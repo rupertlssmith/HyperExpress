@@ -78,6 +78,19 @@ implements Linkable
 
 		links.add(new Link(link));
 	}
+	
+	/**
+	 * Attach a Collection of Link instances to this LinkableCollection.
+	 * 
+	 * @param links a Collection of Link instances.
+	 */
+	public void addAllLinks(Collection<Link> links)
+	{
+		for (Link link : links)
+		{
+			addLink(link);
+		}
+	}
 
 	/**
 	 * Get the items in the underlying collection.  The returned collection is 

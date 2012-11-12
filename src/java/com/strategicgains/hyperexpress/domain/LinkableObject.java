@@ -16,6 +16,7 @@
 package com.strategicgains.hyperexpress.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,9 +65,9 @@ implements Linkable
 	}
 
 	/**
-	 * Attach a link to the collection.
+	 * Attach a link to the object.
 	 * 
-	 * @param link an XLink instance.
+	 * @param link a Link instance.
 	 */
 	public void addLink(Link link)
 	{
@@ -76,6 +77,19 @@ implements Linkable
 		}
 
 		links.add(new Link(link));
+	}
+
+	/**
+	 * Attached a Collection of Link instances to this object.
+	 * 
+	 * @param links a Collection of links.
+	 */
+	public void addAllLinks(Collection<Link> links)
+	{
+		for (Link link : links)
+		{
+			addLink(link);
+		}
 	}
 
 	/**

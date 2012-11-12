@@ -15,6 +15,7 @@
 */
 package com.strategicgains.hyperexpress.domain;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -28,4 +29,5 @@ public interface Linkable
 	public List<Link> getLinks();
 	public void setLinks(List<Link> links);
 	public void addLink(Link link);
+	public void addAllLinks(Collection<Link> links);
 }
