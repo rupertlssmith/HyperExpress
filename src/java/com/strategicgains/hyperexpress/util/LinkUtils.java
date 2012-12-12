@@ -45,7 +45,7 @@ public abstract class LinkUtils
 	 * @param ids a Collection of identifiers to create Link instances for.
 	 * @param rel the Link relationship from the referring object to the referred object (e.g. "self" or "related"). May be null.
 	 * @param type the type of the referred object.
-	 * @param paramName the URL parameter (e.g. {personId}) that these identifiers represent.
+	 * @param paramName the URL parameter (e.g. 'personId' for {personId} in the URL) that these identifiers represent.
 	 * @param urlPattern the URL to operate on the related object (e.g. READ).  There should be a parameter in it that matches the paramName, above.
 	 * @param nameValuePairs is a sequence of name/value pairs, where the name matches parameters in urlPath and the value is what gets substituted.
 	 * @return a List of Link instances.
