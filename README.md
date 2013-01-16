@@ -31,7 +31,7 @@ Stable:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>HyperExpress</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 		</dependency>
 ```
 Development:
@@ -39,7 +39,7 @@ Development:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>HyperExpress</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 ```
 Or download the jar directly from: 
