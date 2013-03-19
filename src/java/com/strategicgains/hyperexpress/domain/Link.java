@@ -45,6 +45,11 @@ public class Link
 	 */
 	private String title;
 	
+	public Link()
+	{
+		super();
+	}
+
 	public Link(String rel, String href)
 	{
 		this(rel, href, null);
