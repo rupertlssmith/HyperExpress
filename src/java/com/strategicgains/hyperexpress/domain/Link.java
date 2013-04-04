@@ -44,7 +44,12 @@ public class Link
 	 * An optional title for the link.
 	 */
 	private String title;
-	
+
+	public Link()
+	{
+		super();
+	}
+
 	public Link(String rel, String href)
 	{
 		this(rel, href, null);
@@ -65,7 +70,7 @@ public class Link
 	}
 	
 	/**
-	 * Copy constructor to facilitate immutability in Link domain.
+	 * Copy constructor.
 	 * 
 	 * @param that
 	 */

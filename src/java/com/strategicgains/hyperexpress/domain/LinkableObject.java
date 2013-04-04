@@ -40,9 +40,15 @@ implements Linkable
 	 */
 	private List<Link> links;
 
-	public LinkableObject(E item)
+	// Simply here to facilitate JSON marshaling and persistence.
+	public LinkableObject()
 	{
 		super();
+	}
+
+	public LinkableObject(E item)
+	{
+		this();
 		setItem(item);
 	}
 
@@ -103,7 +109,7 @@ implements Linkable
 	}
 
 	/**
-	 * Assigns the underlyting item.  Note, there
+	 * Assigns the underlying item.  Note, there
 	 * is no copying occurring in this operation, so it is possible for a caller
 	 * to change the underlying object by changing the original instance.
 	 * 
