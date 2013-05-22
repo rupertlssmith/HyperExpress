@@ -15,10 +15,6 @@
  */
 package com.strategicgains.hyperexpress.domain;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * A wrapper class that enables attaching links (Link instances) to an Object (such as
@@ -28,17 +24,12 @@ import java.util.List;
  * @since Oct 21, 2012
  */
 public class LinkableObject<E>
-implements Linkable
+extends AbstractLinkable
 {
 	/**
 	 * The object that is being wrapped (that we are associating links to).
 	 */
 	private E item;
-	
-	/**
-	 * The Link instances associated with the collection.
-	 */
-	private List<Link> links;
 
 	// Simply here to facilitate JSON marshaling and persistence.
 	public LinkableObject()
@@ -50,52 +41,6 @@ implements Linkable
 	{
 		this();
 		setItem(item);
-	}
-
-	/**
-	 * Returns an unmodifiable List of the links for the object.
-	 */
-	public List<Link> getLinks()
-	{
-		return Collections.unmodifiableList(links);
-	}
-
-	/**
-	 * Sets the links of links as a whole on the collection.
-	 * 
-	 * @param links a list of XLink instances to assign to the colleciton.
-	 */
-	public void setLinks(List<Link> links)
-	{
-		this.links = new ArrayList<Link>(links);
-	}
-
-	/**
-	 * Attach a link to the object.
-	 * 
-	 * @param link a Link instance.
-	 */
-	public void addLink(Link link)
-	{
-		if (links == null)
-		{
-			links = new ArrayList<Link>();
-		}
-
-		links.add(new Link(link));
-	}
-
-	/**
-	 * Attached a Collection of Link instances to this object.
-	 * 
-	 * @param links a Collection of links.
-	 */
-	public void addAllLinks(Collection<Link> links)
-	{
-		for (Link link : links)
-		{
-			addLink(link);
-		}
 	}
 
 	/**

@@ -15,10 +15,8 @@
  */
 package com.strategicgains.hyperexpress.domain;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * A wrapper class that enables attaching links (Link instances) to a Collection before
@@ -28,68 +26,17 @@ import java.util.List;
  * @since Oct 19, 2012
  */
 public class LinkableCollection<E>
-implements Linkable
+extends AbstractLinkable
 {
 	/**
 	 * The collection that is being wrapped.
 	 */
 	private Collection<E> items;
-	
-	/**
-	 * The Link instance associated with the collection.
-	 */
-	private List<Link> links;
 
 	public LinkableCollection(Collection<E> items)
 	{
 		super();
 		setItems(items);
-	}
-
-	/**
-	 * Returns an unmodifiable List of the links.
-	 */
-	public List<Link> getLinks()
-	{
-		return Collections.unmodifiableList(links);
-	}
-
-	/**
-	 * Sets the links of links as a whole on the collection.
-	 * 
-	 * @param links a list of Link instances to assign to the collection.
-	 */
-	public void setLinks(List<Link> links)
-	{
-		this.links = new ArrayList<Link>(links);
-	}
-
-	/**
-	 * Attach a link to the collection.
-	 * 
-	 * @param link an Link instance.
-	 */
-	public void addLink(Link link)
-	{
-		if (links == null)
-		{
-			links = new ArrayList<Link>();
-		}
-
-		links.add(new Link(link));
-	}
-	
-	/**
-	 * Attach a Collection of Link instances to this LinkableCollection.
-	 * 
-	 * @param links a Collection of Link instances.
-	 */
-	public void addAllLinks(Collection<Link> links)
-	{
-		for (Link link : links)
-		{
-			addLink(link);
-		}
 	}
 
 	/**
