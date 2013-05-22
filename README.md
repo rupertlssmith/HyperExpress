@@ -9,7 +9,10 @@ The main hypermedia link class is *Link*, which supports 'rel', 'href' and 'type
 
 * **rel** = the relationship from this object to the referred-to object. See ... for standard 'rel' types.
 * **href** = is the fully-qualified URL to the referred-to object.
-* **type** = the type of the referred-to object.
+* **type** = the type of the referred-to object. Optional
+* **title** = is a human-readable title. Optional.
+* **hreflang** = describes the language of the resource pointed to by the href attribute.
+* **length** = a hint about the content length of the representation. Optional.
 
 There are two wrapper classes to assist in attaching *Link* instances to either your domain/DTO classes or to a collection:
 
