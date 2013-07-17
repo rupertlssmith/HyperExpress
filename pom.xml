@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>Syntaxe</artifactId>
-			<version>0.4.6-SNAPSHOT</version>
+			<version>0.4.6</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
