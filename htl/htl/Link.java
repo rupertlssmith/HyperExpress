@@ -39,28 +39,6 @@ public class Link
 	private Boolean templated;
 
 	/**
-	 * The relationship from the referencing object to the referenced object
-	 * (e.g. rel=self).
-	 * 
-	 * @see http://www.iana.org/assignments/link-relations/link-relations.xml
-	 * 
-	 *      atom:link elements MAY have a "rel" attribute that indicates the
-	 *      link relation type. If the "rel" attribute is not present, the link
-	 *      element MUST be interpreted as if the link relation type is
-	 *      "alternate".
-	 *      <p/>
-	 *      The value of "rel" MUST be a string that is non-empty and matches
-	 *      either the "isegment-nz-nc" or the "IRI" production in [RFC3987].
-	 *      <p/>
-	 *      Note that use of a relative reference other than a simple name is
-	 *      not allowed. If a name is given, implementations MUST consider the
-	 *      link relation type equivalent to the same name registered within the
-	 *      IANA
-	 */
-	@Required
-	private String rel;
-
-	/**
 	 * Optional property for distinguishing between Resource and Link elements
 	 * that share the same 'rel' value. The name attribute SHOULD NOT be used
 	 * exclusively for identifying elements within a HTL representation, it is
@@ -104,21 +82,20 @@ public class Link
 		super();
 	}
 
-	public Link(String rel, String href)
+	public Link(String href)
 	{
-		this(rel, href, null);
+		this(href, null);
 	}
 
-	public Link(String rel, String href, String title)
+	public Link(String href, String title)
 	{
-		this(rel, href, title, null);
+		this(href, title, null);
 	}
 
-	public Link(String rel, String href, String title, String type)
+	public Link(String href, String title, String type)
 	{
 		super();
 		this.href = href;
-		this.rel = rel;
 		this.title = title;
 		this.type = type;
 	}
@@ -130,7 +107,7 @@ public class Link
 	 */
 	public Link(Link that)
 	{
-		this(that.rel, that.href, that.title, that.type);
+		this(that.href, that.title, that.type);
 		this.hreflang = that.hreflang;
 	}
 
@@ -142,16 +119,6 @@ public class Link
 	public void setHref(String href)
 	{
 		this.href = href;
-	}
-
-	public String getRel()
-	{
-		return rel;
-	}
-
-	public void setRel(String rel)
-	{
-		this.rel = rel;
 	}
 
 	public String getTitle()

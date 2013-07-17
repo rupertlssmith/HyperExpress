@@ -59,7 +59,7 @@ implements Linkable
 	 * 
 	 * @param link a Link instance.
 	 */
-	public void addLink(Link link)
+	public void addLink(String rel, Link link)
 	{
 		if (links == null)
 		{
@@ -79,12 +79,12 @@ implements Linkable
 		}
 		else
 		{
-			if (links.containsKey(link.getRel()))
+			if (links.containsKey(rel))
 			{
-				throw new UnsupportedOperationException("Duplicate 'rel' property ('name' required): " + link.getRel());
+				throw new UnsupportedOperationException("Duplicate 'rel' property ('name' required): " + rel);
 			}
 
-			links.put(link.getRel(), new Link(link));
+			links.put(rel, new Link(link));
 		}
 	}
 
