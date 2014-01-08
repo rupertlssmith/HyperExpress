@@ -2,18 +2,23 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<name>HyperExpress</name>
-	<description>Experiments in Hypermedia Linking for Java RESTful Services (HATEOAS)</description>
+	<description>Hypermedia Linking Utilities for Java RESTful Services</description>
 	<url>https://github.com/RestExpress/HyperExpress</url>
 	<groupId>com.strategicgains</groupId>
 	<artifactId>HyperExpress</artifactId>
 	<version>1.0.3-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
 		<artifactId>oss-parent</artifactId>
 		<version>7</version>
 	</parent>
+
+	<modules>
+		<module>core</module>
+		<module>hal</module>
+	</modules>
 
 	<dependencies>
 		<dependency>
@@ -33,9 +38,6 @@
 	</dependencies>
 
 	<build>
-		<sourceDirectory>src/java</sourceDirectory>
-		<testSourceDirectory>test/java</testSourceDirectory>
-
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

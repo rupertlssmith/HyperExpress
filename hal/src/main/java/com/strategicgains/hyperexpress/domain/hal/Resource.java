@@ -15,7 +15,6 @@
 */
 package com.strategicgains.hyperexpress.domain.hal;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.strategicgains.hyperexpress.builder.LinkTemplate;
+
+
 
 /**
  * A HAL Resource instance - For expressing the embedded nature of a given part of the representation.

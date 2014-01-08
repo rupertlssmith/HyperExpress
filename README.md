@@ -45,7 +45,12 @@ Development:
 ```xml
 		<dependency>
 			<groupId>com.strategicgains</groupId>
-			<artifactId>HyperExpress</artifactId>
+			<artifactId>HyperExpress-Core</artifactId>
+			<version>1.0.3-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.strategicgains</groupId>
+			<artifactId>HyperExpress-HAL</artifactId>
 			<version>1.0.3-SNAPSHOT</version>
 		</dependency>
 ```
