@@ -1,11 +1,14 @@
 package com.strategicgains.hyperexpress.builder;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.strategicgains.hyperexpress.util.MapStringFormat;
 
-public abstract class LinkBuilder
+public class LinkBuilder
 {
 	private static final MapStringFormat formatter = new MapStringFormat();
 
@@ -15,25 +18,18 @@ public abstract class LinkBuilder
 
 	private String baseUrl;
 	private String urlPattern;
-	private String idParameterName;
 	private Map<String, String> attributes = new HashMap<String, String>();
 	private Map<String, String> parameters = new HashMap<String, String>();
 
-	public LinkBuilder(String idParameterName)
+	public LinkBuilder(String urlPattern)
 	{
 		super();
-		this.idParameterName = idParameterName;
+		this.urlPattern = urlPattern;
 	}
 
 	public LinkBuilder baseUrl(String url)
     {
     	this.baseUrl = url;
-    	return this;
-    }
-
-	public LinkBuilder href(String pattern)
-    {
-    	this.urlPattern = pattern;
     	return this;
     }
 
@@ -63,14 +59,33 @@ public abstract class LinkBuilder
 		parameters.put(name, value);
 		return this;
 	}
-	
-	protected LinkTemplate build(String id)
+
+	public Collection<LinkTemplate> build(String idParameterName, String... ids)
 	{
-		LinkTemplate l = new LinkTemplate(attributes.get(REL_TYPE), buildHref(id));
+		return build(idParameterName, Arrays.asList(ids));
+	}
+
+	public Collection<LinkTemplate> build(String idParameterName, Collection<String> ids)
+	{
+		if (ids == null) return null;
+
+		Collection<LinkTemplate> r = new ArrayList<LinkTemplate>(ids.size());
+
+		for (String id : ids)
+		{
+			r.add(build(idParameterName, id));
+		}
+
+		return r;
+	}
+	
+	protected LinkTemplate build(String idParameterName, String id)
+	{
+		LinkTemplate l = new LinkTemplate(attributes.get(REL_TYPE), buildHref(idParameterName, id));
 		return l;
 	}
 
-	private String buildHref(String id)
+	private String buildHref(String idParameterName, String id)
     {
 		parameters.put(idParameterName, id.toString());
 		String path = formatter.format(urlPattern, parameters);
