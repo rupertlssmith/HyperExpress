@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.strategicgains.hyperexpress.util.MapStringFormat;
 
@@ -50,7 +51,15 @@ public class LinkBuilder
 
 	public LinkBuilder attribute(String name, String value)
     {
-    	attributes.put(name, value);
+		if (value == null)
+		{
+			attributes.remove(name);
+		}
+		else
+		{
+			attributes.put(name, value);
+		}
+
     	return this;
     }
 	
@@ -60,10 +69,19 @@ public class LinkBuilder
 		return this;
 	}
 	
-	public LinkTemplate build(String idParameterName, String id)
+	public LinkTemplate build()
 	{
-		LinkTemplate l = new LinkTemplate(attributes.get(REL_TYPE), buildHref(idParameterName, id));
-		return l;
+		LinkTemplate t = new LinkTemplate(attributes.get(REL_TYPE), buildHref());
+
+		for (Entry<String, String> entry : attributes.entrySet())
+		{
+			if (!entry.getKey().equalsIgnoreCase(REL_TYPE))
+			{
+				t.set(entry.getKey(), entry.getValue());
+			}
+		}
+
+		return t;
 	}
 
 	public Collection<LinkTemplate> build(String idParameterName, String... ids)
@@ -79,15 +97,16 @@ public class LinkBuilder
 
 		for (String id : ids)
 		{
-			r.add(build(idParameterName, id));
+			parameters.put(idParameterName, id);
+			r.add(build());
 		}
 
+		parameters.remove(idParameterName);
 		return r;
 	}
 
-	private String buildHref(String idParameterName, String id)
+	private String buildHref()
     {
-		parameters.put(idParameterName, id.toString());
 		String path = formatter.format(urlPattern, parameters);
 		return (baseUrl == null ? path : baseUrl + path);
     }

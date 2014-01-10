@@ -105,7 +105,8 @@ public class LinkBuilderTest
 		LinkTemplate link = new LinkBuilder(URL_PATTERN)
 			.baseUrl(BASE_URL)
 			.rel(RelTypes.SELF)
-			.build("id", "42");
+			.urlParam("id", "42")
+			.build();
 		
 		assertEquals(BASE_URL + "/42", link.getHref());
 		assertEquals(RelTypes.SELF, link.getRel());
@@ -119,7 +120,8 @@ public class LinkBuilderTest
 			.rel(RelTypes.DESCRIBED_BY)
 			.urlParam("secondaryId", "second")
 			.urlParam("rootId", "first")
-			.build("id", "42");
+			.urlParam("id", "42")
+			.build();
 		
 		assertEquals(BASE_URL + "/first/second/42", link.getHref());
 		assertEquals(RelTypes.DESCRIBED_BY, link.getRel());
