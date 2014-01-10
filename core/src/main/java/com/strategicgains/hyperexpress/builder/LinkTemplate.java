@@ -24,8 +24,9 @@ import java.util.Map;
  */
 public class LinkTemplate
 {
-	private String href;
-	private String rel;
+	private static final String REL_TYPE = "rel";
+	private static final String HREF = "href";
+
 	private Map<String, String> attributes = new HashMap<String, String>();
 
 	public LinkTemplate(String rel, String href)
@@ -37,22 +38,22 @@ public class LinkTemplate
 
 	public String getHref()
 	{
-		return href;
+		return get(HREF);
 	}
 
 	public void setHref(String href)
 	{
-		this.href = href;
+		set(HREF, href);
 	}
 
 	public String getRel()
 	{
-		return rel;
+		return get(REL_TYPE);
 	}
 
 	public void setRel(String rel)
 	{
-		this.rel = rel;
+		set(REL_TYPE, rel);
 	}
 
 	public void set(String name, String value)
