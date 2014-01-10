@@ -16,6 +16,7 @@
 package com.strategicgains.hyperexpress.domain.hal;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +56,7 @@ public class Resource
 	 * relation type equivalent to the same name registered within the IANA
 	 */
 	private Map<String, Object> _links;
-
+	
 	/**
 	 * The reserved "_embedded" property is OPTIONAL
 	 * 
@@ -114,8 +115,55 @@ public class Resource
 		return Collections.unmodifiableMap(_embedded);
 	}
 
-	public void embed(Object resource)
+	public void embed(String rel, Object resource)
 	{
+		Object listOrResource = acquireEmbedded(rel);
 		
+		if (listOrResource == null) // Add a single resource.
+		{
+			_embedded.put(rel, resource);
+		}
+		else if (listOrResource.getClass().isAssignableFrom(ArrayList.class))	// Add a resource to the list.
+		{
+			((List<Object>) listOrResource).add(resource);
+		}
+		else // Convert a single resource to a list of resources
+		{
+			List<Object> list = new ArrayList<Object>();
+			list.add(listOrResource);
+			list.add(resource);
+			_embedded.put(rel, list);
+		}
 	}
+
+	public void embed(String rel, Collection<? extends Object> resources)
+	{
+		Object listOrResource = acquireEmbedded(rel);
+		
+		if (listOrResource == null) // Create a new list.
+		{
+			_embedded.put(rel, new ArrayList<Object>(resources));
+		}
+		else if (listOrResource.getClass().isAssignableFrom(ArrayList.class))	// Add the resources to the list.
+		{
+			((List<Object>) listOrResource).addAll(resources);
+		}
+		else // Convert a single resource to a list of resources
+		{
+			List<Object> list = new ArrayList<Object>();
+			list.add(listOrResource);
+			list.addAll(resources);
+			_embedded.put(rel, list);
+		}
+	}
+
+	private Object acquireEmbedded(String rel)
+    {
+	    if (_embedded == null)
+		{
+			_embedded = new HashMap<String, Object>();
+		}
+
+		return _embedded.get(rel);
+    }
 }
