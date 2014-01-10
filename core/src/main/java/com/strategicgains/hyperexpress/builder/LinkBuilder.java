@@ -59,6 +59,12 @@ public class LinkBuilder
 		parameters.put(name, value);
 		return this;
 	}
+	
+	public LinkTemplate build(String idParameterName, String id)
+	{
+		LinkTemplate l = new LinkTemplate(attributes.get(REL_TYPE), buildHref(idParameterName, id));
+		return l;
+	}
 
 	public Collection<LinkTemplate> build(String idParameterName, String... ids)
 	{
@@ -77,12 +83,6 @@ public class LinkBuilder
 		}
 
 		return r;
-	}
-	
-	protected LinkTemplate build(String idParameterName, String id)
-	{
-		LinkTemplate l = new LinkTemplate(attributes.get(REL_TYPE), buildHref(idParameterName, id));
-		return l;
 	}
 
 	private String buildHref(String idParameterName, String id)

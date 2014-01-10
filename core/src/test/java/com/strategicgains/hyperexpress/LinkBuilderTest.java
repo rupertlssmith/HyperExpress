@@ -21,27 +21,26 @@ import java.util.Collection;
 
 import org.junit.Test;
 
+import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.builder.LinkTemplate;
-import com.strategicgains.hyperexpress.builder.MultipleLinkBuilder;
 
 /**
  * @author toddf
  * @since Oct 18, 2013
  */
-public class MultipleLinkBuilderTest
+public class LinkBuilderTest
 {
 	private static final String BASE_URL = "http://localhost:8081";
 	private static final String URL_PATTERN = "/{id}";
 	private static final String URL_PATTERN2 = "/{rootId}/{secondaryId}/{id}";
 
 	@Test
-	public void shouldBuildSimpleTemplate()
+	public void shouldBuildSimpleMultipleIdTemplate()
 	{
-		Collection<LinkTemplate> links = ((MultipleLinkBuilder) new MultipleLinkBuilder("id", "42", "22", "4")
+		Collection<LinkTemplate> links = new LinkBuilder(URL_PATTERN)
 			.baseUrl(BASE_URL)
-			.href(URL_PATTERN)
-			.rel(RelTypes.RELATED))
-			.build();
+			.rel(RelTypes.RELATED)
+			.build("id", "42", "22", "4");
 
 		assertEquals(3, links.size());
 		int i = 0;
@@ -67,15 +66,14 @@ public class MultipleLinkBuilderTest
 	}
 
 	@Test
-	public void shouldBuildComplexTemplate()
+	public void shouldBuildComplexMultipleIdTemplate()
 	{
-		Collection<LinkTemplate> links = ((MultipleLinkBuilder) new MultipleLinkBuilder("id", "42", "22", "4")
+		Collection<LinkTemplate> links = new LinkBuilder(URL_PATTERN2)
 			.baseUrl(BASE_URL)
-			.href(URL_PATTERN2)
 			.rel(RelTypes.DESCRIBED_BY)
 			.urlParam("secondaryId", "second")
-			.urlParam("rootId", "first"))
-			.build();
+			.urlParam("rootId", "first")
+			.build("id", "42", "22", "4");
 
 
 		assertEquals(3, links.size());
@@ -101,4 +99,29 @@ public class MultipleLinkBuilderTest
 		}
 	}
 
+	@Test
+	public void shouldBuildSimpleSingleIdTemplate()
+	{
+		LinkTemplate link = new LinkBuilder(URL_PATTERN)
+			.baseUrl(BASE_URL)
+			.rel(RelTypes.SELF)
+			.build("id", "42");
+		
+		assertEquals(BASE_URL + "/42", link.getHref());
+		assertEquals(RelTypes.SELF, link.getRel());
+	}
+
+	@Test
+	public void shouldBuildComplexSingleIdTemplate()
+	{
+		LinkTemplate link = new LinkBuilder(URL_PATTERN2)
+			.baseUrl(BASE_URL)
+			.rel(RelTypes.DESCRIBED_BY)
+			.urlParam("secondaryId", "second")
+			.urlParam("rootId", "first")
+			.build("id", "42");
+		
+		assertEquals(BASE_URL + "/first/second/42", link.getHref());
+		assertEquals(RelTypes.DESCRIBED_BY, link.getRel());
+	}
 }
