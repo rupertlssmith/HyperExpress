@@ -23,16 +23,18 @@ import java.util.List;
 import java.util.Map;
 
 import com.strategicgains.hyperexpress.builder.LinkTemplate;
+import com.strategicgains.hyperexpress.domain.Resource;
 
 
 
 /**
- * A HAL Resource instance - For expressing the embedded nature of a given part of the representation.
+ * A HAL Resource instance, containing links and embedded resources.
  * 
  * @author toddf
  * @since May 21, 2013
  */
-public class Resource
+public class HalResource
+implements Resource
 {
 	/**
 	 * The reserved "_links" property is OPTIONAL.
@@ -69,6 +71,7 @@ public class Resource
 	 */
 	private Map<String, Object> _embedded;
 
+	@Override
 	public void linkTo(String rel, LinkTemplate linkTemplate)
 	{
 		if (!hasLinks())
@@ -80,17 +83,17 @@ public class Resource
 		
 		if (listOrLink == null)	// Add a single Link
 		{
-			_links.put(rel, new Link(linkTemplate));
+			_links.put(rel, new HalLink(linkTemplate));
 		}
 		else if (listOrLink.getClass().isAssignableFrom(ArrayList.class))	// Add Link to list.
 		{
-			((List<Link>) listOrLink).add(new Link(linkTemplate));
+			((List<HalLink>) listOrLink).add(new HalLink(linkTemplate));
 		}
 		else // Convert to a list of Links
 		{
-			List<Link> list = new ArrayList<Link>();
-			list.add((Link) listOrLink);
-			list.add(new Link(linkTemplate));
+			List<HalLink> list = new ArrayList<HalLink>();
+			list.add((HalLink) listOrLink);
+			list.add(new HalLink(linkTemplate));
 			_links.put(rel, list);
 		}
 	}
