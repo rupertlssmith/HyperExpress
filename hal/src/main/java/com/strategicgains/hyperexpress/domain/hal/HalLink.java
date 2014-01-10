@@ -26,7 +26,7 @@ import com.strategicgains.syntaxe.annotation.Required;
  * @author toddf
  * @since May 21, 2013
  */
-public class Link
+public class HalLink
 {
 	/**
 	 * The "href" property is REQUIRED.
@@ -130,12 +130,12 @@ public class Link
 	 */
 	private String profile;
 
-	public Link()
+	public HalLink()
 	{
 		super();
 	}
 	
-	public Link(LinkTemplate template)
+	public HalLink(LinkTemplate template)
 	{
 		this();
 		this.setHref(template.getHref());
