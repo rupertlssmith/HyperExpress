@@ -1,4 +1,4 @@
-package com.strategicgains.hyperexpress.builder;
+package com.strategicgains.hyperexpress;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.strategicgains.hyperexpress.domain.LinkDefinition;
 import com.strategicgains.hyperexpress.util.MapStringFormat;
 
 public class LinkBuilder
@@ -69,40 +70,40 @@ public class LinkBuilder
 		return this;
 	}
 	
-	public LinkTemplate build()
+	public LinkDefinition build()
 	{
-		LinkTemplate t = new LinkTemplate(attributes.get(REL_TYPE), buildHref());
+		LinkDefinition definition = new LinkDefinition(attributes.get(REL_TYPE), buildHref());
 
 		for (Entry<String, String> entry : attributes.entrySet())
 		{
 			if (!entry.getKey().equalsIgnoreCase(REL_TYPE))
 			{
-				t.set(entry.getKey(), entry.getValue());
+				definition.set(entry.getKey(), entry.getValue());
 			}
 		}
 
-		return t;
+		return definition;
 	}
 
-	public Collection<LinkTemplate> build(String idParameterName, String... ids)
+	public Collection<LinkDefinition> build(String idParameterName, String... ids)
 	{
 		return build(idParameterName, Arrays.asList(ids));
 	}
 
-	public Collection<LinkTemplate> build(String idParameterName, Collection<String> ids)
+	public Collection<LinkDefinition> build(String idParameterName, Collection<String> ids)
 	{
 		if (ids == null) return null;
 
-		Collection<LinkTemplate> r = new ArrayList<LinkTemplate>(ids.size());
+		Collection<LinkDefinition> definitions = new ArrayList<LinkDefinition>(ids.size());
 
 		for (String id : ids)
 		{
 			parameters.put(idParameterName, id);
-			r.add(build());
+			definitions.add(build());
 		}
 
 		parameters.remove(idParameterName);
-		return r;
+		return definitions;
 	}
 
 	private String buildHref()

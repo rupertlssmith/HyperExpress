@@ -15,7 +15,7 @@
  */
 package com.strategicgains.hyperexpress.domain.hal;
 
-import com.strategicgains.hyperexpress.builder.LinkTemplate;
+import com.strategicgains.hyperexpress.domain.LinkDefinition;
 import com.strategicgains.syntaxe.annotation.RegexValidation;
 import com.strategicgains.syntaxe.annotation.Required;
 
@@ -135,17 +135,17 @@ public class HalLink
 		super();
 	}
 	
-	public HalLink(LinkTemplate template)
+	public HalLink(LinkDefinition definition)
 	{
 		this();
-		this.setHref(template.getHref());
-		this.setDeprecation(template.get("deprecation"));
-		this.setHreflang(template.get("hreflang"));
-		this.setName(template.get("name"));
-		this.setProfile(template.get("profile"));
-		this.setTemplated(Boolean.valueOf(template.get("templated")));
-		this.setTitle(template.get("title"));
-		this.setType(template.get("type"));
+		this.setHref(definition.getHref());
+		this.setDeprecation(definition.get("deprecation"));
+		this.setHreflang(definition.get("hreflang"));
+		this.setName(definition.get("name"));
+		this.setProfile(definition.get("profile"));
+		this.setTemplated(Boolean.valueOf(definition.get("templated")));
+		this.setTitle(definition.get("title"));
+		this.setType(definition.get("type"));
 	}
 
 	public String getHref()

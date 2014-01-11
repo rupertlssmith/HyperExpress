@@ -15,7 +15,7 @@
 */
 package com.strategicgains.hyperexpress.domain.hal;
 
-import com.strategicgains.hyperexpress.builder.LinkBuilder;
+import com.strategicgains.hyperexpress.LinkBuilder;
 
 /**
  * @author toddf
@@ -37,7 +37,7 @@ extends LinkBuilder
     }
 
 	//TODO: figure out curies...
-	public HalLinkBuilder curies(String curies)
+	public HalLinkBuilder curie(String curies)
 	{
 		return (HalLinkBuilder) attribute(CURIES, curies);
 	}
@@ -59,7 +59,7 @@ extends LinkBuilder
 	@Override
 	public HalLinkBuilder type(String type)
 	{
-		return (HalLinkBuilder) type(type);
+		return (HalLinkBuilder) super.type(type);
 	}
 
 	public HalLinkBuilder deprecation(String deprecation)
@@ -80,7 +80,7 @@ extends LinkBuilder
 	@Override
 	public HalLinkBuilder title(String title)
 	{
-		return (HalLinkBuilder) title(title);
+		return (HalLinkBuilder) super.title(title);
 	}
 
 	public HalLinkBuilder hreflang(String hreflang)

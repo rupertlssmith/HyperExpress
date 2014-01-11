@@ -15,13 +15,20 @@
 */
 package com.strategicgains.hyperexpress.domain;
 
-import com.strategicgains.hyperexpress.builder.LinkTemplate;
 
 /**
+ * Resource defines an interface for a RESTful resource that contains a link to a URL.
+ * 
  * @author toddf
  * @since Jan 10, 2014
  */
 public interface Resource
 {
-	public void linkTo(String rel, LinkTemplate linkTemplate);
+	/**
+	 * Define a link relationship from the resource to a URL.
+	 * 
+	 * @param rel the name of the relationship.
+	 * @param linkDefinition an abstraction of a link as a LinkDefinition instance.
+	 */
+	public void linkTo(String rel, LinkDefinition linkDefinition);
 }

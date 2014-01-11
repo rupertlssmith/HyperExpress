@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.strategicgains.hyperexpress.builder.LinkTemplate;
+import com.strategicgains.hyperexpress.domain.LinkDefinition;
 import com.strategicgains.hyperexpress.domain.Resource;
 
 
@@ -72,7 +72,7 @@ implements Resource
 	private Map<String, Object> _embedded;
 
 	@Override
-	public void linkTo(String rel, LinkTemplate linkTemplate)
+	public void linkTo(String rel, LinkDefinition linkDefinition)
 	{
 		if (!hasLinks())
 		{
@@ -83,17 +83,17 @@ implements Resource
 		
 		if (listOrLink == null)	// Add a single Link
 		{
-			_links.put(rel, new HalLink(linkTemplate));
+			_links.put(rel, new HalLink(linkDefinition));
 		}
 		else if (listOrLink.getClass().isAssignableFrom(ArrayList.class))	// Add Link to list.
 		{
-			((List<HalLink>) listOrLink).add(new HalLink(linkTemplate));
+			((List<HalLink>) listOrLink).add(new HalLink(linkDefinition));
 		}
 		else // Convert to a list of Links
 		{
 			List<HalLink> list = new ArrayList<HalLink>();
 			list.add((HalLink) listOrLink);
-			list.add(new HalLink(linkTemplate));
+			list.add(new HalLink(linkDefinition));
 			_links.put(rel, list);
 		}
 	}

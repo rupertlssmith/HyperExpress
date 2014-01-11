@@ -21,8 +21,7 @@ import java.util.Collection;
 
 import org.junit.Test;
 
-import com.strategicgains.hyperexpress.builder.LinkBuilder;
-import com.strategicgains.hyperexpress.builder.LinkTemplate;
+import com.strategicgains.hyperexpress.domain.LinkDefinition;
 
 /**
  * @author toddf
@@ -37,7 +36,7 @@ public class LinkBuilderTest
 	@Test
 	public void shouldBuildSimpleMultipleIdTemplate()
 	{
-		Collection<LinkTemplate> links = new LinkBuilder(URL_PATTERN)
+		Collection<LinkDefinition> links = new LinkBuilder(URL_PATTERN)
 			.baseUrl(BASE_URL)
 			.rel(RelTypes.RELATED)
 			.build("id", "42", "22", "4");
@@ -45,7 +44,7 @@ public class LinkBuilderTest
 		assertEquals(3, links.size());
 		int i = 0;
 
-		for (LinkTemplate link : links)
+		for (LinkDefinition link : links)
 		{
 			if (i == 0)
 			{
@@ -68,7 +67,7 @@ public class LinkBuilderTest
 	@Test
 	public void shouldBuildComplexMultipleIdTemplate()
 	{
-		Collection<LinkTemplate> links = new LinkBuilder(URL_PATTERN2)
+		Collection<LinkDefinition> links = new LinkBuilder(URL_PATTERN2)
 			.baseUrl(BASE_URL)
 			.rel(RelTypes.DESCRIBED_BY)
 			.urlParam("secondaryId", "second")
@@ -79,7 +78,7 @@ public class LinkBuilderTest
 		assertEquals(3, links.size());
 		int i = 0;
 
-		for (LinkTemplate link : links)
+		for (LinkDefinition link : links)
 		{
 			if (i == 0)
 			{
@@ -102,7 +101,7 @@ public class LinkBuilderTest
 	@Test
 	public void shouldBuildSimpleSingleIdTemplate()
 	{
-		LinkTemplate link = new LinkBuilder(URL_PATTERN)
+		LinkDefinition link = new LinkBuilder(URL_PATTERN)
 			.baseUrl(BASE_URL)
 			.rel(RelTypes.SELF)
 			.urlParam("id", "42")
@@ -115,7 +114,7 @@ public class LinkBuilderTest
 	@Test
 	public void shouldBuildComplexSingleIdTemplate()
 	{
-		LinkTemplate link = new LinkBuilder(URL_PATTERN2)
+		LinkDefinition link = new LinkBuilder(URL_PATTERN2)
 			.baseUrl(BASE_URL)
 			.rel(RelTypes.DESCRIBED_BY)
 			.urlParam("secondaryId", "second")

@@ -24,6 +24,7 @@ import java.util.List;
 /**
  * @author toddf
  * @since May 21, 2013
+ * @deprecated
  */
 public abstract class AbstractLinkable
 implements Linkable

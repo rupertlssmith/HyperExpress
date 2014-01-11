@@ -24,6 +24,7 @@ import java.util.Collections;
  * 
  * @author toddf
  * @since Oct 19, 2012
+ * @deprecated
  */
 public class LinkableCollection<E>
 extends AbstractLinkable

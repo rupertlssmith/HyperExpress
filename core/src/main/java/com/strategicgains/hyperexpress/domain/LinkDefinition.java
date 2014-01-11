@@ -13,7 +13,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
  */
-package com.strategicgains.hyperexpress.builder;
+package com.strategicgains.hyperexpress.domain;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,14 +22,14 @@ import java.util.Map;
  * @author toddf
  * @since Oct 17, 2013
  */
-public class LinkTemplate
+public class LinkDefinition
 {
 	private static final String REL_TYPE = "rel";
 	private static final String HREF = "href";
 
 	private Map<String, String> attributes = new HashMap<String, String>();
 
-	public LinkTemplate(String rel, String href)
+	public LinkDefinition(String rel, String href)
     {
 	    super();
 	    setRel(rel);

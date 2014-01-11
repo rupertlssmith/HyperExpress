@@ -27,6 +27,7 @@ import com.strategicgains.hyperexpress.domain.Link;
  * 
  * @author toddf
  * @since July 29, 2010
+ * @deprecated
  */
 public abstract class LinkUtils
 {

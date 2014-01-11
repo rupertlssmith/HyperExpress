@@ -22,6 +22,7 @@ package com.strategicgains.hyperexpress.domain;
  * 
  * @author toddf
  * @since Oct 21, 2012
+ * @deprecated
  */
 public class LinkableObject<E>
 extends AbstractLinkable
