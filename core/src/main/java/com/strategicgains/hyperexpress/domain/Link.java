@@ -26,6 +26,7 @@ import com.strategicgains.syntaxe.annotation.Required;
  * 
  * @author toddf
  * @since 19 Sep 2012
+ * @deprecated
  */
 public class Link
 {
