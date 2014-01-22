@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * A LinkDefinition is a generic definition of a hypermedia link. It contains attributes
+ * than can describe various output link formats such as HAL, Atom, and JSON-LD.
+ * 
  * @author toddf
  * @since Oct 17, 2013
  */
