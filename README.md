@@ -38,7 +38,15 @@ Stable:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>HyperExpress</artifactId>
-			<version>1.0.2</version>
+			<version>1.0.3</version>
+		</dependency>
+```
+Or, for HAL...
+```xml
+		<dependency>
+			<groupId>com.strategicgains</groupId>
+			<artifactId>HyperExpress-HAL</artifactId>
+			<version>1.0.3</version>
 		</dependency>
 ```
 Development:
@@ -46,12 +54,12 @@ Development:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>HyperExpress-Core</artifactId>
-			<version>1.0.3-SNAPSHOT</version>
+			<version>1.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>HyperExpress-HAL</artifactId>
-			<version>1.0.3-SNAPSHOT</version>
+			<version>1.0.4-SNAPSHOT</version>
 		</dependency>
 ```
 Or download the jar directly from: 
