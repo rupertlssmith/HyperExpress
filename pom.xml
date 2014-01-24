@@ -6,7 +6,7 @@
 	<url>https://github.com/RestExpress/HyperExpress</url>
 	<groupId>com.strategicgains</groupId>
 	<artifactId>HyperExpress</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.0.3</version>
 	<packaging>pom</packaging>
 
 	<parent>
@@ -105,7 +105,7 @@
 		<url>git@github.com:RestExpress/HyperExpress.git</url>
 		<connection>scm:git:git@github.com:RestExpress/HyperExpress.git</connection>
 		<developerConnection>scm:git:git@github.com:RestExpress/HyperExpress.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>HyperExpress-1.0.3</tag>
 	</scm>
 
 	<licenses>
