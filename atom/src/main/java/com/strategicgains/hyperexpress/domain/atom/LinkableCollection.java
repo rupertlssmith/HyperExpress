@@ -13,7 +13,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
  */
-package com.strategicgains.hyperexpress.domain;
+package com.strategicgains.hyperexpress.domain.atom;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +24,7 @@ import java.util.Collections;
  * 
  * @author toddf
  * @since Oct 19, 2012
- * @deprecated Use LinkableCollection in HyperExpress-Atom
+ * @deprecated Use AtomResource
  */
 public class LinkableCollection<E>
 extends AbstractLinkable

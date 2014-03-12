@@ -14,21 +14,21 @@
  * limitations under the License.
  *
  */
-package com.strategicgains.hyperexpress.domain;
+package com.strategicgains.hyperexpress.domain.atom;
 
+import com.strategicgains.hyperexpress.domain.LinkDefinition;
 import com.strategicgains.syntaxe.annotation.RegexValidation;
 import com.strategicgains.syntaxe.annotation.Required;
 
 
 /**
- * Bean for general-purpose hypermedia link. This Link class is
+ * Bean for general-purpose Atom-style hypermedia link. This Link class is
  * derived from http://www.ietf.org/rfc/rfc4287 (see).
  * 
  * @author toddf
  * @since 19 Sep 2012
- * @deprecated Use LinkDefinition, or AtomLink in HyperExpress-Atom
  */
-public class Link
+public class AtomLink
 {
 	/**
 	 * The "href" attribute contains the link's IRI. atom:link elements MUST
@@ -96,22 +96,22 @@ public class Link
 	@RegexValidation(pattern="[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*", nullable=true, message="MUST be a language tag [RFC3066]")
 	private String hreflang;
 
-	public Link()
+	public AtomLink()
 	{
 		super();
 	}
 
-	public Link(String rel, String href)
+	public AtomLink(String rel, String href)
 	{
 		this(rel, href, null);
 	}
 
-	public Link(String rel, String href, String title)
+	public AtomLink(String rel, String href, String title)
 	{
 		this(rel, href, title, null);
 	}
 
-	public Link(String rel, String href, String title, String type)
+	public AtomLink(String rel, String href, String title, String type)
 	{
 		super();
 		this.href = href;
@@ -119,13 +119,24 @@ public class Link
 		this.title = title;
 		this.type = type;
 	}
-	
+
+	public AtomLink(LinkDefinition definition)
+	{
+		this();
+		this.setHref(definition.getHref());
+		this.setRel(definition.getRel());
+		this.setHreflang(definition.get("hreflang"));
+		this.setTitle(definition.get("title"));
+		this.setType(definition.get("type"));
+		this.setLength(definition.get("length"));
+	}
+
 	/**
 	 * Copy constructor.
 	 * 
 	 * @param that
 	 */
-	public Link(Link that)
+	public AtomLink(AtomLink that)
 	{
 		this(that.rel, that.href, that.title, that.type);
 		this.hreflang = that.hreflang;

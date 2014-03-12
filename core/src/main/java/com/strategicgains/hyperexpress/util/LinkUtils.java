@@ -27,7 +27,8 @@ import com.strategicgains.hyperexpress.domain.Link;
  * 
  * @author toddf
  * @since July 29, 2010
- * @deprecated
+ * @deprecated Use LinkBuilder or the specific type builder, AtomLinkBuilder, HalLinkBuilder, in
+ * the appropriate sub-module.
  */
 public abstract class LinkUtils
 {

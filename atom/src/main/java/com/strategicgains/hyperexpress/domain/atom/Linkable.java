@@ -13,7 +13,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package com.strategicgains.hyperexpress.domain;
+package com.strategicgains.hyperexpress.domain.atom;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,12 +23,12 @@ import java.util.List;
  * 
  * @author toddf
  * @since Oct 19, 2012
- * @deprecated Use Resource, or Linkable in HyperExpress-Atom
+ * @deprecated Use AtomResource
  */
 public interface Linkable
 {
-	public List<Link> getLinks();
-	public void setLinks(List<Link> links);
-	public void addLink(Link link);
-	public void addAllLinks(Collection<Link> links);
+	public List<AtomLink> getLinks();
+	public void setLinks(List<AtomLink> links);
+	public void addLink(AtomLink link);
+	public void addAllLinks(Collection<AtomLink> links);
 }

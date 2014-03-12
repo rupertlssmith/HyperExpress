@@ -13,7 +13,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
  */
-package com.strategicgains.hyperexpress.domain;
+package com.strategicgains.hyperexpress.domain.atom;
 
 
 /**
@@ -22,7 +22,7 @@ package com.strategicgains.hyperexpress.domain;
  * 
  * @author toddf
  * @since Oct 21, 2012
- * @deprecated Use LinkableObject in HyperExpress-Atom
+ * @deprecated Use AtomResource
  */
 public class LinkableObject<E>
 extends AbstractLinkable

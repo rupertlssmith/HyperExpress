@@ -134,7 +134,7 @@ public class HalLink
 	{
 		super();
 	}
-	
+
 	public HalLink(LinkDefinition definition)
 	{
 		this();

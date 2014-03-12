@@ -50,12 +50,16 @@ Or, for HAL...
 		</dependency>
 ```
 Development:
+For Atom...
 ```xml
 		<dependency>
 			<groupId>com.strategicgains</groupId>
-			<artifactId>HyperExpress-Core</artifactId>
+			<artifactId>HyperExpress-Atom</artifactId>
 			<version>1.0.4-SNAPSHOT</version>
 		</dependency>
+```
+Or, for HAL...
+```xml
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>HyperExpress-HAL</artifactId>
