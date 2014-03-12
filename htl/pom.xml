@@ -9,7 +9,7 @@
 		<version>1.0.4-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>HyperExpress-Atom</artifactId>
+	<artifactId>HyperExpress-HTL</artifactId>
 	<packaging>jar</packaging>
 
 	<dependencies>

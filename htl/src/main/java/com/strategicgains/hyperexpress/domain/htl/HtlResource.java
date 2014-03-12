@@ -13,7 +13,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package com.strategicgains.hyperexpress.domain.atom;
+package com.strategicgains.hyperexpress.domain.htl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,12 +28,12 @@ import com.strategicgains.hyperexpress.domain.Resource;
 
 
 /**
- * A HAL Resource instance, containing links and embedded resources.
+ * A Resource instance, containing links, embedded resources and possibly, collection items.
  * 
  * @author toddf
  * @since May 21, 2013
  */
-public class AtomResource
+public abstract class HtlResource<E>
 implements Resource
 {
 	/**
@@ -57,7 +57,7 @@ implements Resource
 	 * allowed.  If a name is given, implementations MUST consider the link
 	 * relation type equivalent to the same name registered within the IANA
 	 */
-	private List<AtomLink> links;
+	private Map<String, Object> links;
 	
 	/**
 	 * The reserved "embedded" property is OPTIONAL
@@ -75,20 +75,36 @@ implements Resource
 	 * The reserved "items" property is OPTIONAL
 	 * 
 	 * If the resource is a collection, its elements are contained here
-	 * in the 'items' collection.  Note that each item can be a resource
+	 * in the 'items' collection.  Note that each item may be a resource
 	 * with links, embedded objects, and items.
 	 */
-	private Collection<Object> items;
+	private Collection<E> items;
 
 	@Override
 	public void linkTo(String rel, LinkDefinition linkDefinition)
 	{
 		if (!hasLinks())
 		{
-			links = new ArrayList<AtomLink>();
+			links = new HashMap<String, Object>();
 		}
 
-		links.add(new AtomLink(linkDefinition));
+		Object listOrLink = links.get(rel);
+		
+		if (listOrLink == null)	// Add a single Link
+		{
+			links.put(rel, new HtlLink(linkDefinition));
+		}
+		else if (listOrLink.getClass().isAssignableFrom(ArrayList.class))	// Add Link to list.
+		{
+			((List<HtlLink>) listOrLink).add(new HtlLink(linkDefinition));
+		}
+		else // Convert to a list of Links
+		{
+			List<HtlLink> list = new ArrayList<HtlLink>();
+			list.add((HtlLink) listOrLink);
+			list.add(new HtlLink(linkDefinition));
+			links.put(rel, list);
+		}
 	}
 
 	public boolean hasLinks()
@@ -96,24 +112,19 @@ implements Resource
 		return (links != null);
 	}
 
-	public List<AtomLink> getLinks()
+	public Map<String, Object> getLinks()
 	{
-		return (hasLinks() ? Collections.unmodifiableList(links) : null);
+		return Collections.unmodifiableMap(links);
 	}
 
-	public void setLinks(List<AtomLink> links)
+	public void setLinks(Map<String, Object> links)
 	{
-		this.links = (links == null ? null : new ArrayList<AtomLink>(links));
-	}
-
-	public boolean hasEmbedded()
-	{
-		return (embedded != null);
+		this.links = (links == null ? null : new HashMap<String, Object>(links));
 	}
 
 	public Map<String, Object> getEmbedded()
 	{
-		return (hasEmbedded() ? Collections.unmodifiableMap(embedded) : null);
+		return Collections.unmodifiableMap(embedded);
 	}
 
 	public void embed(String rel, Object resource)
@@ -164,7 +175,7 @@ implements Resource
 	 * 
 	 * @return the items in the collection.
 	 */
-	public Collection<Object> getItems()
+	public Collection<E> getItems()
 	{
 		return Collections.unmodifiableCollection(items);
 	}
@@ -174,9 +185,9 @@ implements Resource
 	 * 
 	 * @param items
 	 */
-	public void setItems(Collection<Object> items)
+	public void setItems(Collection<E> items)
 	{
-		this.items = new ArrayList<Object>(items);
+		this.items = new ArrayList<E>(items);
 	}
 
 	private Object acquireEmbedded(String rel)
