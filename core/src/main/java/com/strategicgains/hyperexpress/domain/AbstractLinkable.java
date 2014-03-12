@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author toddf
  * @since May 21, 2013
- * @deprecated
+ * @deprecated Implement Resource or use HalResource, AtomResource, or HtlResource.
  */
 public abstract class AbstractLinkable
 implements Linkable
