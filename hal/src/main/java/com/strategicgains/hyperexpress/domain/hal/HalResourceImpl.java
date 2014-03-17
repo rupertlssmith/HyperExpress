@@ -13,7 +13,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package com.strategicgains.hyperexpress.domain.atom;
+package com.strategicgains.hyperexpress.domain.hal;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.strategicgains.hyperexpress.domain.LinkDefinition;
-import com.strategicgains.hyperexpress.domain.Resource;
 
 
 
@@ -33,11 +32,11 @@ import com.strategicgains.hyperexpress.domain.Resource;
  * @author toddf
  * @since May 21, 2013
  */
-public class AtomResource
-implements Resource
+public class HalResourceImpl
+implements HalResource
 {
 	/**
-	 * The reserved "links" property is OPTIONAL.
+	 * The reserved "_links" property is OPTIONAL.
 	 * 
 	 * It is an object whose property names are link relation types (as
 	 * defined by [RFC5988]) and values are either a Link Object or an array
@@ -57,10 +56,10 @@ implements Resource
 	 * allowed.  If a name is given, implementations MUST consider the link
 	 * relation type equivalent to the same name registered within the IANA
 	 */
-	private List<AtomLink> links;
+	private Map<String, Object> _links;
 	
 	/**
-	 * The reserved "embedded" property is OPTIONAL
+	 * The reserved "_embedded" property is OPTIONAL
 	 * 
 	 * It is an object whose property names are link relation types (as
 	 * defined by [RFC5988]) and values are either a Resource Object or an
@@ -69,26 +68,33 @@ implements Resource
 	 * Embedded Resources MAY be a full, partial, or inconsistent version of
 	 * the representation served from the target URI.
 	 */
-	private Map<String, Object> embedded;
-
-	/**
-	 * The reserved "items" property is OPTIONAL
-	 * 
-	 * If the resource is a collection, its elements are contained here
-	 * in the 'items' collection.  Note that each item can be a resource
-	 * with links, embedded objects, and items.
-	 */
-	private Collection<Object> items;
+	private Map<String, Object> _embedded;
 
 	@Override
 	public void addLink(LinkDefinition linkDefinition)
 	{
 		if (!hasLinks())
 		{
-			links = new ArrayList<AtomLink>();
+			_links = new HashMap<String, Object>();
 		}
 
-		links.add(new AtomLink(linkDefinition));
+		Object listOrLink = _links.get(linkDefinition.getRel());
+		
+		if (listOrLink == null)	// Add a single Link
+		{
+			_links.put(linkDefinition.getRel(), new HalLink(linkDefinition));
+		}
+		else if (listOrLink.getClass().isAssignableFrom(ArrayList.class))	// Add Link to list.
+		{
+			((List<HalLink>) listOrLink).add(new HalLink(linkDefinition));
+		}
+		else // Convert to a list of Links
+		{
+			List<HalLink> list = new ArrayList<HalLink>();
+			list.add((HalLink) listOrLink);
+			list.add(new HalLink(linkDefinition));
+			_links.put(linkDefinition.getRel(), list);
+		}
 	}
 
 	@Override
@@ -104,36 +110,29 @@ implements Resource
 
 	public boolean hasLinks()
 	{
-		return (links != null);
+		return (_links != null);
 	}
 
-	public List<AtomLink> getLinks()
+	@Override
+	public Map<String, Object> getLinks()
 	{
-		return (hasLinks() ? Collections.unmodifiableList(links) : null);
+		return Collections.unmodifiableMap(_links);
 	}
 
-	public void setLinks(List<AtomLink> links)
-	{
-		this.links = (links == null ? null : new ArrayList<AtomLink>(links));
-	}
-
-	public boolean hasEmbedded()
-	{
-		return (embedded != null);
-	}
-
+	@Override
 	public Map<String, Object> getEmbedded()
 	{
-		return (hasEmbedded() ? Collections.unmodifiableMap(embedded) : null);
+		return Collections.unmodifiableMap(_embedded);
 	}
 
-	public void embed(String rel, Object resource)
+	@Override
+    public void embed(String rel, Object resource)
 	{
 		Object listOrResource = acquireEmbedded(rel);
 		
 		if (listOrResource == null) // Add a single resource.
 		{
-			embedded.put(rel, resource);
+			_embedded.put(rel, resource);
 		}
 		else if (listOrResource.getClass().isAssignableFrom(ArrayList.class))	// Add a resource to the list.
 		{
@@ -144,17 +143,18 @@ implements Resource
 			List<Object> list = new ArrayList<Object>();
 			list.add(listOrResource);
 			list.add(resource);
-			embedded.put(rel, list);
+			_embedded.put(rel, list);
 		}
 	}
 
-	public void embed(String rel, Collection<? extends Object> resources)
+	@Override
+    public void embed(String rel, Collection<? extends Object> resources)
 	{
 		Object listOrResource = acquireEmbedded(rel);
 		
 		if (listOrResource == null) // Create a new list.
 		{
-			embedded.put(rel, new ArrayList<Object>(resources));
+			_embedded.put(rel, new ArrayList<Object>(resources));
 		}
 		else if (listOrResource.getClass().isAssignableFrom(ArrayList.class))	// Add the resources to the list.
 		{
@@ -165,38 +165,17 @@ implements Resource
 			List<Object> list = new ArrayList<Object>();
 			list.add(listOrResource);
 			list.addAll(resources);
-			embedded.put(rel, list);
+			_embedded.put(rel, list);
 		}
-	}
-
-	/**
-	 * Get the items in the underlying collection.  The returned collection is 
-	 * unmodifiable.
-	 * 
-	 * @return the items in the collection.
-	 */
-	public Collection<Object> getItems()
-	{
-		return Collections.unmodifiableCollection(items);
-	}
-
-	/**
-	 * Assigns the items collection to the underlying 'items' collection.
-	 * 
-	 * @param items
-	 */
-	public void setItems(Collection<Object> items)
-	{
-		this.items = new ArrayList<Object>(items);
 	}
 
 	private Object acquireEmbedded(String rel)
     {
-	    if (embedded == null)
+	    if (_embedded == null)
 		{
-			embedded = new HashMap<String, Object>();
+			_embedded = new HashMap<String, Object>();
 		}
 
-		return embedded.get(rel);
+		return _embedded.get(rel);
     }
 }

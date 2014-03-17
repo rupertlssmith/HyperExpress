@@ -17,6 +17,7 @@ package com.strategicgains.hyperexpress.domain;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * A LinkDefinition is a generic definition of a hypermedia link. It contains attributes
@@ -72,5 +73,33 @@ public class LinkDefinition
 	public boolean has(String name)
 	{
 		return (get(name) != null);
+	}
+
+	@Override
+	public String toString()
+	{
+		StringBuilder s = new StringBuilder();
+		s.append(this.getClass().getSimpleName());
+		s.append("{");
+		boolean isFirst = true;
+
+		for (Entry<String, String> entry : attributes.entrySet())
+		{
+			if (!isFirst)
+			{
+				s.append(", ");
+			}
+			else
+			{
+				isFirst = false;
+			}
+
+			s.append(entry.getKey());
+			s.append("=");
+			s.append(entry.getValue());
+		}
+
+		s.append("}");
+		return s.toString();
 	}
 }

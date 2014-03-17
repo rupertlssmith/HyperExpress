@@ -69,9 +69,15 @@ public class LinkBuilder
 		parameters.put(name, value);
 		return this;
 	}
-	
+
+	/**
+	 * 
+	 * @return a LinkDefinition instance
+	 * @throws LinkBuilderException if the LinkBuilder is in a state to build an invalid LinkDefintion.
+	 */
 	public LinkDefinition build()
 	{
+		assertValid();
 		LinkDefinition definition = new LinkDefinition(attributes.get(REL_TYPE), buildHref());
 
 		for (Entry<String, String> entry : attributes.entrySet())
@@ -106,9 +112,42 @@ public class LinkBuilder
 		return definitions;
 	}
 
+	@Override
+	public String toString()
+	{
+		StringBuilder s = new StringBuilder();
+		s.append(this.getClass().getSimpleName());
+		s.append("{");
+		boolean isFirst = true;
+
+		for (Entry<String, String> entry : attributes.entrySet())
+		{
+			if (!isFirst)
+			{
+				s.append(", ");
+			}
+			else
+			{
+				isFirst = false;
+			}
+
+			s.append(entry.getKey());
+			s.append("=");
+			s.append(entry.getValue());
+		}
+
+		s.append("}");
+		return s.toString();
+	}
+
 	private String buildHref()
     {
 		String path = formatter.format(urlPattern, parameters);
 		return (baseUrl == null ? path : baseUrl + path);
     }
+
+	private void assertValid()
+	{
+		if (attributes.get(REL_TYPE) == null) throw new LinkBuilderException("'" + REL_TYPE + "' attribute is required");
+	}
 }

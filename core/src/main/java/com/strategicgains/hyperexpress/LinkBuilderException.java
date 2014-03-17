@@ -13,30 +13,39 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package com.strategicgains.hyperexpress.domain;
-
-import java.util.Collection;
-
+package com.strategicgains.hyperexpress;
 
 /**
- * Resource defines an interface for a RESTful resource that contains one or more links to a URL.
- * 
  * @author toddf
- * @since Jan 10, 2014
+ * @since Mar 17, 2014
  */
-public interface Resource
+public class LinkBuilderException
+extends RuntimeException
 {
-	/**
-	 * Define a link relationship from the resource to a URL.
-	 * 
-	 * @param linkDefinition an abstraction of a link as a LinkDefinition instance.
-	 */
-	public void addLink(LinkDefinition linkDefinition);
+    private static final long serialVersionUID = -1729155706564587435L;
 
 	/**
-	 * Define a link relationship from the resource to a URL.
-	 * 
-	 * @param linkDefinition an abstraction of a link as a LinkDefinition instance.
+	 * @param message
 	 */
-	public void addLinks(Collection<LinkDefinition> links);
+	public LinkBuilderException(String message)
+	{
+		super(message);
+	}
+
+	/**
+	 * @param throwable
+	 */
+	public LinkBuilderException(Throwable throwable)
+	{
+		super(throwable);
+	}
+
+	/**
+	 * @param message
+	 * @param throwable
+	 */
+	public LinkBuilderException(String message, Throwable throwable)
+	{
+		super(message, throwable);
+	}
 }

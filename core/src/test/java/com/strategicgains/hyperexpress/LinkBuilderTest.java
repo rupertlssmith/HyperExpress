@@ -125,4 +125,10 @@ public class LinkBuilderTest
 		assertEquals(BASE_URL + "/first/second/42", link.getHref());
 		assertEquals(RelTypes.DESCRIBED_BY, link.getRel());
 	}
+
+	@Test(expected=LinkBuilderException.class)
+	public void shouldThrowOnMissingRel()
+	{
+		new LinkBuilder(URL_PATTERN).build();
+	}
 }

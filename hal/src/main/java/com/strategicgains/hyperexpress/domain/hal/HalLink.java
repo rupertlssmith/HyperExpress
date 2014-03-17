@@ -143,7 +143,7 @@ public class HalLink
 		this.setHreflang(definition.get("hreflang"));
 		this.setName(definition.get("name"));
 		this.setProfile(definition.get("profile"));
-		this.setTemplated(Boolean.valueOf(definition.get("templated")));
+		this.setTemplated(definition.has("templated") ? Boolean.valueOf(definition.get("templated")) : null);
 		this.setTitle(definition.get("title"));
 		this.setType(definition.get("type"));
 	}
