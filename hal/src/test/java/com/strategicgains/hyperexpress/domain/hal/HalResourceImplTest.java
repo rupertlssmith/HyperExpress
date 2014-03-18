@@ -15,6 +15,11 @@
 */
 package com.strategicgains.hyperexpress.domain.hal;
 
+import static org.junit.Assert.*;
+
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Test;
 
 import com.strategicgains.hyperexpress.ResourceException;
@@ -51,5 +56,39 @@ public class HalResourceImplTest
 	{
 		HalResource r = new HalResourceImpl();
 		r.embed(null, new HalResourceImpl());
+	}
+
+	@Test(expected=ResourceException.class)
+	public void shouldThrowOnNullCurie()
+	{
+		HalResource r = new HalResourceImpl();
+		r.addCurie(null);
+	}
+
+	@Test(expected=ResourceException.class)
+	public void shouldThrowOnNamelessCurie()
+	{
+		HalResource r = new HalResourceImpl();
+		r.addCurie(new HalLinkBuilder("/sample/{rel}").build());
+	}
+
+	@Test
+	public void shouldAddCurieRel()
+	{
+		HalResource r = new HalResourceImpl();
+		r.addCurie(new HalLinkBuilder("/sample/{rel}")
+			.name("some-name")
+			.rel("a-rel")
+			.build());
+		r.addCurie(new HalLinkBuilder("/sample/{rel}")
+			.name("another-name")
+			.rel("another-rel")
+			.build());
+
+		Map<String, Object> l = r.getLinks();
+		assertEquals(1, l.size());
+		List<HalLink> curies = (List<HalLink>) l.get("curies");
+		assertNotNull(curies);
+		assertEquals(2, curies.size());
 	}
 }

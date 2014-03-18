@@ -80,14 +80,21 @@ implements HalResource
 	 * property.
 	 * 
 	 * @param curie a LinkDefinition instance representing a CURIE
+	 * @throws ResourceException if the CURIE doesn't have a name
 	 * @see http://tools.ietf.org/html/draft-kelly-json-hal-06#page-8
 	 */
 	@Override
     public void addCurie(LinkDefinition curie)
     {
 		if (curie == null) throw new ResourceException("Cannot add null curie");
+		assertHasName(curie);
 
 		curie.setRel(null);
+
+		if (!hasLinks())
+		{
+			_links = new HashMap<String, Object>();
+		}
 
 		Object listOrLink = _links.get(REL_CURIES);
 		
@@ -255,5 +262,10 @@ implements HalResource
 		if (linkDefinition == null) throw new ResourceException("LinkDefinition cannot be null");
 
 		if (!linkDefinition.has("rel")) throw new ResourceException("'rel' attribute is required");
+	}
+
+	private void assertHasName(LinkDefinition linkDefinition)
+	{
+		if (!linkDefinition.has("name")) throw new ResourceException("'name' attribute is required");
 	}
 }
