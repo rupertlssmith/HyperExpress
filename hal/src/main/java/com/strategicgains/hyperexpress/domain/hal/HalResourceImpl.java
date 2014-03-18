@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.strategicgains.hyperexpress.ResourceException;
 import com.strategicgains.hyperexpress.domain.LinkDefinition;
 
 
@@ -70,9 +71,18 @@ implements HalResource
 	 */
 	private Map<String, Object> _embedded;
 
+	/**
+	 * Add a LinkDefinition to this resource. The LinkDefinition must be valid, in that,
+	 * it must include a 'rel' property.
+	 * 
+	 * @param linkDefinition a populated, valid LinkDefinition
+	 * @throws ResourceException if the LinkDefinition does not include a 'rel' property.
+	 */
 	@Override
 	public void addLink(LinkDefinition linkDefinition)
 	{
+		assertValid(linkDefinition);
+
 		if (!hasLinks())
 		{
 			_links = new HashMap<String, Object>();
@@ -128,6 +138,9 @@ implements HalResource
 	@Override
     public void embed(String rel, Object resource)
 	{
+		if (rel == null) throw new ResourceException("'rel' is required for embedding");
+		if (resource == null) throw new ResourceException("Cannot embed null resource");
+
 		Object listOrResource = acquireEmbedded(rel);
 		
 		if (listOrResource == null) // Add a single resource.
@@ -150,6 +163,9 @@ implements HalResource
 	@Override
     public void embed(String rel, Collection<? extends Object> resources)
 	{
+		if (rel == null) throw new ResourceException("'rel' is required for embedding");
+		if (resources == null) throw new ResourceException("Cannot embed null collection");
+
 		Object listOrResource = acquireEmbedded(rel);
 		
 		if (listOrResource == null) // Create a new list.
@@ -178,4 +194,18 @@ implements HalResource
 
 		return _embedded.get(rel);
     }
+
+	/**
+	 * Asserts that the LinkDefinition is not null and contains a 'rel' property, throwing
+	 * ResourceException if not.
+	 * 
+	 * @param linkDefinition
+	 * @throws ResourceException if the LinkDefinition is null or doesn't contain a 'rel' property
+	 */
+	private void assertValid(LinkDefinition linkDefinition)
+	{
+		if (linkDefinition == null) throw new ResourceException("LinkDefinition cannot be null");
+
+		if (!linkDefinition.has("rel")) throw new ResourceException("'rel' attribute is required");
+	}
 }

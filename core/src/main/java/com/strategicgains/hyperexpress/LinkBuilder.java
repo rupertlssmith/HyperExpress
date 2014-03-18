@@ -77,7 +77,6 @@ public class LinkBuilder
 	 */
 	public LinkDefinition build()
 	{
-		assertValid();
 		LinkDefinition definition = new LinkDefinition(attributes.get(REL_TYPE), buildHref());
 
 		for (Entry<String, String> entry : attributes.entrySet())
@@ -145,9 +144,4 @@ public class LinkBuilder
 		String path = formatter.format(urlPattern, parameters);
 		return (baseUrl == null ? path : baseUrl + path);
     }
-
-	private void assertValid()
-	{
-		if (attributes.get(REL_TYPE) == null) throw new LinkBuilderException("'" + REL_TYPE + "' attribute is required");
-	}
 }

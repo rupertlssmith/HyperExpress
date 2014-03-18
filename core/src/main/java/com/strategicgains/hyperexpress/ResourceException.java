@@ -19,7 +19,7 @@ package com.strategicgains.hyperexpress;
  * @author toddf
  * @since Mar 17, 2014
  */
-public class LinkBuilderException
+public class ResourceException
 extends RuntimeException
 {
     private static final long serialVersionUID = -1729155706564587435L;
@@ -27,7 +27,7 @@ extends RuntimeException
 	/**
 	 * @param message
 	 */
-	public LinkBuilderException(String message)
+	public ResourceException(String message)
 	{
 		super(message);
 	}
@@ -35,7 +35,7 @@ extends RuntimeException
 	/**
 	 * @param throwable
 	 */
-	public LinkBuilderException(Throwable throwable)
+	public ResourceException(Throwable throwable)
 	{
 		super(throwable);
 	}
@@ -44,7 +44,7 @@ extends RuntimeException
 	 * @param message
 	 * @param throwable
 	 */
-	public LinkBuilderException(String message, Throwable throwable)
+	public ResourceException(String message, Throwable throwable)
 	{
 		super(message, throwable);
 	}

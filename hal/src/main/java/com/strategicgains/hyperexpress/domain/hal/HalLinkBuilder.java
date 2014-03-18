@@ -36,8 +36,7 @@ extends LinkBuilder
 	    super(urlPattern);
     }
 
-	//TODO: figure out curies...
-	public HalLinkBuilder curie(String curies)
+	public HalLinkBuilder addCurie(String curies)
 	{
 		return (HalLinkBuilder) attribute(CURIES, curies);
 	}

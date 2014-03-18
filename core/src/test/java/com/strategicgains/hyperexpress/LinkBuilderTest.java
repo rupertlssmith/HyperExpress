@@ -126,8 +126,8 @@ public class LinkBuilderTest
 		assertEquals(RelTypes.DESCRIBED_BY, link.getRel());
 	}
 
-	@Test(expected=LinkBuilderException.class)
-	public void shouldThrowOnMissingRel()
+	@Test
+	public void shouldAllowMissingRel()
 	{
 		new LinkBuilder(URL_PATTERN).build();
 	}
