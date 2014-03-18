@@ -29,17 +29,11 @@ extends LinkBuilder
 	private static final String NAME = "name";
 	private static final String PROFILE = "profile";
 	private static final String HREFLANG = "hreflang";
-	private static final String CURIES = "curies";
 
 	public HalLinkBuilder(String urlPattern)
     {
 	    super(urlPattern);
     }
-
-	public HalLinkBuilder addCurie(String curies)
-	{
-		return (HalLinkBuilder) attribute(CURIES, curies);
-	}
 
 	public HalLinkBuilder templated(boolean value)
 	{

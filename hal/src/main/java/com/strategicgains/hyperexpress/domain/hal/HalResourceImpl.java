@@ -72,6 +72,54 @@ implements HalResource
 	private Map<String, Object> _embedded;
 
 	/**
+	 * Add a CURIE to this resource's _links collection.
+	 * 
+	 * CURIEs are established within a HAL document via a set of Link Objects
+	 * with the relation type "curies" on the root Resource Object.  These links
+	 * contain a URI Template with the token 'rel', and are named via the "name"
+	 * property.
+	 * 
+	 * @param curie a LinkDefinition instance representing a CURIE
+	 * @see http://tools.ietf.org/html/draft-kelly-json-hal-06#page-8
+	 */
+	@Override
+    public void addCurie(LinkDefinition curie)
+    {
+		if (curie == null) throw new ResourceException("Cannot add null curie");
+
+		curie.setRel(null);
+
+		Object listOrLink = _links.get(REL_CURIES);
+		
+		if (listOrLink == null)
+		{
+			List<HalLink> list = new ArrayList<HalLink>();
+			list.add(new HalLink(curie));
+			_links.put(REL_CURIES, list);
+		}
+		else
+		{
+			((List<HalLink>) listOrLink).add(new HalLink(curie));
+		}
+    }
+
+	/**
+	 * Add a collection of CURIEs to this resource.
+	 * 
+	 * @param curies a collection of LinkDefintion instance representing CURIEs
+	 */
+	@Override
+    public void addCuries(Collection<LinkDefinition> curies)
+    {
+		if (curies == null) return;
+
+		for (LinkDefinition curie : curies)
+		{
+			addCurie(curie);
+		}
+    }
+
+	/**
 	 * Add a LinkDefinition to this resource. The LinkDefinition must be valid, in that,
 	 * it must include a 'rel' property.
 	 * 

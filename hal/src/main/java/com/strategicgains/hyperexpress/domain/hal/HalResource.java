@@ -18,6 +18,7 @@ package com.strategicgains.hyperexpress.domain.hal;
 import java.util.Collection;
 import java.util.Map;
 
+import com.strategicgains.hyperexpress.domain.LinkDefinition;
 import com.strategicgains.hyperexpress.domain.Resource;
 
 /**
@@ -27,6 +28,10 @@ import com.strategicgains.hyperexpress.domain.Resource;
 public interface HalResource
 extends Resource
 {
+	public static final String REL_CURIES = "curies";
+
+	public void addCurie(LinkDefinition LinkDefinition);
+	public void addCuries(Collection<LinkDefinition> curries);
 	public void embed(String rel, Object resource);
 	public void embed(String rel, Collection<? extends Object> resources);
 	Map<String, Object> getLinks();
