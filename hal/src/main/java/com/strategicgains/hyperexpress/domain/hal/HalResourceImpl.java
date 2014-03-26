@@ -24,6 +24,7 @@ import java.util.Map;
 
 import com.strategicgains.hyperexpress.ResourceException;
 import com.strategicgains.hyperexpress.domain.LinkDefinition;
+import com.strategicgains.hyperexpress.domain.Resource;
 
 
 
@@ -134,7 +135,7 @@ implements HalResource
 	 * @throws ResourceException if the LinkDefinition does not include a 'rel' property.
 	 */
 	@Override
-	public void addLink(LinkDefinition linkDefinition)
+	public Resource withLink(LinkDefinition linkDefinition)
 	{
 		assertValid(linkDefinition);
 
@@ -160,17 +161,21 @@ implements HalResource
 			list.add(new HalLink(linkDefinition));
 			_links.put(linkDefinition.getRel(), list);
 		}
+		
+		return this;
 	}
 
 	@Override
-	public void addLinks(Collection<LinkDefinition> links)
+	public Resource withLinks(Collection<LinkDefinition> links)
 	{
-		if (links == null) return;
+		if (links == null) return this;
 
 		for (LinkDefinition defn : links)
 		{
-			addLink(defn);
+			withLink(defn);
 		}
+
+		return this;
 	}
 
 	public boolean hasLinks()

@@ -27,16 +27,54 @@ import java.util.Collection;
 public interface Resource
 {
 	/**
-	 * Define a link relationship from the resource to a URL.
+	 * Add a namespace to the resource.
 	 * 
-	 * @param linkDefinition an abstraction of a link as a LinkDefinition instance.
+	 * @param name the name of the namespace
+	 * @param href the templated URL for documentation about the namespace
+	 * @return this Resource instance (for method chaining).
 	 */
-	public void addLink(LinkDefinition linkDefinition);
+	public Resource withNamespace(String name, String href);
+
+	/**
+	 * Copy the fields from the object into this resource instance.
+	 * 
+	 * @param object the object of which to copy field values.
+	 * @return this Resource instance (for method chaining).
+	 */
+	public Resource withFields(Object object);
+
+	public Resource withCollection(String name, Collection<Object> embedded);
+
+	/**
+	 * Add a single property to this resource.
+	 * 
+	 * @param name the name of the property.
+	 * @param value the property's value.
+	 * @return this Resource instance (for method chaining).
+	 */
+	public Resource withProperty(String name, Object value);
+
+	/**
+	 * Embed another resource into this resource instance.
+	 * 
+	 * @param name
+	 * @param resource
+	 * @return
+	 */
+	public Resource withResource(String name, Resource resource);
 
 	/**
 	 * Define a link relationship from the resource to a URL.
 	 * 
 	 * @param linkDefinition an abstraction of a link as a LinkDefinition instance.
 	 */
-	public void addLinks(Collection<LinkDefinition> links);
+	public Resource withLink(LinkDefinition linkDefinition);
+	public Resource withLink(String rel, String url, String title, String type);
+
+	/**
+	 * Define a link relationship from the resource to a URL.
+	 * 
+	 * @param linkDefinition an abstraction of a link as a LinkDefinition instance.
+	 */
+	public Resource withLinks(Collection<LinkDefinition> links);
 }
