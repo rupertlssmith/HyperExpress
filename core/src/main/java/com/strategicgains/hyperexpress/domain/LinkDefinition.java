@@ -27,6 +27,7 @@ import java.util.Map.Entry;
  * @since Oct 17, 2013
  */
 public class LinkDefinition
+implements Link
 {
 	private static final String REL_TYPE = "rel";
 	private static final String HREF = "href";
@@ -40,42 +41,49 @@ public class LinkDefinition
 	    setHref(href);
     }
 
-	public String getHref()
+	@Override
+    public String getHref()
 	{
 		return get(HREF);
 	}
 
-	public void setHref(String href)
+	@Override
+    public void setHref(String href)
 	{
 		set(HREF, href);
 	}
 
-	public String getRel()
+	@Override
+    public String getRel()
 	{
 		return get(REL_TYPE);
 	}
 
-	public void setRel(String rel)
+	@Override
+    public void setRel(String rel)
 	{
 		set(REL_TYPE, rel);
 	}
 
-	public void set(String name, String value)
+	@Override
+    public void set(String name, String value)
 	{
 		attributes.put(name, value);
 	}
 
-	public String get(String name)
+	@Override
+    public String get(String name)
 	{
 		return attributes.get(name);
 	}
 
-	public boolean has(String name)
+	@Override
+    public boolean has(String name)
 	{
 		return (get(name) != null);
 	}
 
-	@Override
+    @Override
 	public String toString()
 	{
 		StringBuilder s = new StringBuilder();

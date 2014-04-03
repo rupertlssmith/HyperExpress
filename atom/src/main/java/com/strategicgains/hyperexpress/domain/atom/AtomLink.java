@@ -16,7 +16,7 @@
  */
 package com.strategicgains.hyperexpress.domain.atom;
 
-import com.strategicgains.hyperexpress.domain.LinkDefinition;
+import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.syntaxe.annotation.RegexValidation;
 import com.strategicgains.syntaxe.annotation.Required;
 
@@ -120,7 +120,7 @@ public class AtomLink
 		this.type = type;
 	}
 
-	public AtomLink(LinkDefinition definition)
+	public AtomLink(Link definition)
 	{
 		this();
 		this.setHref(definition.getHref());

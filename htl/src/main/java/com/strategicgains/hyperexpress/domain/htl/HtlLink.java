@@ -15,7 +15,7 @@
  */
 package com.strategicgains.hyperexpress.domain.htl;
 
-import com.strategicgains.hyperexpress.domain.LinkDefinition;
+import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.syntaxe.annotation.RegexValidation;
 import com.strategicgains.syntaxe.annotation.Required;
 
@@ -135,7 +135,7 @@ public class HtlLink
 		super();
 	}
 
-	public HtlLink(LinkDefinition definition)
+	public HtlLink(Link definition)
 	{
 		this();
 		this.setHref(definition.getHref());

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.strategicgains.hyperexpress.ResourceException;
+import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.LinkDefinition;
 import com.strategicgains.hyperexpress.domain.Resource;
 
@@ -85,7 +86,7 @@ implements HalResource
 	 * @see http://tools.ietf.org/html/draft-kelly-json-hal-06#page-8
 	 */
 	@Override
-    public void addCurie(LinkDefinition curie)
+    public void addCurie(Link curie)
     {
 		if (curie == null) throw new ResourceException("Cannot add null curie");
 		assertHasName(curie);
@@ -121,7 +122,7 @@ implements HalResource
     {
 		if (curies == null) return;
 
-		for (LinkDefinition curie : curies)
+		for (Link curie : curies)
 		{
 			addCurie(curie);
 		}
@@ -262,14 +263,14 @@ implements HalResource
 	 * @param linkDefinition
 	 * @throws ResourceException if the LinkDefinition is null or doesn't contain a 'rel' property
 	 */
-	private void assertValid(LinkDefinition linkDefinition)
+	private void assertValid(Link linkDefinition)
 	{
 		if (linkDefinition == null) throw new ResourceException("LinkDefinition cannot be null");
 
 		if (!linkDefinition.has("rel")) throw new ResourceException("'rel' attribute is required");
 	}
 
-	private void assertHasName(LinkDefinition linkDefinition)
+	private void assertHasName(Link linkDefinition)
 	{
 		if (!linkDefinition.has("name")) throw new ResourceException("'name' attribute is required");
 	}

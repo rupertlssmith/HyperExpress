@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.LinkDefinition;
 import com.strategicgains.hyperexpress.domain.Resource;
 
@@ -81,7 +82,7 @@ implements Resource
 	private Collection<Object> items;
 
 	@Override
-	public void addLink(LinkDefinition linkDefinition)
+	public void addLink(Link linkDefinition)
 	{
 		if (!hasLinks())
 		{
@@ -96,7 +97,7 @@ implements Resource
 	{
 		if (links == null) return;
 
-		for (LinkDefinition defn : links)
+		for (Link defn : links)
 		{
 			addLink(defn);
 		}
