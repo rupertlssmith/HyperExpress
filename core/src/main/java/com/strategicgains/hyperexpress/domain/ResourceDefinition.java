@@ -88,7 +88,7 @@ implements Resource
 	}
 
 	@Override
-    public Resource withCollection(String name, Collection<Object> collection)
+    public Resource withCollection(String name, Collection<? extends Object> collection)
     {
 		if (collection == null) return this;
 
@@ -108,6 +108,7 @@ implements Resource
 
 	    return this;
     }
+
 	@Override
     public Resource withProperty(String name, Object value)
     {

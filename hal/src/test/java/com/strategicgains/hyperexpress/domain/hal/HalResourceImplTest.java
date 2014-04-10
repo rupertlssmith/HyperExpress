@@ -34,55 +34,57 @@ public class HalResourceImplTest
 	public void shouldThrowOnMissingRel()
 	{
 		HalResource r = new HalResourceImpl();
-		r.addLink(new HalLinkBuilder("/something").build());
+		r.withLink(new HalLinkBuilder("/something").build());
 	}
 
 	@Test(expected=ResourceException.class)
 	public void shouldThrowOnNullLink()
 	{
 		HalResource r = new HalResourceImpl();
-		r.addLink(null);
+		r.withLink(null);
 	}
 
 	@Test(expected=ResourceException.class)
 	public void shouldThrowOnNullEmbed()
 	{
 		HalResource r = new HalResourceImpl();
-		r.embed("something", null);
+		r.withResource("something", null);
 	}
 
 	@Test(expected=ResourceException.class)
 	public void shouldThrowOnNullEmbedRel()
 	{
 		HalResource r = new HalResourceImpl();
-		r.embed(null, new HalResourceImpl());
+		r.withResource(null, new HalResourceImpl());
 	}
 
 	@Test(expected=ResourceException.class)
 	public void shouldThrowOnNullCurie()
 	{
-		HalResource r = new HalResourceImpl();
+		HalResourceImpl r = new HalResourceImpl();
 		r.addCurie(null);
 	}
 
 	@Test(expected=ResourceException.class)
 	public void shouldThrowOnNamelessCurie()
 	{
-		HalResource r = new HalResourceImpl();
+		HalResourceImpl r = new HalResourceImpl();
 		r.addCurie(new HalLinkBuilder("/sample/{rel}").build());
 	}
 
 	@Test
 	public void shouldAddCurieRel()
 	{
-		HalResource r = new HalResourceImpl();
+		HalResourceImpl r = new HalResourceImpl();
 		r.addCurie(new HalLinkBuilder("/sample/{rel}")
 			.name("some-name")
 			.rel("a-rel")
+			.templated(true)
 			.build());
 		r.addCurie(new HalLinkBuilder("/sample/{rel}")
 			.name("another-name")
 			.rel("another-rel")
+			.templated(true)
 			.build());
 
 		Map<String, Object> l = r.getLinks();
@@ -90,5 +92,20 @@ public class HalResourceImplTest
 		List<HalLink> curies = (List<HalLink>) l.get("curies");
 		assertNotNull(curies);
 		assertEquals(2, curies.size());
+	}
+
+	@Test
+	public void shouldAddNamespace()
+	{
+		HalResource r = new HalResourceImpl();
+		r.withNamespace("ea:blah", "/sample/{rel}");
+
+		Map<String, Object> l = r.getLinks();
+		assertEquals(1, l.size());
+		List<HalLink> curies = (List<HalLink>) l.get("curies");
+		assertNotNull(curies);
+		assertEquals(1, curies.size());
+		assertEquals("/sample/{rel}", curies.get(0).getHref());
+		assertEquals("ea:blah", curies.get(0).getName());
 	}
 }

@@ -23,21 +23,24 @@ import java.util.List;
 import java.util.Map;
 
 import com.strategicgains.hyperexpress.ResourceException;
+import com.strategicgains.hyperexpress.domain.AbstractResource;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.LinkDefinition;
 import com.strategicgains.hyperexpress.domain.Resource;
 
-
-
 /**
- * A HAL Resource instance, containing links and embedded resources.
+ * A HAL Resource instance, containing links, CURIEs and embedded resources.
  * 
  * @author toddf
  * @since May 21, 2013
  */
 public class HalResourceImpl
+extends AbstractResource
 implements HalResource
 {
+    private static final long serialVersionUID = -8818645918407374522L;
+	public static final String REL_CURIES = "curies";
+
 	/**
 	 * The reserved "_links" property is OPTIONAL.
 	 * 
@@ -59,8 +62,8 @@ implements HalResource
 	 * allowed.  If a name is given, implementations MUST consider the link
 	 * relation type equivalent to the same name registered within the IANA
 	 */
-	private Map<String, Object> _links;
-	
+	private static final String LINKS = "_links";
+
 	/**
 	 * The reserved "_embedded" property is OPTIONAL
 	 * 
@@ -71,7 +74,7 @@ implements HalResource
 	 * Embedded Resources MAY be a full, partial, or inconsistent version of
 	 * the representation served from the target URI.
 	 */
-	private Map<String, Object> _embedded;
+	private static final String EMBEDDED = "_embedded";
 
 	/**
 	 * Add a CURIE to this resource's _links collection.
@@ -85,21 +88,15 @@ implements HalResource
 	 * @throws ResourceException if the CURIE doesn't have a name
 	 * @see http://tools.ietf.org/html/draft-kelly-json-hal-06#page-8
 	 */
-	@Override
     public void addCurie(Link curie)
     {
 		if (curie == null) throw new ResourceException("Cannot add null curie");
 		assertHasName(curie);
 
 		curie.setRel(null);
-
-		if (!hasLinks())
-		{
-			_links = new HashMap<String, Object>();
-		}
-
+		Map<String, Object> _links = acquireLinks();
 		Object listOrLink = _links.get(REL_CURIES);
-		
+
 		if (listOrLink == null)
 		{
 			List<HalLink> list = new ArrayList<HalLink>();
@@ -117,7 +114,6 @@ implements HalResource
 	 * 
 	 * @param curies a collection of LinkDefintion instance representing CURIEs
 	 */
-	@Override
     public void addCuries(Collection<LinkDefinition> curies)
     {
 		if (curies == null) return;
@@ -140,11 +136,7 @@ implements HalResource
 	{
 		assertValid(linkDefinition);
 
-		if (!hasLinks())
-		{
-			_links = new HashMap<String, Object>();
-		}
-
+		Map<String, Object> _links = acquireLinks();
 		Object listOrLink = _links.get(linkDefinition.getRel());
 		
 		if (listOrLink == null)	// Add a single Link
@@ -181,28 +173,34 @@ implements HalResource
 
 	public boolean hasLinks()
 	{
-		return (_links != null);
+		return (getLinks0() != null);
 	}
 
 	@Override
 	public Map<String, Object> getLinks()
 	{
-		return Collections.unmodifiableMap(_links);
+		return Collections.unmodifiableMap(getLinks0());
+	}
+
+	public boolean hasEmbedded()
+	{
+		return (getEmbedded0() != null);
 	}
 
 	@Override
 	public Map<String, Object> getEmbedded()
 	{
-		return Collections.unmodifiableMap(_embedded);
+		return Collections.unmodifiableMap(getEmbedded0());
 	}
 
 	@Override
-    public void embed(String rel, Object resource)
+    public Resource withResource(String rel, Resource resource)
 	{
 		if (rel == null) throw new ResourceException("'rel' is required for embedding");
 		if (resource == null) throw new ResourceException("Cannot embed null resource");
 
-		Object listOrResource = acquireEmbedded(rel);
+		Map<String, Object> _embedded = acquireEmbedded();
+		Object listOrResource = _embedded.get(rel);
 		
 		if (listOrResource == null) // Add a single resource.
 		{
@@ -219,15 +217,18 @@ implements HalResource
 			list.add(resource);
 			_embedded.put(rel, list);
 		}
+
+		return this;
 	}
 
 	@Override
-    public void embed(String rel, Collection<? extends Object> resources)
+    public Resource withCollection(String rel, Collection<? extends Object> resources)
 	{
 		if (rel == null) throw new ResourceException("'rel' is required for embedding");
 		if (resources == null) throw new ResourceException("Cannot embed null collection");
 
-		Object listOrResource = acquireEmbedded(rel);
+		Map<String, Object> _embedded = acquireEmbedded();
+		Object listOrResource = _embedded.get(rel);
 		
 		if (listOrResource == null) // Create a new list.
 		{
@@ -244,16 +245,16 @@ implements HalResource
 			list.addAll(resources);
 			_embedded.put(rel, list);
 		}
+
+		return this;
 	}
 
-	private Object acquireEmbedded(String rel)
+	@Override
+    public Resource withNamespace(String name, String href)
     {
-	    if (_embedded == null)
-		{
-			_embedded = new HashMap<String, Object>();
-		}
-
-		return _embedded.get(rel);
+		HalLinkBuilder hlb = new HalLinkBuilder(href).name(name);
+		addCurie(hlb.build());
+	    return this;
     }
 
 	/**
@@ -273,5 +274,51 @@ implements HalResource
 	private void assertHasName(Link linkDefinition)
 	{
 		if (!linkDefinition.has("name")) throw new ResourceException("'name' attribute is required");
+	}
+
+	private Map<String, Object> acquireLinks()
+    {
+		Map<String, Object> _links = getLinks0();
+
+	    if (_links == null)
+		{
+			_links = new HashMap<String, Object>();
+			setLinks0(_links);
+		}
+
+		return _links;
+    }
+
+	private Map<String, Object> acquireEmbedded()
+    {
+		Map<String, Object> _embedded = getEmbedded0();
+
+	    if (_embedded == null)
+		{
+			_embedded = new HashMap<String, Object>();
+			setEmbedded0(_embedded);
+		}
+
+		return _embedded;
+    }
+
+	private Map<String, Object> getLinks0()
+	{
+		return (Map<String, Object>) get(LINKS);
+	}
+
+	private void setLinks0(Map<String, Object> value)
+	{
+		put(LINKS, value);
+	}
+
+	private Map<String, Object> getEmbedded0()
+	{
+		return (Map<String, Object>) get(EMBEDDED);
+	}
+
+	private void setEmbedded0(Map<String, Object> value)
+	{
+		put(EMBEDDED, value);
 	}
 }

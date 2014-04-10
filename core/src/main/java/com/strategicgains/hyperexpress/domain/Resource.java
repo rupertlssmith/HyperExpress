@@ -43,8 +43,6 @@ public interface Resource
 	 */
 	public Resource withFields(Object object);
 
-	public Resource withCollection(String name, Collection<Object> embedded);
-
 	/**
 	 * Add a single property to this resource.
 	 * 
@@ -77,4 +75,6 @@ public interface Resource
 	 * @param linkDefinition an abstraction of a link as a LinkDefinition instance.
 	 */
 	public Resource withLinks(Collection<LinkDefinition> links);
+
+	Resource withCollection(String rel, Collection<? extends Object> resources);
 }
