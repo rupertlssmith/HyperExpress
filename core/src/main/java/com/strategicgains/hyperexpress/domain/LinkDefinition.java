@@ -41,6 +41,12 @@ implements Link
 	    setHref(href);
     }
 
+	public LinkDefinition(LinkDefinition that)
+	{
+		super();
+		this.attributes.putAll(that.attributes);
+	}
+
 	@Override
     public String getHref()
 	{
