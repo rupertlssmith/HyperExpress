@@ -28,7 +28,7 @@ public class Relationships
 		return rb;
 	}
 
-	public RelationshipBuilder forCollectionOf(Class<?> forClass)
+	public static RelationshipBuilder forCollectionOf(Class<?> forClass)
 	{
 		RelationshipBuilder rb = new RelationshipBuilder();
 		rb.forCollectionOf(forClass);
@@ -45,10 +45,5 @@ public class Relationships
 	public static Namespace namespace(String name, String href)
 	{
 		return new Namespace(name, href);
-	}
-
-	public static ParameterResolver resolve()
-	{
-		return new ParameterResolver();
 	}
 }

@@ -12,14 +12,26 @@
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-*/
-package com.strategicgains.hyperexpress.fluent;
+ */
+package com.strategicgains.hyperexpress.domain;
+
+import java.util.UUID;
 
 /**
  * @author toddf
- * @since Apr 8, 2014
+ * @since Apr 10, 2014
  */
-public class Entry
+public abstract class AbstractEntity
 {
+	private UUID id;
 
+	public UUID getId()
+	{
+		return id;
+	}
+
+	public void setId(UUID id)
+	{
+		this.id = id;
+	}
 }

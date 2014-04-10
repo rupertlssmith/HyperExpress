@@ -74,7 +74,14 @@ implements Link
 	@Override
     public void set(String name, String value)
 	{
-		attributes.put(name, value);
+		if (value == null)
+		{
+			attributes.remove(name);
+		}
+		else
+		{
+			attributes.put(name, value);
+		}
 	}
 
 	@Override

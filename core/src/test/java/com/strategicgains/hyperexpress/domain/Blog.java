@@ -12,15 +12,49 @@
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-*/
-package com.strategicgains.hyperexpress.fluent;
+ */
+package com.strategicgains.hyperexpress.domain;
+
+import java.util.UUID;
 
 /**
  * @author toddf
  * @since Apr 8, 2014
  */
-public class CommentResolver
-extends ParameterResolver
+public class Blog
+extends AbstractEntity
 {
+	private String name;
+	private String description;
+	private UUID ownerId;
 
+	public UUID getOwnerId()
+	{
+		return ownerId;
+	}
+
+	public void setOwnerId(UUID ownerId)
+	{
+		this.ownerId = ownerId;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
 }
