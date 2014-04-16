@@ -15,12 +15,16 @@
 */
 package com.strategicgains.hyperexpress.fluent;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.LinkDefinition;
+import com.strategicgains.hyperexpress.util.MapStringFormat;
 
 /**
  * @author toddf
@@ -28,7 +32,10 @@ import com.strategicgains.hyperexpress.domain.LinkDefinition;
  */
 public class LinkResolver
 {
+	private static final MapStringFormat FORMATTER = new MapStringFormat();
+
 	private RelationshipBuilder relationshipBuilder;
+	private Map<String, String> parameters = new HashMap<>();
 
 	public LinkResolver(RelationshipBuilder builder)
     {
@@ -36,29 +43,42 @@ public class LinkResolver
 		this.relationshipBuilder = builder;
     }
 
-	public LinkResolver with(String string, String string2)
+	public LinkResolver with(String name, String value)
     {
+		parameters.put(name, value);
 		return this;
     }
 
-	public List<LinkDefinition> resolve(Object resource)
+	/**
+	 * Clear the parameters for this LinkResolver.
+	 */
+	public void clear()
 	{
-		if (resource == null) throw new NullPointerException("Null resource");
+		parameters.clear();
+	}
+
+	public List<Link> resolve(Object resource)
+	{
+		if (resource == null) throw new NullPointerException("Cannot resolve null resource");
 
 		return resolve(resource.getClass());
 	}
 
-	public List<LinkDefinition> resolve(Class<?> forClass)
+	public List<Link> resolve(Class<?> forClass)
 	{
 		Map<String, LinkDefinition> templates = relationshipBuilder.getLinkTemplates(forClass);
 
 		if (templates == null) return Collections.emptyList();
+		
+		List<Link> links = new ArrayList<>(templates.size());
 
 		for (Entry<String, LinkDefinition> template : templates.entrySet())
 		{
-			
+			LinkDefinition ld = new LinkDefinition(template.getValue());
+			ld.setHref(FORMATTER.format(ld.getHref(), parameters));
+			links.add(ld);
 		}
 
-		return null;
+		return links;
 	}
 }

@@ -15,23 +15,17 @@
 */
 package com.strategicgains.hyperexpress.domain.hal;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import com.strategicgains.hyperexpress.domain.Link;
-import com.strategicgains.hyperexpress.domain.LinkDefinition;
-import com.strategicgains.hyperexpress.domain.Resource;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author toddf
- * @since Mar 18, 2014
+ * @since Apr 11, 2014
  */
-public interface HalResource
-extends Resource
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Exclude
 {
-    void addCurie(Link curie);
-    void addCuries(Collection<LinkDefinition> curies);
-    List<Link> getCuries();
-	Map<String, Object> getEmbedded();
 }

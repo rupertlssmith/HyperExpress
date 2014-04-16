@@ -21,18 +21,33 @@ import java.util.Map;
 import com.strategicgains.hyperexpress.domain.Resource;
 
 /**
+ * A ResourceFactory implementation that has no functionality on its own, but must have ResourceFactoryStrategy
+ * implementations added to it, associating the strategy to a given content type.
+ * </p>
+ * Usage: ResourceFactory rf = new DefaultResourceFactory()
+ *     .addStrategy(new HalResourceFactoryStrategy(), "application/json")
+ *     .addStrategy(new AtomResourceFactoryStrategy(), "application/xml");
+ * </p>
+ * Resource resource = rf.createResource(object, response.getContentType());
+ * 
  * @author toddf
  * @since Apr 7, 2014
  */
 public class DefaultResourceFactory
 implements ResourceFactory
 {
-	private Map<String, ResourceStrategy> strategies = new HashMap<String, ResourceStrategy>();
+	private Map<String, ResourceFactoryStrategy> strategies = new HashMap<String, ResourceFactoryStrategy>();
 
+	/**
+	 * Create a Resource using data from the given object for the requested content type.
+	 * 
+	 * @param object the object to use as a source of properties (data).
+	 * @param contentType the content type to use when creating the new resource.
+	 */
 	@Override
 	public Resource createResource(Object object, String contentType)
 	{
-		ResourceStrategy strategy = strategies.get(contentType);
+		ResourceFactoryStrategy strategy = strategies.get(contentType);
 		
 		if (strategy == null)
 		{
@@ -42,7 +57,14 @@ implements ResourceFactory
 		return strategy.createResource(object);
 	}
 
-	public DefaultResourceFactory addStrategy(ResourceStrategy strategy, String contentType)
+	/**
+	 * Add a ResourceFactoryStrategy to create resource instances for the given content type.
+	 * 
+	 * @param strategy the ResourceFactoryStrategy to use when creating new instances.
+	 * @param contentType the content type the strategy should be invoked for.
+	 * @return this DefaultResourceFactory to facilitate method chaining.
+	 */
+	public DefaultResourceFactory addStrategy(ResourceFactoryStrategy strategy, String contentType)
 	{
 		if (strategies.containsKey(contentType))
 		{

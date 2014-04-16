@@ -15,8 +15,6 @@
  */
 package com.strategicgains.hyperexpress.domain;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 
 import com.strategicgains.hyperexpress.ResourceException;
@@ -30,46 +28,6 @@ extends HashMap<String, Object>
 implements Resource
 {
 	private static final long serialVersionUID = 6406167608894764116L;
-	public static final int IGNORED_FIELD_MODIFIERS = Modifier.FINAL | Modifier.STATIC | Modifier.TRANSIENT | Modifier.VOLATILE;
-
-	@Override
-	public Resource withFields(Object object)
-	{
-		processFields(object.getClass(), object);
-		return this;
-	}
-
-	private void processFields(Class<?> type, Object object)
-	{
-		if (type == null) return;
-
-		Field[] fields = getDeclaredFields(type);
-
-		try
-		{
-			for (Field f : fields)
-			{
-				// TODO: check for desired annotations, exclusions, modifiers,
-				// etc. instead of hard-coding
-				if ((f.getModifiers() & IGNORED_FIELD_MODIFIERS) == 0)
-				{
-					f.setAccessible(true);
-					withProperty(f.getName(), f.get(object));
-				}
-			}
-		}
-		catch (IllegalAccessException e)
-		{
-			throw new ResourceException(e);
-		}
-
-		processFields(type.getSuperclass(), object);
-	}
-
-	private Field[] getDeclaredFields(Class<?> type)
-	{
-		return type.getDeclaredFields();
-	}
 
 	@Override
 	public Resource withProperty(String name, Object value)

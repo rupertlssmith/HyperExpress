@@ -13,17 +13,19 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package com.strategicgains.hyperexpress;
+package com.strategicgains.hyperexpress.domain.hal;
 
-import com.strategicgains.hyperexpress.domain.Resource;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Strategy to create a Resource instance from an Object instance.
- * 
  * @author toddf
- * @since Apr 7, 2014
+ * @since Apr 11, 2014
  */
-public interface ResourceStrategy
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Include
 {
-	Resource createResource(Object object);
 }

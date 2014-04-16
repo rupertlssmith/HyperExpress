@@ -16,6 +16,7 @@
 package com.strategicgains.hyperexpress.domain;
 
 import java.util.Collection;
+import java.util.Map;
 
 
 /**
@@ -34,14 +35,8 @@ public interface Resource
 	 * @return this Resource instance (for method chaining).
 	 */
 	public Resource withNamespace(String name, String href);
-
-	/**
-	 * Copy the fields from the object into this resource instance.
-	 * 
-	 * @param object the object of which to copy field values.
-	 * @return this Resource instance (for method chaining).
-	 */
-	public Resource withFields(Object object);
+	public String getNamespace(String name);
+	public Map<String, String> getNamespaces();
 
 	/**
 	 * Add a single property to this resource.
@@ -51,6 +46,7 @@ public interface Resource
 	 * @return this Resource instance (for method chaining).
 	 */
 	public Resource withProperty(String name, Object value);
+	public Object getProperty(String name);
 
 	/**
 	 * Embed another resource into this resource instance.
@@ -68,6 +64,7 @@ public interface Resource
 	 */
 	public Resource withLink(LinkDefinition linkDefinition);
 	public Resource withLink(String rel, String url, String title, String type);
+	public Map<String, Object> getLinks();
 
 	/**
 	 * Define a link relationship from the resource to a URL.
@@ -76,5 +73,12 @@ public interface Resource
 	 */
 	public Resource withLinks(Collection<LinkDefinition> links);
 
+	/**
+	 * Embed an entire collection in this resource.
+	 * 
+	 * @param rel
+	 * @param resources
+	 * @return
+	 */
 	Resource withCollection(String rel, Collection<? extends Object> resources);
 }

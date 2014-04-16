@@ -15,6 +15,10 @@
  */
 package com.strategicgains.hyperexpress.fluent;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -225,7 +229,36 @@ public class RelationshipBuilder
 
 	public Map<String, LinkDefinition> getLinkTemplates(Class<?> forClass)
 	{
-		Map<String, LinkDefinition> templates = relsByClass.get(forClass);
+		if (forClass == null) return null;
+
+		if (forClass.isArray())
+		{
+			return getLinkTemplatesForName(forClass.getComponentType().getName() + ".Collection");
+		}
+		else if (Collection.class.isAssignableFrom(forClass))
+		{
+			return getLinkTemplatesForCollection(forClass);
+		}
+
+		return getLinkTemplatesForName(forClass.getName());
+	}
+
+	private Map<String, LinkDefinition> getLinkTemplatesForCollection(Class<?> forClass)
+    {
+		Type t = forClass.getGenericInterfaces()[0];
+
+		if (t instanceof ParameterizedType)
+		{
+//			Type b = ((ParameterizedType) t).get
+			return getLinkTemplatesForName(b.getClass().getName() + ".Collection");
+		}
+
+		return getLinkTemplatesForName(t.getClass().getName() + ".Collection");
+    }
+
+	private Map<String, LinkDefinition> getLinkTemplatesForName(String className)
+	{
+		Map<String, LinkDefinition> templates = relsByClass.get(className);
 		
 		if (templates != null)
 		{

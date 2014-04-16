@@ -3,31 +3,21 @@ package com.strategicgains.hyperexpress.fluent;
 import static com.strategicgains.hyperexpress.RelTypes.SELF;
 import static com.strategicgains.hyperexpress.RelTypes.UP;
 import static com.strategicgains.hyperexpress.fluent.Relationships.namespace;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.strategicgains.hyperexpress.domain.Blog;
 import com.strategicgains.hyperexpress.domain.Comment;
 import com.strategicgains.hyperexpress.domain.Entry;
-import com.strategicgains.hyperexpress.domain.LinkDefinition;
+import com.strategicgains.hyperexpress.domain.Link;
 
 public class RelationshipsTest
 {
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception
-	{
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception
-	{
-	}
-
 	@Test
 	public void testWithNamespaces()
 	{
@@ -67,19 +57,50 @@ public class RelationshipsTest
 				.rel("ea:author", "/pi/users/{userId}")
 					.title("The comment author");
 
-		LinkResolver lr = rb.resolver()
+		LinkResolver resolver = rb.resolver()
 			.with("blogId", "1234")
 			.with("entryId", "5678")
 			.with("commentId", "0987")
 			.with("userId", "7654");
 
-		List<LinkDefinition> links = lr.resolve(new Blog());
+		List<Link> links = resolver.resolve(Blog.class);
+		assertNotNull(links);
+		assertEquals(3, links.size());
+
+		links = resolver.resolve(new Blog[0]);
+		assertNotNull(links);
+		assertEquals(1, links.size());
+		assertEquals(SELF, links.get(0).getRel());
+		assertEquals("/blogs", links.get(0).getHref());
+
+		List<Blog> c = new ArrayList<Blog>();
+		links = resolver.resolve(c);
+		assertNotNull(links);
+		assertEquals(1, links.size());
+		assertEquals(SELF, links.get(0).getRel());
+		assertEquals("/blogs", links.get(0).getHref());
+
+		links = resolver.resolve(Entry.class);
+		assertNotNull(links);
+		assertEquals(3, links.size());
+
+		links = resolver.resolve(new ArrayList<Entry>());
+		assertNotNull(links);
+		assertEquals(2, links.size());
+
+		links = resolver.resolve(Comment.class);
+		assertNotNull(links);
+		assertEquals(3, links.size());
+
+		links = resolver.resolve(new ArrayList<Comment>());
+		assertNotNull(links);
+		assertEquals(3, links.size());
 	}
 
 	@Test
 	public void testWithoutNamespaces()
 	{
-		Relationships
+		RelationshipBuilder rb = Relationships
 			.forCollectionOf(Blog.class)
 				.rel(SELF, "/blogs")
 	
@@ -107,9 +128,23 @@ public class RelationshipsTest
 				.rel(UP, "/blogs/{blogId}/entries/{entryId}")
 					.title("The parent blog entry")
 				.rel("ea:author", "/pi/users/{userId}");
-	}
 
-	public void upsideDownTest()
-	{
+		LinkResolver resolver = rb.resolver()
+			.with("blogId", "1234")
+			.with("entryId", "5678")
+			.with("commentId", "0987")
+			.with("userId", "7654");
+
+		List<Link> links = resolver.resolve(Blog.class);
+		assertNotNull(links);
+		assertEquals(3, links.size());
+
+		links = resolver.resolve(Entry.class);
+		assertNotNull(links);
+		assertEquals(3, links.size());
+
+		links = resolver.resolve(Comment.class);
+		assertNotNull(links);
+		assertEquals(3, links.size());
 	}
 }

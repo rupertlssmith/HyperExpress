@@ -13,25 +13,21 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package com.strategicgains.hyperexpress.domain.hal;
+package com.strategicgains.hyperexpress;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.lang.annotation.Annotation;
 
-import com.strategicgains.hyperexpress.domain.Link;
-import com.strategicgains.hyperexpress.domain.LinkDefinition;
 import com.strategicgains.hyperexpress.domain.Resource;
 
 /**
+ * Strategy to create a Resource instance from an Object instance.
+ * 
  * @author toddf
- * @since Mar 18, 2014
+ * @since Apr 7, 2014
  */
-public interface HalResource
-extends Resource
+public interface ResourceFactoryStrategy
 {
-    void addCurie(Link curie);
-    void addCuries(Collection<LinkDefinition> curies);
-    List<Link> getCuries();
-	Map<String, Object> getEmbedded();
+	ResourceFactoryStrategy includeAnnotations(Class<? extends Annotation>... annotations);
+    ResourceFactoryStrategy excludeAnnotations(Class<? extends Annotation>... annotations);
+	Resource createResource(Object object);
 }

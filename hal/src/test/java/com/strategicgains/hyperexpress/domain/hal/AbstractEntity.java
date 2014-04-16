@@ -12,26 +12,26 @@
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-*/
+ */
 package com.strategicgains.hyperexpress.domain.hal;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import com.strategicgains.hyperexpress.domain.Link;
-import com.strategicgains.hyperexpress.domain.LinkDefinition;
-import com.strategicgains.hyperexpress.domain.Resource;
+import java.util.UUID;
 
 /**
  * @author toddf
- * @since Mar 18, 2014
+ * @since Apr 10, 2014
  */
-public interface HalResource
-extends Resource
+public abstract class AbstractEntity
 {
-    void addCurie(Link curie);
-    void addCuries(Collection<LinkDefinition> curies);
-    List<Link> getCuries();
-	Map<String, Object> getEmbedded();
+	private UUID id;
+
+	public UUID getId()
+	{
+		return id;
+	}
+
+	public void setId(UUID id)
+	{
+		this.id = id;
+	}
 }

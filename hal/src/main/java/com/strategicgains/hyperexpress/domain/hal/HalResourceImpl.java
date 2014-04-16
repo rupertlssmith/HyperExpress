@@ -16,6 +16,7 @@
 package com.strategicgains.hyperexpress.domain.hal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -88,9 +89,10 @@ implements HalResource
 	 * @throws ResourceException if the CURIE doesn't have a name
 	 * @see http://tools.ietf.org/html/draft-kelly-json-hal-06#page-8
 	 */
+	@Override
     public void addCurie(Link curie)
     {
-		if (curie == null) throw new ResourceException("Cannot add null curie");
+		if (curie == null) throw new ResourceException("Cannot add null CURIE");
 		assertHasName(curie);
 
 		curie.setRel(null);
@@ -114,6 +116,7 @@ implements HalResource
 	 * 
 	 * @param curies a collection of LinkDefintion instance representing CURIEs
 	 */
+    @Override
     public void addCuries(Collection<LinkDefinition> curies)
     {
 		if (curies == null) return;
@@ -320,5 +323,52 @@ implements HalResource
 	private void setEmbedded0(Map<String, Object> value)
 	{
 		put(EMBEDDED, value);
+	}
+
+	@Override
+    public String getNamespace(String name)
+    {
+		return null;
+    }
+
+	@Override
+    public Map<String, String> getNamespaces()
+    {
+		List<Link> curies = getCuries();
+		Map<String, String> ns = new HashMap<>();
+
+		for (Link curie : curies)
+		{
+			ns.put(curie.getRel(), curie.getHref());
+		}
+
+	    return ns;
+    }
+
+	@Override
+    public Object getProperty(String name)
+    {
+	    return get(name);
+    }
+
+	@Override
+    public List<Link> getCuries()
+	{
+		Map<String, Object> _links = acquireLinks();		
+		Object listOrLink = _links.get(REL_CURIES);
+		
+		if (listOrLink != null)
+		{
+			if (List.class.isAssignableFrom(listOrLink.getClass()))
+			{
+				return (List<Link>) listOrLink;
+			}
+			else
+			{
+				return Arrays.asList((Link) listOrLink);
+			}
+		}
+
+		return Collections.emptyList();
 	}
 }
