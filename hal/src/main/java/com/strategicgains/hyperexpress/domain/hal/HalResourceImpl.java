@@ -39,7 +39,7 @@ public class HalResourceImpl
 extends AbstractResource
 implements HalResource
 {
-    private static final long serialVersionUID = -8818645918407374522L;
+    private static final long serialVersionUID = 907704154200748233L;
 	public static final String REL_CURIES = "curies";
 
 	/**
@@ -190,10 +190,29 @@ implements HalResource
 		return (getEmbedded0() != null);
 	}
 
+	/**
+	 * Returns a Map of embedded resources by 'rel'. Never null.
+	 * 
+	 * @return a Map of embedded resources by 'rel'. Never null.
+	 */
 	@Override
 	public Map<String, Object> getEmbedded()
 	{
-		return Collections.unmodifiableMap(getEmbedded0());
+		Map<String, Object> m = getEmbedded0();
+		return (m == null ? Collections.EMPTY_MAP : Collections.unmodifiableMap(getEmbedded0()));
+	}
+
+	/**
+	 * Returns the embedded objects (either a single embedded object or a List) for a
+	 * given 'rel'. Possibly null, if there are no embedded resources for that particular
+	 * 'rel'.
+	 * 
+	 * @return a List or Object of embeded resource(s) for the given 'rel'.  Possibly null.
+	 */
+	@Override
+	public Object getEmbedded(String rel)
+	{
+		return getEmbedded().get(rel);
 	}
 
 	@Override

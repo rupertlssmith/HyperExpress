@@ -17,7 +17,6 @@ package com.strategicgains.hyperexpress.fluent;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -249,7 +248,7 @@ public class RelationshipBuilder
 
 		if (t instanceof ParameterizedType)
 		{
-//			Type b = ((ParameterizedType) t).get
+			Type b = ((ParameterizedType) t).getRawType();
 			return getLinkTemplatesForName(b.getClass().getName() + ".Collection");
 		}
 

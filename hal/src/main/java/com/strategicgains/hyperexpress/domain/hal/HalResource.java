@@ -34,4 +34,5 @@ extends Resource
     void addCuries(Collection<LinkDefinition> curies);
     List<Link> getCuries();
 	Map<String, Object> getEmbedded();
+	Object getEmbedded(String rel);
 }

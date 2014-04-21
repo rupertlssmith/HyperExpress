@@ -1,5 +1,5 @@
 /*
-    Copyright 2012, Strategic Gains, Inc.
+    Copyright 2014, Strategic Gains, Inc.
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -15,20 +15,21 @@
 */
 package com.strategicgains.hyperexpress.domain.atom;
 
-import java.util.Collection;
-import java.util.List;
+import com.strategicgains.hyperexpress.AbstractResourceFactoryStrategy;
+import com.strategicgains.hyperexpress.domain.Resource;
 
 /**
- * Interface defining a hypermedia-linkable object.
- * 
  * @author toddf
- * @since Oct 19, 2012
- * @deprecated Use AtomResource
+ * @since Apr 21, 2014
  */
-public interface Linkable
+public class AtomResourceFactory
+extends AbstractResourceFactoryStrategy
 {
-	public List<AtomLink> getLinks();
-	public void setLinks(List<AtomLink> links);
-	public void addLink(AtomLink link);
-	public void addAllLinks(Collection<AtomLink> links);
+	@Override
+	public Resource createResource(Object object)
+	{
+		AtomResource r = new AtomResourceImpl();
+		copyProperties(object, r);
+		return r;
+	}
 }

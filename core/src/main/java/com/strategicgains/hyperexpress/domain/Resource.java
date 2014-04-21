@@ -63,8 +63,20 @@ public interface Resource
 	 * @param linkDefinition an abstraction of a link as a LinkDefinition instance.
 	 */
 	public Resource withLink(LinkDefinition linkDefinition);
-	public Resource withLink(String rel, String url, String title, String type);
+
+	/**
+	 * Get a Map of links by Rel.
+	 * 
+	 * @return Map of links by Rel name.  Never null;
+	 */
 	public Map<String, Object> getLinks();
+
+	/**
+	 * Answer whether links are present.
+	 * 
+	 * @return true if links are present on the resource. Otherwise, false.
+	 */
+	public boolean hasLinks();
 
 	/**
 	 * Define a link relationship from the resource to a URL.

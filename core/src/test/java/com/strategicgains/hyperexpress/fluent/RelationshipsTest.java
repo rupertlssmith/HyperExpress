@@ -74,6 +74,7 @@ public class RelationshipsTest
 		assertEquals("/blogs", links.get(0).getHref());
 
 		List<Blog> c = new ArrayList<Blog>();
+		c.add(new Blog());
 		links = resolver.resolve(c);
 		assertNotNull(links);
 		assertEquals(1, links.size());

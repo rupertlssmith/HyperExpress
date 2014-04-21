@@ -41,7 +41,6 @@ implements Resource
 		return this;
 	}
 
-	@Override
 	public Resource withLink(String rel, String url, String title, String type)
 	{
 		LinkDefinition ld = new LinkDefinition(rel, url);
