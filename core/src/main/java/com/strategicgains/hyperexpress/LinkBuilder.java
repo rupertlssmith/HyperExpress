@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.strategicgains.hyperexpress.domain.LinkDefinition;
+import com.strategicgains.hyperexpress.domain.LinkImpl;
 import com.strategicgains.hyperexpress.util.MapStringFormat;
 
 public class LinkBuilder
@@ -75,9 +75,9 @@ public class LinkBuilder
 	 * @return a LinkDefinition instance
 	 * @throws LinkBuilderException if the LinkBuilder is in a state to build an invalid LinkDefintion.
 	 */
-	public LinkDefinition build()
+	public LinkImpl build()
 	{
-		LinkDefinition definition = new LinkDefinition(attributes.get(REL_TYPE), buildHref());
+		LinkImpl definition = new LinkImpl(attributes.get(REL_TYPE), buildHref());
 
 		for (Entry<String, String> entry : attributes.entrySet())
 		{
@@ -90,16 +90,16 @@ public class LinkBuilder
 		return definition;
 	}
 
-	public Collection<LinkDefinition> build(String idParameterName, String... ids)
+	public Collection<LinkImpl> build(String idParameterName, String... ids)
 	{
 		return build(idParameterName, Arrays.asList(ids));
 	}
 
-	public Collection<LinkDefinition> build(String idParameterName, Collection<String> ids)
+	public Collection<LinkImpl> build(String idParameterName, Collection<String> ids)
 	{
 		if (ids == null) return null;
 
-		Collection<LinkDefinition> definitions = new ArrayList<LinkDefinition>(ids.size());
+		Collection<LinkImpl> definitions = new ArrayList<LinkImpl>(ids.size());
 
 		for (String id : ids)
 		{

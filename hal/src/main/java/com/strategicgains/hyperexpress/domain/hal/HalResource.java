@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.strategicgains.hyperexpress.domain.Link;
-import com.strategicgains.hyperexpress.domain.LinkDefinition;
+import com.strategicgains.hyperexpress.domain.LinkImpl;
 import com.strategicgains.hyperexpress.domain.Resource;
 
 /**
@@ -31,7 +31,7 @@ public interface HalResource
 extends Resource
 {
     void addCurie(Link curie);
-    void addCuries(Collection<LinkDefinition> curies);
+    void addCuries(Collection<LinkImpl> curies);
     List<Link> getCuries();
 	Map<String, Object> getEmbedded();
 	Object getEmbedded(String rel);

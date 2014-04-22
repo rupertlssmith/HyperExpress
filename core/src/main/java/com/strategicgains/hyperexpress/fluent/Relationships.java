@@ -15,6 +15,8 @@
 */
 package com.strategicgains.hyperexpress.fluent;
 
+import com.strategicgains.hyperexpress.domain.Namespace;
+
 /**
  * @author toddf
  * @since Apr 8, 2014

@@ -20,9 +20,12 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.strategicgains.hyperexpress.domain.LinkDefinition;
+import com.strategicgains.hyperexpress.domain.Link;
+import com.strategicgains.hyperexpress.domain.LinkImpl;
+import com.strategicgains.hyperexpress.domain.Namespace;
 
 /**
  * @author toddf
@@ -49,10 +52,10 @@ public class RelationshipBuilder
 	// Atom-specific
 	private static final String LENGTH = "length";
 
-	private Map<String, Namespace> namespaces = new HashMap<>();
-	private Map<String, Map<String, LinkDefinition>> relsByClass = new HashMap<>();
-	private Map<String, LinkDefinition> links;
-	private LinkDefinition link;
+	private Map<String, Link> namespaces = new LinkedHashMap<>();
+	private Map<String, Map<String, Link>> relsByClass = new LinkedHashMap<>();
+	private Map<String, Link> links;
+	private Link link;
 
 	/**
 	 * Adds one or more namespaces to this relationship builder.
@@ -87,7 +90,7 @@ public class RelationshipBuilder
 			throw new RelationshipException("Duplicate namespace: " + namespace.name());
 		}
 
-		namespaces.put(namespace.name(), namespace);
+		namespaces.put(namespace.name(), namespace.clone());
 		return this;
 	}
 
@@ -122,7 +125,7 @@ public class RelationshipBuilder
 
 	public RelationshipBuilder rel(String name, String href)
 	{
-		link = new LinkDefinition(name, href);
+		link = new LinkImpl(name, href);
 		links.put(name, link);
 		return this;
 	}
@@ -221,12 +224,12 @@ public class RelationshipBuilder
     	return this;
     }
 
-	public LinkResolver resolver()
+	public LinkResolver createResolver()
 	{
 		return new LinkResolver(this);
 	}
 
-	public Map<String, LinkDefinition> getLinkTemplates(Class<?> forClass)
+	public Map<String, Link> getLinkTemplates(Class<?> forClass)
 	{
 		if (forClass == null) return null;
 
@@ -242,7 +245,12 @@ public class RelationshipBuilder
 		return getLinkTemplatesForName(forClass.getName());
 	}
 
-	private Map<String, LinkDefinition> getLinkTemplatesForCollection(Class<?> forClass)
+	public Map<String, Link> getNamespaces()
+	{
+		return Collections.unmodifiableMap(namespaces);
+	}
+
+	private Map<String, Link> getLinkTemplatesForCollection(Class<?> forClass)
     {
 		Type t = forClass.getGenericInterfaces()[0];
 
@@ -255,9 +263,9 @@ public class RelationshipBuilder
 		return getLinkTemplatesForName(t.getClass().getName() + ".Collection");
     }
 
-	private Map<String, LinkDefinition> getLinkTemplatesForName(String className)
+	private Map<String, Link> getLinkTemplatesForName(String className)
 	{
-		Map<String, LinkDefinition> templates = relsByClass.get(className);
+		Map<String, Link> templates = relsByClass.get(className);
 		
 		if (templates != null)
 		{

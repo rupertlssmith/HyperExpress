@@ -26,7 +26,7 @@ import java.util.Map;
 import com.strategicgains.hyperexpress.ResourceException;
 import com.strategicgains.hyperexpress.domain.AbstractResource;
 import com.strategicgains.hyperexpress.domain.Link;
-import com.strategicgains.hyperexpress.domain.LinkDefinition;
+import com.strategicgains.hyperexpress.domain.LinkImpl;
 import com.strategicgains.hyperexpress.domain.Resource;
 
 /**
@@ -39,7 +39,6 @@ public class HalResourceImpl
 extends AbstractResource
 implements HalResource
 {
-    private static final long serialVersionUID = 907704154200748233L;
 	public static final String REL_CURIES = "curies";
 
 	/**
@@ -117,7 +116,7 @@ implements HalResource
 	 * @param curies a collection of LinkDefintion instance representing CURIEs
 	 */
     @Override
-    public void addCuries(Collection<LinkDefinition> curies)
+    public void addCuries(Collection<LinkImpl> curies)
     {
 		if (curies == null) return;
 
@@ -131,42 +130,42 @@ implements HalResource
 	 * Add a LinkDefinition to this resource. The LinkDefinition must be valid, in that,
 	 * it must include a 'rel' property.
 	 * 
-	 * @param linkDefinition a populated, valid LinkDefinition
+	 * @param link a populated, valid Link implementation
 	 * @throws ResourceException if the LinkDefinition does not include a 'rel' property.
 	 */
 	@Override
-	public Resource withLink(LinkDefinition linkDefinition)
+	public Resource withLink(Link link)
 	{
-		assertValid(linkDefinition);
+		assertValid(link);
 
 		Map<String, Object> _links = acquireLinks();
-		Object listOrLink = _links.get(linkDefinition.getRel());
+		Object listOrLink = _links.get(link.getRel());
 		
 		if (listOrLink == null)	// Add a single Link
 		{
-			_links.put(linkDefinition.getRel(), new HalLink(linkDefinition));
+			_links.put(link.getRel(), new HalLink(link));
 		}
 		else if (listOrLink.getClass().isAssignableFrom(ArrayList.class))	// Add Link to list.
 		{
-			((List<HalLink>) listOrLink).add(new HalLink(linkDefinition));
+			((List<HalLink>) listOrLink).add(new HalLink(link));
 		}
 		else // Convert to a list of Links
 		{
 			List<HalLink> list = new ArrayList<HalLink>();
 			list.add((HalLink) listOrLink);
-			list.add(new HalLink(linkDefinition));
-			_links.put(linkDefinition.getRel(), list);
+			list.add(new HalLink(link));
+			_links.put(link.getRel(), list);
 		}
 		
 		return this;
 	}
 
 	@Override
-	public Resource withLinks(Collection<LinkDefinition> links)
+	public Resource withLinks(Collection<Link> links)
 	{
 		if (links == null) return this;
 
-		for (LinkDefinition defn : links)
+		for (Link defn : links)
 		{
 			withLink(defn);
 		}

@@ -22,7 +22,7 @@ import java.util.Collection;
 import org.junit.Test;
 
 import com.strategicgains.hyperexpress.domain.Link;
-import com.strategicgains.hyperexpress.domain.LinkDefinition;
+import com.strategicgains.hyperexpress.domain.LinkImpl;
 
 /**
  * @author toddf
@@ -37,7 +37,7 @@ public class LinkBuilderTest
 	@Test
 	public void shouldBuildSimpleMultipleIdTemplate()
 	{
-		Collection<LinkDefinition> links = new LinkBuilder(URL_PATTERN)
+		Collection<LinkImpl> links = new LinkBuilder(URL_PATTERN)
 			.baseUrl(BASE_URL)
 			.rel(RelTypes.RELATED)
 			.build("id", "42", "22", "4");
@@ -68,7 +68,7 @@ public class LinkBuilderTest
 	@Test
 	public void shouldBuildComplexMultipleIdTemplate()
 	{
-		Collection<LinkDefinition> links = new LinkBuilder(URL_PATTERN2)
+		Collection<LinkImpl> links = new LinkBuilder(URL_PATTERN2)
 			.baseUrl(BASE_URL)
 			.rel(RelTypes.DESCRIBED_BY)
 			.urlParam("secondaryId", "second")

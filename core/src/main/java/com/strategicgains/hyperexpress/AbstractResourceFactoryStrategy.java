@@ -84,7 +84,12 @@ implements ResourceFactoryStrategy
 				if (isIncluded(f))
 				{
 					f.setAccessible(true);
-					to.withProperty(f.getName(), f.get(from));
+					Object value = f.get(from);
+					
+					if (value != null)
+					{
+						to.withProperty(f.getName(), value);
+					}
 				}
 			}
 		}

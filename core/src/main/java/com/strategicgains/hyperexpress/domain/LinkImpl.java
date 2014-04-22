@@ -20,13 +20,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * A LinkDefinition is a generic definition of a hypermedia link. It contains attributes
+ * A LinkImpl is a generic definition of a hypermedia link. It contains attributes
  * than can describe various output link formats such as HAL, Atom, and JSON-LD.
  * 
  * @author toddf
  * @since Oct 17, 2013
  */
-public class LinkDefinition
+public class LinkImpl
 implements Link
 {
 	private static final String REL_TYPE = "rel";
@@ -34,18 +34,24 @@ implements Link
 
 	private Map<String, String> attributes = new HashMap<String, String>();
 
-	public LinkDefinition(String rel, String href)
+	public LinkImpl(String rel, String href)
     {
 	    super();
 	    setRel(rel);
 	    setHref(href);
     }
 
-	public LinkDefinition(LinkDefinition that)
+	public LinkImpl(LinkImpl that)
 	{
 		super();
 		this.attributes.putAll(that.attributes);
 	}
+
+	@Override
+    public LinkImpl clone()
+    {
+		return new LinkImpl(this);
+    }
 
 	@Override
     public String getHref()

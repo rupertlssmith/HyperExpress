@@ -25,7 +25,6 @@ import java.util.Map;
 import com.strategicgains.hyperexpress.ResourceException;
 import com.strategicgains.hyperexpress.domain.AbstractResource;
 import com.strategicgains.hyperexpress.domain.Link;
-import com.strategicgains.hyperexpress.domain.LinkDefinition;
 import com.strategicgains.hyperexpress.domain.Resource;
 
 
@@ -77,9 +76,9 @@ implements AtomResource
 	private transient Map<String, String> namespaces;
 
 	@Override
-	public Resource withLink(LinkDefinition linkDefinition)
+	public Resource withLink(Link link)
 	{
-		assertValid(linkDefinition);
+		assertValid(link);
 		List<AtomLink> links = acquireLinks();
 
 		if (!hasLinks())
@@ -87,17 +86,17 @@ implements AtomResource
 			links = new ArrayList<AtomLink>();
 		}
 
-		links.add(new AtomLink(linkDefinition));
+		links.add(new AtomLink(link));
 		linksByRel = null; // cause re-indexing.
 		return this;
 	}
 
 	@Override
-	public Resource withLinks(Collection<LinkDefinition> links)
+	public Resource withLinks(Collection<Link> links)
 	{
 		if (links == null) return this;
 
-		for (LinkDefinition defn : links)
+		for (Link defn : links)
 		{
 			withLink(defn);
 		}

@@ -13,31 +13,27 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package com.strategicgains.hyperexpress.fluent;
+package com.strategicgains.hyperexpress.domain;
 
 /**
  * @author toddf
  * @since Apr 8, 2014
  */
 public class Namespace
+extends LinkImpl
 {
-	private String name;
-	private String href;
-
 	public Namespace(String name, String href)
     {
-		super();
-		this.name = name;
-		this.href = href;
+		super(name, href);
     }
 
 	public String name()
-    {
-	    return name;
-    }
+	{
+		return getRel();
+	}
 
 	public String href()
 	{
-		return href;
+		return getHref();
 	}
 }

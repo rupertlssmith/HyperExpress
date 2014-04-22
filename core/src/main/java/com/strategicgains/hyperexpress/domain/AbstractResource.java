@@ -24,28 +24,37 @@ import com.strategicgains.hyperexpress.ResourceException;
  * @since Apr 7, 2014
  */
 public abstract class AbstractResource
-extends HashMap<String, Object>
 implements Resource
 {
-	private static final long serialVersionUID = 6406167608894764116L;
+	private HashMap<String, Object> properties = new HashMap<String, Object>();
 
 	@Override
 	public Resource withProperty(String name, Object value)
 	{
-		if (containsKey(name))
+		if (properties.containsKey(name))
 		{
 			throw new ResourceException("Duplicate property: " + name);
 		}
 
-		put(name, value);
+		properties.put(name, value);
 		return this;
 	}
 
 	public Resource withLink(String rel, String url, String title, String type)
 	{
-		LinkDefinition ld = new LinkDefinition(rel, url);
+		LinkImpl ld = new LinkImpl(rel, url);
 		ld.set("title", title);
 		ld.set("type", type);
 		return withLink(ld);
+	}
+
+	protected Object get(String key)
+	{
+		return properties.get(key);
+	}
+
+	protected Object put(String key, Object value)
+	{
+		return properties.put(key, value);
 	}
 }

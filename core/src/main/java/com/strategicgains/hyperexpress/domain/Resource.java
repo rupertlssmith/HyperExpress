@@ -60,9 +60,9 @@ public interface Resource
 	/**
 	 * Define a link relationship from the resource to a URL.
 	 * 
-	 * @param linkDefinition an abstraction of a link as a LinkDefinition instance.
+	 * @param link an abstraction of a link.
 	 */
-	public Resource withLink(LinkDefinition linkDefinition);
+	public Resource withLink(Link link);
 
 	/**
 	 * Get a Map of links by Rel.
@@ -81,9 +81,9 @@ public interface Resource
 	/**
 	 * Define a link relationship from the resource to a URL.
 	 * 
-	 * @param linkDefinition an abstraction of a link as a LinkDefinition instance.
+	 * @param link an abstraction of a link.
 	 */
-	public Resource withLinks(Collection<LinkDefinition> links);
+	public Resource withLinks(Collection<Link> links);
 
 	/**
 	 * Embed an entire collection in this resource.

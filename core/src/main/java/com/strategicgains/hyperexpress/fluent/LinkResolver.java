@@ -16,14 +16,13 @@
 package com.strategicgains.hyperexpress.fluent;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.strategicgains.hyperexpress.domain.Link;
-import com.strategicgains.hyperexpress.domain.LinkDefinition;
 import com.strategicgains.hyperexpress.util.MapStringFormat;
 
 /**
@@ -66,19 +65,24 @@ public class LinkResolver
 
 	public List<Link> resolve(Class<?> forClass)
 	{
-		Map<String, LinkDefinition> templates = relationshipBuilder.getLinkTemplates(forClass);
+		Collection<Link> templates = relationshipBuilder.getLinkTemplates(forClass).values();
 
 		if (templates == null) return Collections.emptyList();
 		
 		List<Link> links = new ArrayList<>(templates.size());
 
-		for (Entry<String, LinkDefinition> template : templates.entrySet())
+		for (Link template : templates)
 		{
-			LinkDefinition ld = new LinkDefinition(template.getValue());
-			ld.setHref(FORMATTER.format(ld.getHref(), parameters));
-			links.add(ld);
+			Link link = template.clone();
+			link.setHref(FORMATTER.format(link.getHref(), parameters));
+			links.add(link);
 		}
 
 		return links;
+	}
+
+	public Collection<Link> getNamespaces()
+	{
+		return relationshipBuilder.getNamespaces().values();
 	}
 }

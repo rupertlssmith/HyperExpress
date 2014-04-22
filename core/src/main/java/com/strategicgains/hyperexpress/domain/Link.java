@@ -21,6 +21,7 @@ package com.strategicgains.hyperexpress.domain;
  * @since Apr 3, 2014
  */
 public interface Link
+extends Cloneable
 {
 	public String getHref();
 	public void setHref(String href);
@@ -29,4 +30,5 @@ public interface Link
 	public void set(String name, String value);
 	public String get(String name);
 	public boolean has(String name);
+	public LinkImpl clone();
 }
