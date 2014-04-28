@@ -18,9 +18,9 @@ package com.strategicgains.hyperexpress.fluent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.util.MapStringFormat;
@@ -32,9 +32,10 @@ import com.strategicgains.hyperexpress.util.MapStringFormat;
 public class LinkResolver
 {
 	private static final MapStringFormat FORMATTER = new MapStringFormat();
+	private static final String TEMPLATE_REGEX = "\\{(\\w*?)\\}";
+	private static final Pattern TEMPLATE_PATTERN = Pattern.compile(TEMPLATE_REGEX);
 
 	private RelationshipBuilder relationshipBuilder;
-	private Map<String, String> parameters = new HashMap<>();
 
 	public LinkResolver(RelationshipBuilder builder)
     {
@@ -42,39 +43,33 @@ public class LinkResolver
 		this.relationshipBuilder = builder;
     }
 
-	public LinkResolver with(String name, String value)
-    {
-		parameters.put(name, value);
-		return this;
-    }
-
-	/**
-	 * Clear the parameters for this LinkResolver.
-	 */
-	public void clear()
-	{
-		parameters.clear();
-	}
-
-	public List<Link> resolve(Object resource)
+	public List<Link> resolve(Object resource, IdResolver idResolver)
 	{
 		if (resource == null) throw new NullPointerException("Cannot resolve null resource");
 
-		return resolve(resource.getClass());
+		return resolve(resource.getClass(), idResolver);
 	}
 
-	public List<Link> resolve(Class<?> forClass)
+	public List<Link> resolve(Class<?> forClass, IdResolver idResolver)
 	{
 		Collection<Link> templates = relationshipBuilder.getLinkTemplates(forClass).values();
 
 		if (templates == null) return Collections.emptyList();
 		
 		List<Link> links = new ArrayList<>(templates.size());
+		Map<String, String> ids = idResolver.asMap();
 
 		for (Link template : templates)
 		{
 			Link link = template.clone();
-			link.setHref(FORMATTER.format(link.getHref(), parameters));
+			String href = FORMATTER.format(link.getHref(), ids);
+			link.setHref(href);
+
+			if (TEMPLATE_PATTERN.matcher(href).matches())
+			{
+				link.set("templated", Boolean.TRUE.toString());
+			}
+
 			links.add(link);
 		}
 

@@ -63,7 +63,7 @@ public class RelationshipBuilder
 	 * @param namespaces one or more Namespace instances.
 	 * @return
 	 */
-	public RelationshipBuilder addNamespaces(Namespace[] namespaces)
+	public RelationshipBuilder addNamespaces(Namespace... namespaces)
 	{
 		if (namespaces == null) return this;
 

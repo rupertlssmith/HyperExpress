@@ -2,7 +2,6 @@ package com.strategicgains.hyperexpress.fluent;
 
 import static com.strategicgains.hyperexpress.RelTypes.SELF;
 import static com.strategicgains.hyperexpress.RelTypes.UP;
-import static com.strategicgains.hyperexpress.fluent.Relationships.namespace;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -15,17 +14,18 @@ import com.strategicgains.hyperexpress.domain.Blog;
 import com.strategicgains.hyperexpress.domain.Comment;
 import com.strategicgains.hyperexpress.domain.Entry;
 import com.strategicgains.hyperexpress.domain.Link;
+import com.strategicgains.hyperexpress.domain.Namespace;
 
-public class RelationshipsTest
+public class RelationshipBuilderTest
 {
 	@Test
 	public void testWithNamespaces()
 	throws Exception
 	{
-		RelationshipBuilder rb =Relationships
-			.namespaces(
-				namespace("ea", "http://namespaces.example.com/{rel}"),
-				namespace("blog", "http://namespaces.example.com/{rel}")
+		RelationshipBuilder rb = new RelationshipBuilder()
+			.addNamespaces(
+				new Namespace("ea", "http://namespaces.example.com/{rel}").setTemplated(true),
+				new Namespace("blog", "http://namespaces.example.com/{rel}").setTemplated(true)
 			)
 
 			.forCollectionOf(Blog.class)
@@ -58,7 +58,8 @@ public class RelationshipsTest
 				.rel("ea:author", "/pi/users/{userId}")
 					.title("The comment author");
 
-		LinkResolver resolver = rb.createResolver()
+		LinkResolver resolver = rb.createResolver();
+		IdResolver ids = new IdResolver()
 			.with("blogId", "1234")
 			.with("entryId", "5678")
 			.with("commentId", "0987")
@@ -66,11 +67,11 @@ public class RelationshipsTest
 
 		verifyNamespacesExist(resolver.getNamespaces());
 
-		List<Link> links = resolver.resolve(Blog.class);
+		List<Link> links = resolver.resolve(Blog.class, ids);
 		assertNotNull(links);
 		assertEquals(3, links.size());
 
-		links = resolver.resolve(new Blog[0]);
+		links = resolver.resolve(new Blog[0], ids);
 		assertNotNull(links);
 		assertEquals(1, links.size());
 		assertEquals(SELF, links.get(0).getRel());
@@ -84,7 +85,7 @@ public class RelationshipsTest
 //		assertEquals(SELF, links.get(0).getRel());
 //		assertEquals("/blogs", links.get(0).getHref());
 
-		links = resolver.resolve(Entry.class);
+		links = resolver.resolve(Entry.class, ids);
 		assertNotNull(links);
 		assertEquals(3, links.size());
 
@@ -92,7 +93,7 @@ public class RelationshipsTest
 //		assertNotNull(links);
 //		assertEquals(2, links.size());
 
-		links = resolver.resolve(Comment.class);
+		links = resolver.resolve(Comment.class, ids);
 		assertNotNull(links);
 		assertEquals(3, links.size());
 
@@ -134,7 +135,7 @@ public class RelationshipsTest
 	@Test
 	public void testWithoutNamespaces()
 	{
-		RelationshipBuilder rb = Relationships
+		RelationshipBuilder rb = new RelationshipBuilder()
 			.forCollectionOf(Blog.class)
 				.rel(SELF, "/blogs")
 	
@@ -163,21 +164,22 @@ public class RelationshipsTest
 					.title("The parent blog entry")
 				.rel("ea:author", "/pi/users/{userId}");
 
-		LinkResolver resolver = rb.createResolver()
+		LinkResolver resolver = rb.createResolver();
+		IdResolver ids = new IdResolver()
 			.with("blogId", "1234")
 			.with("entryId", "5678")
 			.with("commentId", "0987")
 			.with("userId", "7654");
 
-		List<Link> links = resolver.resolve(Blog.class);
+		List<Link> links = resolver.resolve(Blog.class, ids);
 		assertNotNull(links);
 		assertEquals(3, links.size());
 
-		links = resolver.resolve(Entry.class);
+		links = resolver.resolve(Entry.class, ids);
 		assertNotNull(links);
 		assertEquals(3, links.size());
 
-		links = resolver.resolve(Comment.class);
+		links = resolver.resolve(Comment.class, ids);
 		assertNotNull(links);
 		assertEquals(3, links.size());
 	}

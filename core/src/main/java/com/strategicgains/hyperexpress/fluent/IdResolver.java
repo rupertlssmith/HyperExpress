@@ -13,35 +13,41 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package com.strategicgains.hyperexpress.domain;
+package com.strategicgains.hyperexpress.fluent;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author toddf
- * @since Apr 8, 2014
+ * @since Apr 28, 2014
  */
-public class Namespace
-extends LinkImpl
+public class IdResolver
 {
-	private static final String TEMPLATED = "templated";
+	private Map<String, String> parameters = new HashMap<>();
 
-	public Namespace(String name, String href)
+	public IdResolver with(String name, String value)
     {
-		super(name, href);
+		parameters.put(name, value);
+		return this;
     }
 
-	public String name()
+	/**
+	 * Clear the parameters for this LinkResolver.
+	 */
+	public void clear()
 	{
-		return getRel();
+		parameters.clear();
 	}
 
-	public String href()
+	public String resolve(String name)
 	{
-		return getHref();
+		return parameters.get(name);
 	}
 
-	public Namespace setTemplated(boolean value)
+	public Map<String, String> asMap()
 	{
-		set(TEMPLATED, Boolean.toString(value));
-		return this;
+		return Collections.unmodifiableMap(parameters);
 	}
 }
