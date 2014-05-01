@@ -88,7 +88,7 @@ implements ResourceFactoryStrategy
 					
 					if (value != null)
 					{
-						to.withProperty(f.getName(), value);
+						to.addProperty(f.getName(), value);
 					}
 				}
 			}

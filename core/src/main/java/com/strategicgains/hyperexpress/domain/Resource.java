@@ -16,11 +16,13 @@
 package com.strategicgains.hyperexpress.domain;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 
 /**
- * Resource defines an interface for a RESTful resource that contains one or more links to a URL.
+ * Resource defines an interface for a RESTful resource that contains one or more links to a URL and
+ * possibly, other embedded resources.
  * 
  * @author toddf
  * @since Jan 10, 2014
@@ -34,9 +36,10 @@ public interface Resource
 	 * @param href the templated URL for documentation about the namespace
 	 * @return this Resource instance (for method chaining).
 	 */
-	public Resource withNamespace(String name, String href);
-	public String getNamespace(String name);
-	public Map<String, String> getNamespaces();
+	Resource addNamespace(String name, String href);
+	Resource addNamespace(Namespace namespace);
+	List<Namespace> getNamespaces();
+	boolean hasNamespaces();
 
 	/**
 	 * Add a single property to this resource.
@@ -45,8 +48,38 @@ public interface Resource
 	 * @param value the property's value.
 	 * @return this Resource instance (for method chaining).
 	 */
-	public Resource withProperty(String name, Object value);
-	public Object getProperty(String name);
+	Resource addProperty(String name, Object value);
+	Map<String, Object> getProperties();
+	boolean hasProperties();
+
+	/**
+	 * Define a link relationship from the resource to a URL.
+	 * 
+	 * @param link an abstraction of a link.
+	 */
+	Resource addLink(Link link);
+	Resource addLink(String rel, String href);
+
+	/**
+	 * Define a link relationship from the resource to a URL.
+	 * 
+	 * @param link an abstraction of a link.
+	 */
+	Resource addLinks(Collection<Link> links);
+
+	/**
+	 * Get a List of links.
+	 * 
+	 * @return List of links.  Never null;
+	 */
+	List<Link> getLinks();
+
+	/**
+	 * Answer whether links are present.
+	 * 
+	 * @return true if links are present on the resource. Otherwise, false.
+	 */
+	boolean hasLinks();
 
 	/**
 	 * Embed another resource into this resource instance.
@@ -55,35 +88,7 @@ public interface Resource
 	 * @param resource
 	 * @return
 	 */
-	public Resource withResource(String name, Resource resource);
-
-	/**
-	 * Define a link relationship from the resource to a URL.
-	 * 
-	 * @param link an abstraction of a link.
-	 */
-	public Resource withLink(Link link);
-
-	/**
-	 * Get a Map of links by Rel.
-	 * 
-	 * @return Map of links by Rel name.  Never null;
-	 */
-	public Map<String, Object> getLinks();
-
-	/**
-	 * Answer whether links are present.
-	 * 
-	 * @return true if links are present on the resource. Otherwise, false.
-	 */
-	public boolean hasLinks();
-
-	/**
-	 * Define a link relationship from the resource to a URL.
-	 * 
-	 * @param link an abstraction of a link.
-	 */
-	public Resource withLinks(Collection<Link> links);
+	Resource addResource(String name, Resource resource);
 
 	/**
 	 * Embed an entire collection in this resource.
@@ -92,5 +97,7 @@ public interface Resource
 	 * @param resources
 	 * @return
 	 */
-	Resource withCollection(String rel, Collection<? extends Object> resources);
+	Resource addResources(String rel, Collection<Resource> resources);
+	Map<String, List<Resource>> getResources();
+	boolean hasResources();
 }

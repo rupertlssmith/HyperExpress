@@ -15,12 +15,6 @@
 */
 package com.strategicgains.hyperexpress.domain.hal;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import com.strategicgains.hyperexpress.domain.Link;
-import com.strategicgains.hyperexpress.domain.LinkImpl;
 import com.strategicgains.hyperexpress.domain.Resource;
 
 /**

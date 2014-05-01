@@ -59,7 +59,7 @@ public class RelationshipBuilderTest
 					.title("The comment author");
 
 		LinkResolver resolver = rb.createResolver();
-		IdResolver ids = new IdResolver()
+		TokenResolver ids = new TokenResolver()
 			.with("blogId", "1234")
 			.with("entryId", "5678")
 			.with("commentId", "0987")
@@ -165,7 +165,7 @@ public class RelationshipBuilderTest
 				.rel("ea:author", "/pi/users/{userId}");
 
 		LinkResolver resolver = rb.createResolver();
-		IdResolver ids = new IdResolver()
+		TokenResolver ids = new TokenResolver()
 			.with("blogId", "1234")
 			.with("entryId", "5678")
 			.with("commentId", "0987")

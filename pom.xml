@@ -19,6 +19,7 @@
 		<module>core</module>
 		<module>atom</module>
 		<module>hal</module>
+		<module>halbuilder</module>
 	</modules>
 
 	<dependencies>

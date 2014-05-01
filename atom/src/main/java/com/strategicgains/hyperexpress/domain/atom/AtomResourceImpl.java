@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.strategicgains.hyperexpress.ResourceException;
-import com.strategicgains.hyperexpress.domain.AbstractResource;
+import com.strategicgains.hyperexpress.domain.ResourceImpl;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Resource;
 
@@ -36,7 +36,7 @@ import com.strategicgains.hyperexpress.domain.Resource;
  * @since May 21, 2013
  */
 public class AtomResourceImpl
-extends AbstractResource
+extends ResourceImpl
 implements AtomResource
 {
     private static final long serialVersionUID = 2282309584744435597L;
@@ -76,7 +76,7 @@ implements AtomResource
 	private transient Map<String, String> namespaces;
 
 	@Override
-	public Resource withLink(Link link)
+	public Resource addLink(Link link)
 	{
 		assertValid(link);
 		List<AtomLink> links = acquireLinks();
@@ -92,13 +92,13 @@ implements AtomResource
 	}
 
 	@Override
-	public Resource withLinks(Collection<Link> links)
+	public Resource addLinks(Collection<Link> links)
 	{
 		if (links == null) return this;
 
 		for (Link defn : links)
 		{
-			withLink(defn);
+			addLink(defn);
 		}
 
 		return this;
@@ -110,7 +110,7 @@ implements AtomResource
 	}
 
 	@Override
-	public Map<String, Object> getLinks()
+	public List<Link> getLinks()
 	{
 		List<AtomLink> links = getLinks0();
 

@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.strategicgains.hyperexpress.ResourceException;
-import com.strategicgains.hyperexpress.domain.AbstractResource;
+import com.strategicgains.hyperexpress.domain.ResourceImpl;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.LinkImpl;
 import com.strategicgains.hyperexpress.domain.Resource;
@@ -36,7 +36,7 @@ import com.strategicgains.hyperexpress.domain.Resource;
  * @since May 21, 2013
  */
 public class HalResourceImpl
-extends AbstractResource
+extends ResourceImpl
 implements HalResource
 {
 	public static final String REL_CURIES = "curies";

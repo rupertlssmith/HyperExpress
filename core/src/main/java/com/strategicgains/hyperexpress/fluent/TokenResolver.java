@@ -23,11 +23,11 @@ import java.util.Map;
  * @author toddf
  * @since Apr 28, 2014
  */
-public class IdResolver
+public class TokenResolver
 {
 	private Map<String, String> parameters = new HashMap<>();
 
-	public IdResolver with(String name, String value)
+	public TokenResolver with(String name, String value)
     {
 		parameters.put(name, value);
 		return this;

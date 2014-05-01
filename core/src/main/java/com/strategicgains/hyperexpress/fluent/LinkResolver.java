@@ -31,6 +31,7 @@ import com.strategicgains.hyperexpress.util.MapStringFormat;
  */
 public class LinkResolver
 {
+	private static final String TEMPLATED = "templated";
 	private static final MapStringFormat FORMATTER = new MapStringFormat();
 	private static final String TEMPLATE_REGEX = "\\{(\\w*?)\\}";
 	private static final Pattern TEMPLATE_PATTERN = Pattern.compile(TEMPLATE_REGEX);
@@ -43,20 +44,39 @@ public class LinkResolver
 		this.relationshipBuilder = builder;
     }
 
-	public List<Link> resolve(Object resource, IdResolver idResolver)
+	public List<Link> resolve(Object resource, TokenResolver idResolver)
 	{
 		if (resource == null) throw new NullPointerException("Cannot resolve null resource");
 
 		return resolve(resource.getClass(), idResolver);
 	}
 
-	public List<Link> resolve(Class<?> forClass, IdResolver idResolver)
+	public List<Link> resolve(Class<?> forClass, TokenResolver idResolver)
 	{
 		Collection<Link> templates = relationshipBuilder.getLinkTemplates(forClass).values();
 
-		if (templates == null) return Collections.emptyList();
-		
-		List<Link> links = new ArrayList<>(templates.size());
+		if (templates.isEmpty()) return Collections.emptyList();
+
+		return resolveUrlParameters(templates, idResolver);
+	}
+
+	public List<Link> resolveCollectionOf(Class<?> componentType, TokenResolver idResolver)
+	{
+		Collection<Link> templates = relationshipBuilder.getCollectionLinkTemplates(componentType).values();
+
+		if (templates.isEmpty()) return Collections.emptyList();
+
+		return resolveUrlParameters(templates, idResolver);
+	}
+
+	public Collection<Link> getNamespaces()
+	{
+		return relationshipBuilder.getNamespaces().values();
+	}
+
+	protected List<Link> resolveUrlParameters(Collection<Link> templates, TokenResolver idResolver)
+    {
+	    List<Link> links = new ArrayList<>(templates.size());
 		Map<String, String> ids = idResolver.asMap();
 
 		for (Link template : templates)
@@ -67,17 +87,12 @@ public class LinkResolver
 
 			if (TEMPLATE_PATTERN.matcher(href).matches())
 			{
-				link.set("templated", Boolean.TRUE.toString());
+				link.set(TEMPLATED, Boolean.TRUE.toString());
 			}
 
 			links.add(link);
 		}
 
 		return links;
-	}
-
-	public Collection<Link> getNamespaces()
-	{
-		return relationshipBuilder.getNamespaces().values();
-	}
+    }
 }

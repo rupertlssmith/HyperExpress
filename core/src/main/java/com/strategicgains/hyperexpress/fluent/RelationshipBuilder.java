@@ -15,9 +15,6 @@
  */
 package com.strategicgains.hyperexpress.fluent;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -231,18 +228,21 @@ public class RelationshipBuilder
 
 	public Map<String, Link> getLinkTemplates(Class<?> forClass)
 	{
-		if (forClass == null) return null;
+		if (forClass == null) return Collections.emptyMap();
 
 		if (forClass.isArray())
 		{
 			return getLinkTemplatesForName(forClass.getComponentType().getName() + ".Collection");
 		}
-		else if (Collection.class.isAssignableFrom(forClass))
-		{
-			return getLinkTemplatesForCollection(forClass);
-		}
 
 		return getLinkTemplatesForName(forClass.getName());
+	}
+
+	public Map<String, Link> getCollectionLinkTemplates(Class<?> componentType)
+	{
+		if (componentType == null) return Collections.emptyMap();
+
+		return getLinkTemplatesForName(componentType.getName() + ".Collection");
 	}
 
 	public Map<String, Link> getNamespaces()
@@ -250,28 +250,10 @@ public class RelationshipBuilder
 		return Collections.unmodifiableMap(namespaces);
 	}
 
-	private Map<String, Link> getLinkTemplatesForCollection(Class<?> forClass)
-    {
-		Type t = forClass.getGenericInterfaces()[0];
-
-		if (t instanceof ParameterizedType)
-		{
-			Type b = ((ParameterizedType) t).getRawType();
-			return getLinkTemplatesForName(b.getClass().getName() + ".Collection");
-		}
-
-		return getLinkTemplatesForName(t.getClass().getName() + ".Collection");
-    }
-
 	private Map<String, Link> getLinkTemplatesForName(String className)
 	{
 		Map<String, Link> templates = relsByClass.get(className);
 		
-		if (templates != null)
-		{
-			return Collections.unmodifiableMap(templates);
-		}
-
-		return null;
+		return (templates != null ? Collections.unmodifiableMap(templates) : Collections.EMPTY_MAP);
 	}
 }
