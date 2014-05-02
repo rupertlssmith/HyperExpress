@@ -38,17 +38,19 @@ public interface Resource
 	 */
 	Resource addNamespace(String name, String href);
 	Resource addNamespace(Namespace namespace);
+	Resource addNamespaces(Collection<Namespace> namespaces);
 	List<Namespace> getNamespaces();
 	boolean hasNamespaces();
 
 	/**
-	 * Add a single property to this resource.
+	 * Add a single property to this resource. Ensures the property name is unique.
 	 * 
 	 * @param name the name of the property.
 	 * @param value the property's value.
 	 * @return this Resource instance (for method chaining).
 	 */
 	Resource addProperty(String name, Object value);
+	Object getProperty(String name);
 	Map<String, Object> getProperties();
 	boolean hasProperties();
 
@@ -99,5 +101,6 @@ public interface Resource
 	 */
 	Resource addResources(String rel, Collection<Resource> resources);
 	Map<String, List<Resource>> getResources();
+	List<Resource> getResources(String rel);
 	boolean hasResources();
 }

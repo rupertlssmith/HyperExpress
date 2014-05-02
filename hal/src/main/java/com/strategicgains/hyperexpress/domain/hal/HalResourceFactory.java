@@ -28,8 +28,13 @@ extends AbstractResourceFactoryStrategy
 	@Override
 	public Resource createResource(Object object)
 	{
-		HalResource r = new HalResourceImpl();
-		copyProperties(object, r);
+		Resource r = new HalResourceImpl();
+
+		if (object != null)
+		{
+			copyProperties(object, r);
+		}
+
 		return r;
 	}
 }

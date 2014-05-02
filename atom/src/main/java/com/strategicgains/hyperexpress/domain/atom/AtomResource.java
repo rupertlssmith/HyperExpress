@@ -40,7 +40,7 @@ extends Resource
 	 * 
 	 * @return a Map of embedded resources by 'rel'. Never null.
 	 */
-	Map<String, List<Object>> getEmbedded();
+	Map<String, List<Resource>> getEmbedded();
 
 	/**
 	 * Get the list of embedded objects for a given 'rel'. Possibly null,
@@ -49,5 +49,5 @@ extends Resource
 	 * @param rel the 'rel' type to retrieve embedded objects.
 	 * @return a List of embedded objects for the give 'rel'. Or null.
 	 */
-	List<Object> getEmbedded(String rel);
+	List<Resource> getEmbedded(String rel);
 }

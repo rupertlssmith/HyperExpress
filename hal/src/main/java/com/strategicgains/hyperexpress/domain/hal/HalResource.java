@@ -12,7 +12,7 @@
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-*/
+ */
 package com.strategicgains.hyperexpress.domain.hal;
 
 import com.strategicgains.hyperexpress.domain.Resource;
@@ -24,9 +24,4 @@ import com.strategicgains.hyperexpress.domain.Resource;
 public interface HalResource
 extends Resource
 {
-    void addCurie(Link curie);
-    void addCuries(Collection<LinkImpl> curies);
-    List<Link> getCuries();
-	Map<String, Object> getEmbedded();
-	Object getEmbedded(String rel);
 }

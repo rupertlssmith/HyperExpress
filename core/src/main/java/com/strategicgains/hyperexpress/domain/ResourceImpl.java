@@ -36,6 +36,9 @@ implements Resource
 	private HashMap<String, Object> properties = new HashMap<String, Object>();
 	private HashMap<String, List<Resource>> resources = new HashMap<String, List<Resource>>();
 
+	/**
+	 * Ensures the property name is unique.
+	 */
 	@Override
 	public Resource addProperty(String name, Object value)
 	{
@@ -48,12 +51,13 @@ implements Resource
 		return this;
 	}
 
-	protected Object getProperty(String key)
+	@Override
+	public Object getProperty(String key)
 	{
 		return properties.get(key);
 	}
 
-	protected Object putProperty(String key, Object value)
+	protected Object setProperty(String key, Object value)
 	{
 		return properties.put(key, value);
 	}
@@ -81,24 +85,34 @@ implements Resource
     }
 
 	@Override
+	public Resource addNamespaces(Collection<Namespace> values)
+	{
+		if (values == null) return this;
+
+		for (Namespace ns : values)
+		{
+			addNamespace(ns);
+		}
+
+		return this;
+	}
+
+	@Override
 	public List<Namespace> getNamespaces()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.unmodifiableList(namespaces);
 	}
 
 	@Override
 	public boolean hasNamespaces()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return !namespaces.isEmpty();
 	}
 
 	@Override
 	public Map<String, Object> getProperties()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.unmodifiableMap(properties);
 	}
 
 	@Override
@@ -153,6 +167,13 @@ implements Resource
 	public Map<String, List<Resource>> getResources()
 	{
 		return Collections.unmodifiableMap(resources);
+	}
+
+	@Override
+	public List<Resource> getResources(String rel)
+	{
+		List<Resource> result = resources.get(rel);
+		return (result == null ? Collections.EMPTY_LIST : Collections.unmodifiableList(result));
 	}
 
 	@Override

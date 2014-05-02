@@ -20,9 +20,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import com.strategicgains.hyperexpress.domain.Link;
+import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.util.MapStringFormat;
 
 /**
@@ -31,10 +31,7 @@ import com.strategicgains.hyperexpress.util.MapStringFormat;
  */
 public class LinkResolver
 {
-	private static final String TEMPLATED = "templated";
 	private static final MapStringFormat FORMATTER = new MapStringFormat();
-	private static final String TEMPLATE_REGEX = "\\{(\\w*?)\\}";
-	private static final Pattern TEMPLATE_PATTERN = Pattern.compile(TEMPLATE_REGEX);
 
 	private RelationshipBuilder relationshipBuilder;
 
@@ -69,7 +66,7 @@ public class LinkResolver
 		return resolveUrlParameters(templates, idResolver);
 	}
 
-	public Collection<Link> getNamespaces()
+	public Collection<Namespace> getNamespaces()
 	{
 		return relationshipBuilder.getNamespaces().values();
 	}
@@ -84,12 +81,6 @@ public class LinkResolver
 			Link link = template.clone();
 			String href = FORMATTER.format(link.getHref(), ids);
 			link.setHref(href);
-
-			if (TEMPLATE_PATTERN.matcher(href).matches())
-			{
-				link.set(TEMPLATED, Boolean.TRUE.toString());
-			}
-
 			links.add(link);
 		}
 

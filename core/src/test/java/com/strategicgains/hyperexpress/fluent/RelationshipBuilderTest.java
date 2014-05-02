@@ -24,8 +24,8 @@ public class RelationshipBuilderTest
 	{
 		RelationshipBuilder rb = new RelationshipBuilder()
 			.addNamespaces(
-				new Namespace("ea", "http://namespaces.example.com/{rel}").setTemplated(true),
-				new Namespace("blog", "http://namespaces.example.com/{rel}").setTemplated(true)
+				new Namespace("ea", "http://namespaces.example.com/{rel}"),
+				new Namespace("blog", "http://namespaces.example.com/{rel}")
 			)
 
 			.forCollectionOf(Blog.class)
@@ -102,7 +102,7 @@ public class RelationshipBuilderTest
 //		assertEquals(3, links.size());
 	}
 
-	private void verifyNamespacesExist(Collection<Link> namespaces)
+	private void verifyNamespacesExist(Collection<Namespace> namespaces)
 	throws Exception
     {
 		assertNotNull(namespaces);
@@ -111,20 +111,20 @@ public class RelationshipBuilderTest
 		boolean eaChecked = false;
 		boolean blogChecked = false;
 
-		for (Link namespace : namespaces)
+		for (Namespace namespace : namespaces)
 		{
-			if ("ea".equals(namespace.getRel()))
+			if ("ea".equals(namespace.name()))
 			{
 				if (eaChecked) throw new IllegalStateException("Namespace 'ea' already checked.");
 				eaChecked = true;
-				assertEquals("http://namespaces.example.com/{rel}", namespace.getHref());
+				assertEquals("http://namespaces.example.com/{rel}", namespace.href());
 			}
 
-			if ("blog".equals(namespace.getRel()))
+			if ("blog".equals(namespace.name()))
 			{
 				if (blogChecked) throw new IllegalStateException("Namespace 'blog' already checked.");
 				blogChecked = true;
-				assertEquals("http://namespaces.example.com/{rel}", namespace.getHref());
+				assertEquals("http://namespaces.example.com/{rel}", namespace.href());
 			}
 		}
 

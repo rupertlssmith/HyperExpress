@@ -15,14 +15,15 @@
 */
 package com.strategicgains.hyperexpress.domain.hal;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Test;
 
 import com.strategicgains.hyperexpress.ResourceException;
+import com.strategicgains.hyperexpress.domain.Namespace;
 
 /**
  * @author toddf
@@ -34,62 +35,52 @@ public class HalResourceImplTest
 	public void shouldThrowOnMissingRel()
 	{
 		HalResource r = new HalResourceImpl();
-		r.withLink(new HalLinkBuilder("/something").build());
+		r.addLink(new HalLinkBuilder("/something").build());
 	}
 
 	@Test(expected=ResourceException.class)
 	public void shouldThrowOnNullLink()
 	{
 		HalResource r = new HalResourceImpl();
-		r.withLink(null);
+		r.addLink(null);
 	}
 
 	@Test(expected=ResourceException.class)
 	public void shouldThrowOnNullEmbed()
 	{
 		HalResource r = new HalResourceImpl();
-		r.withResource("something", null);
+		r.addResource("something", null);
 	}
 
 	@Test(expected=ResourceException.class)
 	public void shouldThrowOnNullEmbedRel()
 	{
 		HalResource r = new HalResourceImpl();
-		r.withResource(null, new HalResourceImpl());
+		r.addResource(null, new HalResourceImpl());
 	}
 
 	@Test(expected=ResourceException.class)
 	public void shouldThrowOnNullCurie()
 	{
 		HalResourceImpl r = new HalResourceImpl();
-		r.addCurie(null);
+		r.addNamespace(null);
 	}
 
 	@Test(expected=ResourceException.class)
 	public void shouldThrowOnNamelessCurie()
 	{
 		HalResourceImpl r = new HalResourceImpl();
-		r.addCurie(new HalLinkBuilder("/sample/{rel}").build());
+		r.addNamespace(new Namespace(null, "/sample/{rel}"));
 	}
 
 	@Test
 	public void shouldAddCurieRel()
 	{
 		HalResourceImpl r = new HalResourceImpl();
-		r.addCurie(new HalLinkBuilder("/sample/{rel}")
-			.name("some-name")
-			.rel("a-rel")
-			.templated(true)
-			.build());
-		r.addCurie(new HalLinkBuilder("/sample/{rel}")
-			.name("another-name")
-			.rel("another-rel")
-			.templated(true)
-			.build());
+		r.addNamespace(new Namespace("some-name", "/sample/{rel}"));
+		r.addNamespace(new Namespace("another-name", "/sample/{rel}"));
 
-		Map<String, Object> l = r.getLinks();
-		assertEquals(1, l.size());
-		List<HalLink> curies = (List<HalLink>) l.get("curies");
+		List<Namespace> curies = r.getNamespaces();
 		assertNotNull(curies);
 		assertEquals(2, curies.size());
 	}
@@ -98,14 +89,12 @@ public class HalResourceImplTest
 	public void shouldAddNamespace()
 	{
 		HalResource r = new HalResourceImpl();
-		r.withNamespace("ea:blah", "/sample/{rel}");
+		r.addNamespace("ea:blah", "/sample/{rel}");
 
-		Map<String, Object> l = r.getLinks();
-		assertEquals(1, l.size());
-		List<HalLink> curies = (List<HalLink>) l.get("curies");
+		List<Namespace> curies = r.getNamespaces();
 		assertNotNull(curies);
 		assertEquals(1, curies.size());
-		assertEquals("/sample/{rel}", curies.get(0).getHref());
-		assertEquals("ea:blah", curies.get(0).getName());
+		assertEquals("/sample/{rel}", curies.get(0).href());
+		assertEquals("ea:blah", curies.get(0).name());
 	}
 }

@@ -49,7 +49,7 @@ public class RelationshipBuilder
 	// Atom-specific
 	private static final String LENGTH = "length";
 
-	private Map<String, Link> namespaces = new LinkedHashMap<>();
+	private Map<String, Namespace> namespaces = new LinkedHashMap<>();
 	private Map<String, Map<String, Link>> relsByClass = new LinkedHashMap<>();
 	private Map<String, Link> links;
 	private Link link;
@@ -75,7 +75,7 @@ public class RelationshipBuilder
 	/**
 	 * Add a single Namespace to this relationship builder.
 	 * 
-	 * @param namespace a Namespace. Cannot be nul.
+	 * @param namespace a Namespace. Cannot be null.
 	 * @return
 	 */
 	public RelationshipBuilder addNamespace(Namespace namespace)
@@ -245,7 +245,7 @@ public class RelationshipBuilder
 		return getLinkTemplatesForName(componentType.getName() + ".Collection");
 	}
 
-	public Map<String, Link> getNamespaces()
+	public Map<String, Namespace> getNamespaces()
 	{
 		return Collections.unmodifiableMap(namespaces);
 	}

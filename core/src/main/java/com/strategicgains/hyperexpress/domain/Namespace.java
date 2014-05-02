@@ -20,28 +20,30 @@ package com.strategicgains.hyperexpress.domain;
  * @since Apr 8, 2014
  */
 public class Namespace
-extends LinkImpl
+implements Cloneable
 {
-	private static final String TEMPLATED = "templated";
+	private String name;
+	private String href;
 
 	public Namespace(String name, String href)
     {
-		super(name, href);
+		super();
+		this.name = name;
+		this.href = href;
     }
 
 	public String name()
 	{
-		return getRel();
+		return name;
 	}
 
 	public String href()
 	{
-		return getHref();
+		return href;
 	}
 
-	public Namespace setTemplated(boolean value)
+	public Namespace clone()
 	{
-		set(TEMPLATED, Boolean.toString(value));
-		return this;
+		return new Namespace(name, href);
 	}
 }

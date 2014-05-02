@@ -15,6 +15,8 @@
  */
 package com.strategicgains.hyperexpress.domain.hal;
 
+import java.util.regex.Pattern;
+
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.syntaxe.annotation.RegexValidation;
 import com.strategicgains.syntaxe.annotation.Required;
@@ -28,6 +30,18 @@ import com.strategicgains.syntaxe.annotation.Required;
  */
 public class HalLink
 {
+	public static final String TYPE = "type";
+	public static final String TITLE = "title";
+	public static final String TEMPLATED = "templated";
+	public static final String PROFILE = "profile";
+	public static final String NAME = "name";
+	public static final String HREFLANG = "hreflang";
+	public static final String HREF = "href";
+	public static final String DEPRECATION = "deprecation";
+
+	private static final String TEMPLATE_REGEX = "\\{(\\w*?)\\}";
+	private static final Pattern TEMPLATE_PATTERN = Pattern.compile(TEMPLATE_REGEX);
+
 	/**
 	 * The "href" property is REQUIRED.
 	 * 
@@ -135,17 +149,17 @@ public class HalLink
 		super();
 	}
 
-	public HalLink(Link definition)
+	public HalLink(Link link)
 	{
 		this();
-		this.setHref(definition.getHref());
-		this.setDeprecation(definition.get("deprecation"));
-		this.setHreflang(definition.get("hreflang"));
-		this.setName(definition.get("name"));
-		this.setProfile(definition.get("profile"));
-		this.setTemplated(definition.has("templated") ? Boolean.valueOf(definition.get("templated")) : null);
-		this.setTitle(definition.get("title"));
-		this.setType(definition.get("type"));
+		this.setHref(link.getHref());
+		this.setDeprecation(link.get(DEPRECATION));
+		this.setHreflang(link.get(HREFLANG));
+		this.setName(link.get(NAME));
+		this.setProfile(link.get(PROFILE));
+		this.setTemplated(link.has(TEMPLATED) ? Boolean.valueOf(link.get(TEMPLATED)) : null);
+		this.setTitle(link.get(TITLE));
+		this.setType(link.get(TYPE));
 	}
 
 	public String getHref()
@@ -153,9 +167,10 @@ public class HalLink
 		return href;
 	}
 
-	public void setHref(String href)
+	public HalLink setHref(String href)
 	{
 		this.href = href;
+		return this;
 	}
 
 	public String getName()
@@ -163,9 +178,10 @@ public class HalLink
 		return name;
 	}
 
-	public void setName(String name)
+	public HalLink setName(String name)
 	{
 		this.name = name;
+		return this;
 	}
 
 	public String getHreflang()
@@ -173,9 +189,10 @@ public class HalLink
 		return hreflang;
 	}
 
-	public void setHreflang(String hreflang)
+	public HalLink setHreflang(String hreflang)
 	{
 		this.hreflang = hreflang;
+		return this;
 	}
 
 	public String getTitle()
@@ -183,9 +200,10 @@ public class HalLink
 		return title;
 	}
 
-	public void setTitle(String title)
+	public HalLink setTitle(String title)
 	{
 		this.title = title;
+		return this;
 	}
 
 	public Boolean getTemplated()
@@ -193,9 +211,15 @@ public class HalLink
 		return templated;
 	}
 
-	public void setTemplated(Boolean templated)
+	public boolean hasTemplate()
+	{
+		return TEMPLATE_PATTERN.matcher(getHref()).matches();
+	}
+
+	public HalLink setTemplated(Boolean templated)
 	{
 		this.templated = templated;
+		return this;
 	}
 
 	public String getType()
@@ -203,9 +227,10 @@ public class HalLink
 		return type;
 	}
 
-	public void setType(String type)
+	public HalLink setType(String type)
 	{
 		this.type = type;
+		return this;
 	}
 
 	public String getDeprecation()
@@ -213,9 +238,10 @@ public class HalLink
 		return deprecation;
 	}
 
-	public void setDeprecation(String deprecation)
+	public HalLink setDeprecation(String deprecation)
 	{
 		this.deprecation = deprecation;
+		return this;
 	}
 
 	public String getProfile()
@@ -223,8 +249,9 @@ public class HalLink
 		return profile;
 	}
 
-	public void setProfile(String profile)
+	public HalLink setProfile(String profile)
 	{
 		this.profile = profile;
+		return this;
 	}
 }
