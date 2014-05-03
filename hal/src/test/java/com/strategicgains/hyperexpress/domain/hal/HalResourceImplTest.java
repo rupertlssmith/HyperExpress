@@ -22,8 +22,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.strategicgains.hyperexpress.ResourceException;
 import com.strategicgains.hyperexpress.domain.Namespace;
+import com.strategicgains.hyperexpress.exception.ResourceException;
 
 /**
  * @author toddf
@@ -34,49 +34,49 @@ public class HalResourceImplTest
 	@Test(expected=ResourceException.class)
 	public void shouldThrowOnMissingRel()
 	{
-		HalResource r = new HalResourceImpl();
+		HalResource r = new HalResource();
 		r.addLink(new HalLinkBuilder("/something").build());
 	}
 
 	@Test(expected=ResourceException.class)
 	public void shouldThrowOnNullLink()
 	{
-		HalResource r = new HalResourceImpl();
+		HalResource r = new HalResource();
 		r.addLink(null);
 	}
 
 	@Test(expected=ResourceException.class)
 	public void shouldThrowOnNullEmbed()
 	{
-		HalResource r = new HalResourceImpl();
+		HalResource r = new HalResource();
 		r.addResource("something", null);
 	}
 
 	@Test(expected=ResourceException.class)
 	public void shouldThrowOnNullEmbedRel()
 	{
-		HalResource r = new HalResourceImpl();
-		r.addResource(null, new HalResourceImpl());
+		HalResource r = new HalResource();
+		r.addResource(null, new HalResource());
 	}
 
 	@Test(expected=ResourceException.class)
 	public void shouldThrowOnNullCurie()
 	{
-		HalResourceImpl r = new HalResourceImpl();
+		HalResource r = new HalResource();
 		r.addNamespace(null);
 	}
 
 	@Test(expected=ResourceException.class)
 	public void shouldThrowOnNamelessCurie()
 	{
-		HalResourceImpl r = new HalResourceImpl();
+		HalResource r = new HalResource();
 		r.addNamespace(new Namespace(null, "/sample/{rel}"));
 	}
 
 	@Test
 	public void shouldAddCurieRel()
 	{
-		HalResourceImpl r = new HalResourceImpl();
+		HalResource r = new HalResource();
 		r.addNamespace(new Namespace("some-name", "/sample/{rel}"));
 		r.addNamespace(new Namespace("another-name", "/sample/{rel}"));
 
@@ -88,7 +88,7 @@ public class HalResourceImplTest
 	@Test
 	public void shouldAddNamespace()
 	{
-		HalResource r = new HalResourceImpl();
+		HalResource r = new HalResource();
 		r.addNamespace("ea:blah", "/sample/{rel}");
 
 		List<Namespace> curies = r.getNamespaces();

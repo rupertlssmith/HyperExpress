@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.strategicgains.hyperexpress.ResourceException;
+import com.strategicgains.hyperexpress.exception.ResourceException;
 
 /**
  * @author toddf

@@ -19,6 +19,12 @@ import com.strategicgains.hyperexpress.AbstractResourceFactoryStrategy;
 import com.strategicgains.hyperexpress.domain.Resource;
 
 /**
+ * HalResourceFactory is a ResourceFactoryStrategy implementation that creates
+ * HAL-style Resource implementations (e.g. HalResource).
+ * <p/>
+ * It can be used by itself or added to a ResourceFactory impelemenation, such as
+ * DefaultResourceFactory, with a given content type.
+ * 
  * @author toddf
  * @since Apr 11, 2014
  */
@@ -28,7 +34,7 @@ extends AbstractResourceFactoryStrategy
 	@Override
 	public Resource createResource(Object object)
 	{
-		Resource r = new HalResourceImpl();
+		Resource r = new HalResource();
 
 		if (object != null)
 		{

@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.strategicgains.hyperexpress.domain.Resource;
+import com.strategicgains.hyperexpress.exception.ResourceException;
 
 /**
  * A ResourceFactory implementation that has no functionality on its own, but must have ResourceFactoryStrategy

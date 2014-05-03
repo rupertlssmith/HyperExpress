@@ -12,40 +12,56 @@
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-*/
-package com.strategicgains.hyperexpress;
+ */
+package com.strategicgains.hyperexpress.exception;
 
 /**
  * @author toddf
- * @since Mar 17, 2014
+ * @since May 3, 2014
  */
-public class ResourceException
+public class NamespaceException
 extends RuntimeException
 {
-    private static final long serialVersionUID = -1729155706564587435L;
+    private static final long serialVersionUID = 5216546742077523451L;
+
+	public NamespaceException()
+	{
+	}
 
 	/**
 	 * @param message
 	 */
-	public ResourceException(String message)
+	public NamespaceException(String message)
 	{
 		super(message);
 	}
 
 	/**
-	 * @param throwable
+	 * @param cause
 	 */
-	public ResourceException(Throwable throwable)
+	public NamespaceException(Throwable cause)
 	{
-		super(throwable);
+		super(cause);
 	}
 
 	/**
 	 * @param message
-	 * @param throwable
+	 * @param cause
 	 */
-	public ResourceException(String message, Throwable throwable)
+	public NamespaceException(String message, Throwable cause)
 	{
-		super(message, throwable);
+		super(message, cause);
+	}
+
+	/**
+	 * @param message
+	 * @param cause
+	 * @param enableSuppression
+	 * @param writableStackTrace
+	 */
+	public NamespaceException(String message, Throwable cause,
+	    boolean enableSuppression, boolean writableStackTrace)
+	{
+		super(message, cause, enableSuppression, writableStackTrace);
 	}
 }

@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.strategicgains.hyperexpress.domain.Resource;
+import com.strategicgains.hyperexpress.exception.ResourceException;
 
 /**
  * @author toddf

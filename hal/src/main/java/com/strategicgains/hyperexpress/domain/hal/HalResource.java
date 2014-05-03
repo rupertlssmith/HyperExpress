@@ -1,5 +1,5 @@
 /*
-    Copyright 2014, Strategic Gains, Inc.
+    Copyright 2013, Strategic Gains, Inc.
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -12,16 +12,20 @@
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
- */
+*/
 package com.strategicgains.hyperexpress.domain.hal;
 
 import com.strategicgains.hyperexpress.domain.Resource;
+import com.strategicgains.hyperexpress.domain.ResourceImpl;
 
 /**
+ * A HAL Resource instance, containing links, CURIEs and embedded resources.
+ * 
  * @author toddf
- * @since Mar 18, 2014
+ * @since May 21, 2013
  */
-public interface HalResource
-extends Resource
+public class HalResource
+extends ResourceImpl
+implements Resource
 {
 }
