@@ -23,7 +23,6 @@ public class HalResourceFactoryTest
 		b.setName("Blog Name");
 		b.setOwnerId(ownerId);
 		Resource r = factory.createResource(b);
-		System.out.println(r.toString());
 		assertEquals("Blog Description", r.getProperty("description"));
 		assertEquals("Blog Name", r.getProperty("name"));
 		assertEquals(blogId, r.getProperty("id"));
@@ -48,7 +47,6 @@ public class HalResourceFactoryTest
 		b.setName("Blog Name");
 		b.setOwnerId(ownerId);
 		Resource r = factory.createResource(b);
-		System.out.println(r.toString());
 		assertEquals("Blog Description", r.getProperty("description"));
 		assertNull(r.getProperty("name"));
 		assertEquals(blogId, r.getProperty("id"));

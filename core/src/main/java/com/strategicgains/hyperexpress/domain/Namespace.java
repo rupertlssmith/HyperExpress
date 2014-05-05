@@ -15,7 +15,11 @@
 */
 package com.strategicgains.hyperexpress.domain;
 
+import com.strategicgains.hyperexpress.exception.ResourceException;
+
 /**
+ * An immutable object representing a namespace, containing a name and an href (a URL).
+ * 
  * @author toddf
  * @since Apr 8, 2014
  */
@@ -25,25 +29,90 @@ implements Cloneable
 	private String name;
 	private String href;
 
+	/**
+	 * Create a new namespace, providing a name and href.
+	 * 
+	 * @param name the name of the namespace.
+	 * @param href the URL for the namespace.
+	 */
 	public Namespace(String name, String href)
     {
 		super();
+
+		if (name == null) throw new ResourceException("Namespace name cannot be null");
+		if (href == null) throw new ResourceException("Namespace href cannot be null");
+
 		this.name = name;
 		this.href = href;
     }
 
+	/**
+	 * Retrieve the namespace name.
+	 * 
+	 * @return the namespace name.
+	 */
 	public String name()
 	{
 		return name;
 	}
 
+	/**
+	 * Retrieve the URL for the namespace.
+	 * 
+	 * @return the namespace href.
+	 */
 	public String href()
 	{
 		return href;
 	}
 
+	/**
+	 * Clone this namespace, creating new instance matching this one.
+	 * The resulting namespace will contain the same name and href.
+	 * 
+	 * @return a new namespace instance with matching name and href.
+	 */
 	public Namespace clone()
 	{
 		return new Namespace(name, href);
+	}
+
+	/**
+	 * Return whether another object is 'equal to' this Namespace.
+	 * 
+	 * @param that another object to check for equality.
+	 * @return true if the provided object is a Namespace and contains the same name and href. Otherwise, false.
+	 */
+	@Override
+	public boolean equals(Object that)
+	{
+		if (this == that) return true;
+		if (! (that instanceof Namespace)) return false;
+
+		return equals((Namespace) that);
+	}
+
+	/**
+	 * Return whether another Namespace instance contains the same name and href.
+	 * 
+	 * @param that a Namespace instance to check for equality.
+	 * @return true if the other namespace contains the same href and name. Otherwise, false.
+	 */
+	public boolean equals(Namespace that)
+	{
+		if (that == null) return false;
+
+		return (this.href.equals(that.href) && this.name.equals(that.name));
+	}
+
+	/**
+	 * Returns a hash code for this Namespace based on the name and href.
+	 * 
+	 * @return a hash code for this namespace.
+	 */
+	@Override
+	public int hashCode()
+	{
+		return 42 + name.hashCode() + href.hashCode();
 	}
 }

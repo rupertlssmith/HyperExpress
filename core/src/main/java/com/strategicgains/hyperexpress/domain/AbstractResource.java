@@ -25,10 +25,12 @@ import java.util.Map;
 import com.strategicgains.hyperexpress.exception.ResourceException;
 
 /**
+ * An abstract implementation of the Resource interface.
+ * 
  * @author toddf
  * @since Apr 7, 2014
  */
-public class ResourceImpl
+public abstract class AbstractResource
 implements Resource
 {
 	private List<Namespace> namespaces = new ArrayList<Namespace>();
@@ -57,11 +59,14 @@ implements Resource
 		return properties.get(key);
 	}
 
-	protected Object setProperty(String key, Object value)
+	@Override
+	public Resource setProperty(String key, Object value)
 	{
-		return properties.put(key, value);
+		properties.put(key, value);
+		return this;
 	}
 
+	@Override
 	public Resource addLink(String rel, String url)
 	{
 		return addLink(new LinkImpl(rel, url));
@@ -76,6 +81,8 @@ implements Resource
 	@Override
     public Resource addNamespace(Namespace namespace)
     {
+		if (namespace == null) throw new ResourceException("Cannot add null namespace to resource");
+
 		if (!namespaces.contains(namespace))
 		{
 			namespaces.add(namespace);
@@ -124,6 +131,8 @@ implements Resource
 	@Override
 	public Resource addLink(Link link)
 	{
+		if (link == null) throw new ResourceException("Cannot add null link to resource");
+
 		links.add(link);
 		return this;
 	}
@@ -150,6 +159,9 @@ implements Resource
 	@Override
 	public Resource addResource(String rel, Resource resource)
 	{
+		if (rel == null) throw new ResourceException("Cannot embed resource using null 'rel'");
+		if (resource == null) throw new ResourceException("Cannot embed null resource");
+
 		List<Resource> forRel = acquireResourcesForRel(rel);
 		forRel.add(resource);
 		return this;
@@ -169,13 +181,26 @@ implements Resource
 		return Collections.unmodifiableMap(resources);
 	}
 
-	@Override
+	/**
+	 * Get the embedded resources for a given relation type. The returned list is unmodifiable. Returns an
+	 * empty list if there are no embedded resources.
+	 * 
+	 * @param rel the name of the relation for which to retrieve embedded resources.
+	 * @return a list of embedded resources. Never null. 
+	 */
+    @Override
+    @SuppressWarnings("unchecked")
 	public List<Resource> getResources(String rel)
 	{
 		List<Resource> result = resources.get(rel);
 		return (result == null ? Collections.EMPTY_LIST : Collections.unmodifiableList(result));
 	}
 
+	/**
+	 * Returns whether this resource has embedded resources or not.
+	 * 
+	 * @return true if this resource has embedded resources. Otherwise, false.
+	 */
 	@Override
 	public boolean hasResources()
 	{

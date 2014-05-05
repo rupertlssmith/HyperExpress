@@ -31,8 +31,8 @@ import com.strategicgains.hyperexpress.exception.ResourceException;
  */
 public class HalResourceImplTest
 {
-	@Test(expected=ResourceException.class)
-	public void shouldThrowOnMissingRel()
+	@Test
+	public void shouldAllowMissingRel()
 	{
 		HalResource r = new HalResource();
 		r.addLink(new HalLinkBuilder("/something").build());

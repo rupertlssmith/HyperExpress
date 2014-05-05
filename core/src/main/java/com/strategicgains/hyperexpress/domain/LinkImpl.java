@@ -44,7 +44,8 @@ implements Link
 	public LinkImpl(LinkImpl that)
 	{
 		super();
-		this.attributes.putAll(that.attributes);
+		
+		if (that != null) this.attributes.putAll(that.attributes);
 	}
 
 	@Override
@@ -60,9 +61,10 @@ implements Link
 	}
 
 	@Override
-    public void setHref(String href)
+    public LinkImpl setHref(String href)
 	{
 		set(HREF, href);
+		return this;
 	}
 
 	@Override
@@ -72,13 +74,14 @@ implements Link
 	}
 
 	@Override
-    public void setRel(String rel)
+    public LinkImpl setRel(String rel)
 	{
 		set(REL_TYPE, rel);
+		return this;
 	}
 
 	@Override
-    public void set(String name, String value)
+    public LinkImpl set(String name, String value)
 	{
 		if (value == null)
 		{
@@ -88,6 +91,8 @@ implements Link
 		{
 			attributes.put(name, value);
 		}
+
+		return this;
 	}
 
 	@Override

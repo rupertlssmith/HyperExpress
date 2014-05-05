@@ -54,7 +54,7 @@ public class LinkResolver
 
 		if (templates.isEmpty()) return Collections.emptyList();
 
-		return resolveUrlParameters(templates, idResolver);
+		return resolveUrlTokens(templates, idResolver);
 	}
 
 	public List<Link> resolveCollectionOf(Class<?> componentType, TokenResolver idResolver)
@@ -63,7 +63,7 @@ public class LinkResolver
 
 		if (templates.isEmpty()) return Collections.emptyList();
 
-		return resolveUrlParameters(templates, idResolver);
+		return resolveUrlTokens(templates, idResolver);
 	}
 
 	public Collection<Namespace> getNamespaces()
@@ -71,7 +71,7 @@ public class LinkResolver
 		return relationshipBuilder.getNamespaces().values();
 	}
 
-	protected List<Link> resolveUrlParameters(Collection<Link> templates, TokenResolver idResolver)
+	protected List<Link> resolveUrlTokens(Collection<Link> templates, TokenResolver idResolver)
     {
 	    List<Link> links = new ArrayList<>(templates.size());
 		Map<String, String> ids = idResolver.asMap();

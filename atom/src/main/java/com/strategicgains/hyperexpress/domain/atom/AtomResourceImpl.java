@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.strategicgains.hyperexpress.domain.Resource;
-import com.strategicgains.hyperexpress.domain.ResourceImpl;
+import com.strategicgains.hyperexpress.domain.AbstractResource;
 
 
 
@@ -32,7 +32,7 @@ import com.strategicgains.hyperexpress.domain.ResourceImpl;
  * @since May 21, 2013
  */
 public class AtomResourceImpl
-extends ResourceImpl
+extends AbstractResource
 implements AtomResource
 {
 	private List<Object> items = new ArrayList<Object>();

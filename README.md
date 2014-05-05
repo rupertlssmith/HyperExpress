@@ -5,84 +5,31 @@
 HyperExpress
 ============
 
-Offers a simple way to add hypermedia links to your domain models or DTOs before serializing them to clients.
+Offers a simple way to add hypermedia links to your domain models or DTOs before serializing them to clients. 
+HyperExpress supports several ways to generate links in responses.  If you want to create Link instances
+or URLs (using token substitution in URLs patterns) by hand using the Builder pattern (Location header anyone?):
 
-The main hypermedia link class is *Link*, which supports 'rel', 'href' and 'type' properties, where:
+* **LinkBuilder** = Create Link instance using the builder pattern, optionally using URL token substitution.
+* **UrlBuilder** = Create a string URL from a URL pattern, substituting URL tokens to produce a fully-populated URL.
 
-* **rel** = the relationship from this object to the referred-to object. See ... for standard 'rel' types.
-* **href** = is the fully-qualified URL to the referred-to object.
-* **type** = the type of the referred-to object. Optional
-* **title** = is a human-readable title. Optional.
-* **hreflang** = describes the language of the resource pointed to by the href attribute.
-* **length** = a hint about the content length of the representation. Optional.
+Additionally, HyperExpress now supports the concept of a Resource, which is a generalized interface that
+creates a 'presentation model' where your links can be added, other resources can be embedded, etc. with
+output rendering being abstracted and dependent on the requested content type.
 
-There are two wrapper classes to assist in attaching *Link* instances to either your domain/DTO classes or to a collection:
+There are three concepts that play together to accomplish this:
 
-* **LinkableObject** - which accepts an Object instance (generic) in its constructor. You can attached an arbitrary number of links using the addLink() and setLinks() methods.
-* **LinkableCollection** - which accepts a Collection (also generic) implementor in its constructor.
-
-Both of these objects implement the *Linkable* interface.  The *Linkable* interface can be implemented in your own domain or DTO classes to facilitate linking in them if you don't want to use the wrapper classes, *LinkableObject* and *LinkableCollection*.
+* **RelationshipBuilder** = Use this to describe relationships between resources and namespaces.
+* **LinkResolver** = Given a RelationshipBuilder, this class provides links (from the RelationshipBuilder) relevant for a given resource type.
+* **TokenResolver** = For relationships (in the RelationshipBuilder) that have templated URLs, this class is able to populate the URL parameters, substituting actual values for the tokens (e.g. '{userId}').
 
 Additionally, there are a couple of helper classes to assist in creating URLs and Links en masse:
 
-* **MapStringFormat** - which will substitute names in a string with provided values (such as an URL).
-* **LinkUtils** - which will perform operations such as replacing create a *Collection* of *Link* instances from a list of IDs and an URL, using the substitution capabilities of *MapStringFormat*.  It will also format a single URL replacing parameters in the URL string.
-* **RelTypes** - contains constants for REST-related standard Iana.org link-relation types.
+* **MapStringFormat** = which will substitute names in a string with provided values (such as an URL).
+* **RelTypes** = contains constants for REST-related standard Iana.org link-relation types.
+
+The HyperExpress-Core project is primarily abstract implementations. The real functionality is in the sub-projects, such
+as HyperExpress-HAL, which has HAL-specific rendering of Resource implementations.
+
+Please see HyperExpress-HAL for usage information: https://github.com/RestExpress/HyperExpress/tree/master/hal
 
 Interested in other functionality?  Drop me a line... let's talk!
-
-Maven Usage
-===========
-Stable:
-```xml
-		<dependency>
-			<groupId>com.strategicgains</groupId>
-			<artifactId>HyperExpress</artifactId>
-			<version>1.0.4</version>
-		</dependency>
-```
-Or, for HAL...
-```xml
-		<dependency>
-			<groupId>com.strategicgains</groupId>
-			<artifactId>HyperExpress-HAL</artifactId>
-			<version>1.0.4</version>
-		</dependency>
-```
-Development:
-For Atom...
-```xml
-		<dependency>
-			<groupId>com.strategicgains</groupId>
-			<artifactId>HyperExpress-Atom</artifactId>
-			<version>1.0.5-SNAPSHOT</version>
-		</dependency>
-```
-Or, for HAL...
-```xml
-		<dependency>
-			<groupId>com.strategicgains</groupId>
-			<artifactId>HyperExpress-HAL</artifactId>
-			<version>1.0.5-SNAPSHOT</version>
-		</dependency>
-```
-Or download the jar directly from: 
-http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22HyperExpress%22
-
-Note that to use the SNAPSHOT version, you must enable snapshots and a repository in your pom file as follows:
-```xml
-  <profiles>
-    <profile>
-       <id>allow-snapshots</id>
-          <activation><activeByDefault>true</activeByDefault></activation>
-       <repositories>
-         <repository>
-           <id>snapshots-repo</id>
-           <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-           <releases><enabled>false</enabled></releases>
-           <snapshots><enabled>true</enabled></snapshots>
-         </repository>
-       </repositories>
-     </profile>
-  </profiles>
-```

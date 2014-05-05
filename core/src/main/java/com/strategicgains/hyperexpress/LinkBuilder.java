@@ -7,9 +7,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.LinkImpl;
 import com.strategicgains.hyperexpress.util.MapStringFormat;
 
+/**
+ * 
+ * @author toddf
+ * @since May 5, 2014
+ */
 public class LinkBuilder
 {
 	private static final MapStringFormat formatter = new MapStringFormat();
@@ -23,6 +29,11 @@ public class LinkBuilder
 	private Map<String, String> attributes = new HashMap<String, String>();
 	private Map<String, String> parameters = new HashMap<String, String>();
 
+	/**
+	 * A link builder requires, at the very least, a URL
+	 * 
+	 * @param urlPattern
+	 */
 	public LinkBuilder(String urlPattern)
 	{
 		super();
@@ -75,31 +86,31 @@ public class LinkBuilder
 	 * @return a LinkDefinition instance
 	 * @throws LinkBuilderException if the LinkBuilder is in a state to build an invalid LinkDefintion.
 	 */
-	public LinkImpl build()
+	public Link build()
 	{
-		LinkImpl definition = new LinkImpl(attributes.get(REL_TYPE), buildHref());
+		Link link = new LinkImpl(attributes.get(REL_TYPE), buildHref());
 
 		for (Entry<String, String> entry : attributes.entrySet())
 		{
 			if (!entry.getKey().equalsIgnoreCase(REL_TYPE))
 			{
-				definition.set(entry.getKey(), entry.getValue());
+				link.set(entry.getKey(), entry.getValue());
 			}
 		}
 
-		return definition;
+		return link;
 	}
 
-	public Collection<LinkImpl> build(String idParameterName, String... ids)
+	public Collection<Link> build(String idParameterName, String... ids)
 	{
 		return build(idParameterName, Arrays.asList(ids));
 	}
 
-	public Collection<LinkImpl> build(String idParameterName, Collection<String> ids)
+	public Collection<Link> build(String idParameterName, Collection<String> ids)
 	{
 		if (ids == null) return null;
 
-		Collection<LinkImpl> definitions = new ArrayList<LinkImpl>(ids.size());
+		Collection<Link> definitions = new ArrayList<Link>(ids.size());
 
 		for (String id : ids)
 		{

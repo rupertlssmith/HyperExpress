@@ -16,7 +16,7 @@
 package com.strategicgains.hyperexpress.domain.hal;
 
 import com.strategicgains.hyperexpress.domain.Resource;
-import com.strategicgains.hyperexpress.domain.ResourceImpl;
+import com.strategicgains.hyperexpress.domain.AbstractResource;
 
 /**
  * A HAL Resource instance, containing links, CURIEs and embedded resources.
@@ -25,7 +25,7 @@ import com.strategicgains.hyperexpress.domain.ResourceImpl;
  * @since May 21, 2013
  */
 public class HalResource
-extends ResourceImpl
+extends AbstractResource
 implements Resource
 {
 }
