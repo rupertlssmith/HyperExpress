@@ -133,14 +133,16 @@ implements Resource
 	{
 		if (link == null) throw new ResourceException("Cannot add null link to resource");
 
-		links.add(link);
+		this.links.add(link);
 		return this;
 	}
 
 	@Override
 	public Resource addLinks(Collection<Link> links)
 	{
-		links.addAll(links);
+		if (links == null) throw new ResourceException("Cannot add null links collection to resource");
+
+		this.links.addAll(links);
 		return this;
 	}
 
