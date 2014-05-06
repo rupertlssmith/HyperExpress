@@ -15,6 +15,9 @@
 */
 package com.strategicgains.hyperexpress;
 
+import java.util.List;
+
+import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.fluent.LinkResolver;
 import com.strategicgains.hyperexpress.fluent.RelationshipBuilder;
@@ -85,10 +88,9 @@ public class HyperExpress
 		return INSTANCE.relationshipBuilder;
 	}
 
-	public static HyperExpress bindToken(String token, String value)
+	public static TokenResolver bindToken(String token, String value)
 	{
-		INSTANCE._bindToken(token, value);
-		return null;
+		return INSTANCE._bindToken(token, value);
 	}
 
 //	public static HyperExpress bindToken(String token, UUID uuid)
@@ -102,7 +104,7 @@ public class HyperExpress
 //		return bindToken(token, Identifiers.UUID.format(identifier));
 //	}
 
-	public static HyperExpress bindToken(TokenBinderCallback<?> callback)
+	public static HyperExpress bindToken(TokenBinderCallback callback)
 	{
 		INSTANCE._addCallback(callback);
 		return null;
@@ -124,7 +126,8 @@ public class HyperExpress
     private Resource _createResource(Object object, String contentType)
     {
     	Resource r = resourceFactory.createResource(object, contentType);
-    	r.addLinks(linkResolver.resolve(object, _getTokenBindings()));
+    	List<Link> links = linkResolver.resolve(object, _getTokenBindings());
+    	r.addLinks(links);
     	r.addNamespaces(linkResolver.getNamespaces());
 	    return r;
     }
@@ -137,7 +140,7 @@ public class HyperExpress
     private Resource _createCollectionResource(Class<?> componentType, String contentType)
     {
     	Resource r = resourceFactory.createResource(null, contentType);
-    	r.addLinks(linkResolver.resolve(componentType, _getTokenBindings()));
+    	r.addLinks(linkResolver.resolveCollectionOf(componentType, _getTokenBindings()));
     	r.addNamespaces(linkResolver.getNamespaces());
 	    return r;
     }
@@ -152,10 +155,10 @@ public class HyperExpress
 			tokenResolver.set(tr);
 		}
 
-		return tr.with(token, value);
+		return tr.bindToken(token, value);
     }
 
-	private TokenResolver _addCallback(TokenBinderCallback<?> callback)
+	private TokenResolver _addCallback(TokenBinderCallback callback)
     {
 		TokenResolver tr = _getTokenBindings();
 

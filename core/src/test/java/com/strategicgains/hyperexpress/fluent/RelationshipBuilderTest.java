@@ -60,10 +60,10 @@ public class RelationshipBuilderTest
 
 		LinkResolver resolver = rb.createResolver();
 		TokenResolver ids = new TokenResolver()
-			.with("blogId", "1234")
-			.with("entryId", "5678")
-			.with("commentId", "0987")
-			.with("userId", "7654");
+			.bindToken("blogId", "1234")
+			.bindToken("entryId", "5678")
+			.bindToken("commentId", "0987")
+			.bindToken("userId", "7654");
 
 		verifyNamespacesExist(resolver.getNamespaces());
 
@@ -166,10 +166,10 @@ public class RelationshipBuilderTest
 
 		LinkResolver resolver = rb.createResolver();
 		TokenResolver ids = new TokenResolver()
-			.with("blogId", "1234")
-			.with("entryId", "5678")
-			.with("commentId", "0987")
-			.with("userId", "7654");
+			.bindToken("blogId", "1234")
+			.bindToken("entryId", "5678")
+			.bindToken("commentId", "0987")
+			.bindToken("userId", "7654");
 
 		List<Link> links = resolver.resolve(Blog.class, ids);
 		assertNotNull(links);

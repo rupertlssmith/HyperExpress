@@ -19,7 +19,7 @@ package com.strategicgains.hyperexpress.fluent;
  * @author toddf
  * @since May 5, 2014
  */
-public interface TokenBinderCallback<T>
+public interface TokenBinderCallback
 {
-	void bind(T object);
+	void bind(Object object);
 }

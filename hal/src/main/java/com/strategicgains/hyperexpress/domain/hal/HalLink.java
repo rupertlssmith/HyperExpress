@@ -149,17 +149,17 @@ public class HalLink
 		super();
 	}
 
-	public HalLink(Link link)
+	public HalLink(Link that)
 	{
 		this();
-		this.setHref(link.getHref());
-		this.setDeprecation(link.get(DEPRECATION));
-		this.setHreflang(link.get(HREFLANG));
-		this.setName(link.get(NAME));
-		this.setProfile(link.get(PROFILE));
-		this.setTemplated(link.has(TEMPLATED) ? Boolean.valueOf(link.get(TEMPLATED)) : null);
-		this.setTitle(link.get(TITLE));
-		this.setType(link.get(TYPE));
+		this.setHref(that.getHref());
+		this.setDeprecation(that.get(DEPRECATION));
+		this.setHreflang(that.get(HREFLANG));
+		this.setName(that.get(NAME));
+		this.setProfile(that.get(PROFILE));
+		this.setTemplated(that.has(TEMPLATED) ? Boolean.valueOf(that.get(TEMPLATED)) : null);
+		this.setTitle(that.get(TITLE));
+		this.setType(that.get(TYPE));
 	}
 
 	public String getHref()

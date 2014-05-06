@@ -81,7 +81,15 @@ public class LinkResolver
 			Link link = template.clone();
 			String href = FORMATTER.format(link.getHref(), ids);
 			link.setHref(href);
-			links.add(link);
+
+//			if (link.has("optional") && link.hasTemplate())
+//			{
+//				// ignore it.
+//			}
+//			else
+//			{
+				links.add(link);
+//			}
 		}
 
 		return links;

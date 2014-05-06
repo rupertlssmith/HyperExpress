@@ -30,6 +30,7 @@ import com.strategicgains.hyperexpress.domain.Namespace;
  */
 public class RelationshipBuilder
 {
+    private static final String OPTIONAL = "optional";
 	private static final String TITLE = "title";
 	private static final String TYPE = "type";
 	private static final String HREFLANG = "hreflang";
@@ -200,6 +201,17 @@ public class RelationshipBuilder
 	public RelationshipBuilder length(String value)
 	{
 		return attribute(LENGTH, value);
+	}
+
+	/**
+	 * Indicates that the link should not be included in a response if it would be marked 'templated'.
+	 * This is useful for links that are 'pagination' related, or otherwise conditional in the response.
+	 * 
+	 * @return
+	 */
+	public RelationshipBuilder optional()
+	{
+		return attribute(OPTIONAL, Boolean.TRUE.toString());
 	}
 
 	/**
