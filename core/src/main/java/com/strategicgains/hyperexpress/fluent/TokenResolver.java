@@ -15,8 +15,10 @@
 */
 package com.strategicgains.hyperexpress.fluent;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,11 +28,18 @@ import java.util.Map;
 public class TokenResolver
 {
 	private Map<String, String> parameters = new HashMap<>();
+	private List<TokenBinderCallback<?>> callbacks = new ArrayList<TokenBinderCallback<?>>();
 
 	public TokenResolver with(String name, String value)
     {
 		parameters.put(name, value);
 		return this;
+    }
+
+    public TokenResolver callback(TokenBinderCallback<?> callback)
+    {
+    	callbacks.add(callback);
+	    return this;
     }
 
 	/**
