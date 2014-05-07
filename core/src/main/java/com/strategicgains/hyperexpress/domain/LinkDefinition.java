@@ -26,7 +26,7 @@ import java.util.Map.Entry;
  * @author toddf
  * @since Oct 17, 2013
  */
-public class LinkImpl
+public class LinkDefinition
 implements Link
 {
 	private static final String REL_TYPE = "rel";
@@ -34,14 +34,14 @@ implements Link
 
 	private Map<String, String> attributes = new HashMap<String, String>();
 
-	public LinkImpl(String rel, String href)
+	public LinkDefinition(String rel, String href)
     {
 	    super();
 	    setRel(rel);
 	    setHref(href);
     }
 
-	public LinkImpl(LinkImpl that)
+	public LinkDefinition(LinkDefinition that)
 	{
 		super();
 		
@@ -49,9 +49,9 @@ implements Link
 	}
 
 	@Override
-    public LinkImpl clone()
+    public LinkDefinition clone()
     {
-		return new LinkImpl(this);
+		return new LinkDefinition(this);
     }
 
 	@Override
@@ -61,7 +61,7 @@ implements Link
 	}
 
 	@Override
-    public LinkImpl setHref(String href)
+    public LinkDefinition setHref(String href)
 	{
 		set(HREF, href);
 		return this;
@@ -74,14 +74,14 @@ implements Link
 	}
 
 	@Override
-    public LinkImpl setRel(String rel)
+    public LinkDefinition setRel(String rel)
 	{
 		set(REL_TYPE, rel);
 		return this;
 	}
 
 	@Override
-    public LinkImpl set(String name, String value)
+    public LinkDefinition set(String name, String value)
 	{
 		if (value == null)
 		{

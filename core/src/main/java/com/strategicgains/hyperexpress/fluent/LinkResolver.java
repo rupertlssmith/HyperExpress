@@ -33,9 +33,9 @@ public class LinkResolver
 {
 	private static final MapStringFormat FORMATTER = new MapStringFormat();
 
-	private RelationshipBuilder relationshipBuilder;
+	private RelationshipDefinition relationshipBuilder;
 
-	public LinkResolver(RelationshipBuilder builder)
+	public LinkResolver(RelationshipDefinition builder)
     {
 		super();
 		this.relationshipBuilder = builder;

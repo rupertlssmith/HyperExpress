@@ -21,14 +21,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.strategicgains.hyperexpress.domain.Link;
-import com.strategicgains.hyperexpress.domain.LinkImpl;
+import com.strategicgains.hyperexpress.domain.LinkDefinition;
 import com.strategicgains.hyperexpress.domain.Namespace;
 
 /**
  * @author toddf
  * @since Apr 8, 2014
  */
-public class RelationshipBuilder
+public class RelationshipDefinition
 {
     private static final String OPTIONAL = "optional";
 	private static final String TITLE = "title";
@@ -61,7 +61,7 @@ public class RelationshipBuilder
 	 * @param namespaces one or more Namespace instances.
 	 * @return
 	 */
-	public RelationshipBuilder addNamespaces(Namespace... namespaces)
+	public RelationshipDefinition addNamespaces(Namespace... namespaces)
 	{
 		if (namespaces == null) return this;
 
@@ -79,7 +79,7 @@ public class RelationshipBuilder
 	 * @param namespace a Namespace. Cannot be null.
 	 * @return
 	 */
-	public RelationshipBuilder addNamespace(Namespace namespace)
+	public RelationshipDefinition addNamespace(Namespace namespace)
 	{
 		if (namespace == null) return this;
 
@@ -92,21 +92,21 @@ public class RelationshipBuilder
 		return this;
 	}
 
-	public RelationshipBuilder forCollectionOf(Class<?> forClass)
+	public RelationshipDefinition forCollectionOf(Class<?> forClass)
 	{
 		if (forClass == null) return this;
 
 		return forClassName(forClass.getName() + ".Collection");
 	}
 
-	public RelationshipBuilder forClass(Class<?> forClass)
+	public RelationshipDefinition forClass(Class<?> forClass)
 	{
 		if (forClass == null) return this;
 
 		return forClassName(forClass.getName());
 	}
 
-	private RelationshipBuilder forClassName(String name)
+	private RelationshipDefinition forClassName(String name)
 	{
 		if (name == null) return this;
 
@@ -121,24 +121,24 @@ public class RelationshipBuilder
 		return this;
 	}
 
-	public RelationshipBuilder rel(String name, String href)
+	public RelationshipDefinition rel(String name, String href)
 	{
-		link = new LinkImpl(name, href);
+		link = new LinkDefinition(name, href);
 		links.put(name, link);
 		return this;
 	}
 
-	public RelationshipBuilder title(String title)
+	public RelationshipDefinition title(String title)
 	{
 		return attribute(TITLE, title);
 	}
 
-	public RelationshipBuilder hreflang(String value)
+	public RelationshipDefinition hreflang(String value)
 	{
 		return attribute(HREFLANG, value);
 	}
 
-	public RelationshipBuilder type(String type)
+	public RelationshipDefinition type(String type)
     {
     	return attribute(TYPE, type);
     }
@@ -149,7 +149,7 @@ public class RelationshipBuilder
 	 * @param name
 	 * @return
 	 */
-	public RelationshipBuilder name(String name)
+	public RelationshipDefinition name(String name)
 	{
 		return attribute(NAME, name);
 	}
@@ -160,7 +160,7 @@ public class RelationshipBuilder
 	 * @param value
 	 * @return
 	 */
-	public RelationshipBuilder templated(boolean value)
+	public RelationshipDefinition templated(boolean value)
 	{
 		if (value)
 		{
@@ -176,7 +176,7 @@ public class RelationshipBuilder
 	 * @param value
 	 * @return
 	 */
-	public RelationshipBuilder deprecation(String value)
+	public RelationshipDefinition deprecation(String value)
 	{
 		return attribute(DEPRECATION, value);
 	}
@@ -187,7 +187,7 @@ public class RelationshipBuilder
 	 * @param value
 	 * @return
 	 */
-	public RelationshipBuilder profile(String value)
+	public RelationshipDefinition profile(String value)
 	{
 		return attribute(PROFILE, value);
 	}
@@ -198,7 +198,7 @@ public class RelationshipBuilder
 	 * @param value
 	 * @return
 	 */
-	public RelationshipBuilder length(String value)
+	public RelationshipDefinition length(String value)
 	{
 		return attribute(LENGTH, value);
 	}
@@ -209,7 +209,7 @@ public class RelationshipBuilder
 	 * 
 	 * @return
 	 */
-	public RelationshipBuilder optional()
+	public RelationshipDefinition optional()
 	{
 		return attribute(OPTIONAL, Boolean.TRUE.toString());
 	}
@@ -225,7 +225,7 @@ public class RelationshipBuilder
 	 * @param value
 	 * @return
 	 */
-	public RelationshipBuilder attribute(String name, String value)
+	public RelationshipDefinition attribute(String name, String value)
     {
 		if (link == null) throw new RelationshipException("Attempt to set attribute on null link: " + name + ". Call 'rel()' first.");
 
@@ -262,7 +262,8 @@ public class RelationshipBuilder
 		return Collections.unmodifiableMap(namespaces);
 	}
 
-	private Map<String, Link> getLinkTemplatesForName(String className)
+	@SuppressWarnings("unchecked")
+    private Map<String, Link> getLinkTemplatesForName(String className)
 	{
 		Map<String, Link> templates = relsByClass.get(className);
 		

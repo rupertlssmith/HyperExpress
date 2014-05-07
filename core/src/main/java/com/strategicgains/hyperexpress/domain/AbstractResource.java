@@ -69,7 +69,7 @@ implements Resource
 	@Override
 	public Resource addLink(String rel, String url)
 	{
-		return addLink(new LinkImpl(rel, url));
+		return addLink(new LinkDefinition(rel, url));
 	}
 
 	@Override

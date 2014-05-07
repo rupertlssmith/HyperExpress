@@ -13,7 +13,7 @@ public class UrlBuilderTest
 	public void shouldBuildSimpleUrl()
 	{
 		assertEquals("/todd:was,here", new UrlBuilder(URL_PATTERN)
-			.param("id", "todd:was,here")
+			.bindToken("id", "todd:was,here")
 			.build());
 	}
 
@@ -21,9 +21,9 @@ public class UrlBuilderTest
 	public void shouldBuildComplexUrl()
 	{
 		assertEquals("/something/else/12345", new UrlBuilder(URL_PATTERN2)
-			.param("rootId", "something")
-			.param("secondaryId", "else")
-			.param("id", "12345")
+			.bindToken("rootId", "something")
+			.bindToken("secondaryId", "else")
+			.bindToken("id", "12345")
 			.build());	
 	}
 
@@ -32,19 +32,19 @@ public class UrlBuilderTest
 	{
 		UrlBuilder b = new UrlBuilder(URL_PATTERN2);
 		assertEquals("/something/else/12345", b
-			.param("rootId", "something")
-			.param("secondaryId", "else")
-			.param("id", "12345")
+			.bindToken("rootId", "something")
+			.bindToken("secondaryId", "else")
+			.bindToken("id", "12345")
 			.build());	
 
 		assertEquals("/anything/maybe/54321", b
-			.param("rootId", "anything")
-			.param("secondaryId", "maybe")
-			.param("id", "54321")
+			.bindToken("rootId", "anything")
+			.bindToken("secondaryId", "maybe")
+			.bindToken("id", "54321")
 			.build());	
 
 		assertEquals("/anything/wonderful/54321", b
-			.param("secondaryId", "wonderful")
+			.bindToken("secondaryId", "wonderful")
 			.build());	
 	}
 }

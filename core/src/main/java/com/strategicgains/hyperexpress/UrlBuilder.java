@@ -29,7 +29,7 @@ public class UrlBuilder
 	private static final MapStringFormat FORMATTER = new MapStringFormat();
 
 	private String urlPattern;
-	private Map<String, String> parameters = new HashMap<String, String>();
+	private Map<String, String> bindings = new HashMap<String, String>();
 
 	public UrlBuilder(String urlPattern)
 	{
@@ -37,15 +37,15 @@ public class UrlBuilder
 		this.urlPattern = urlPattern;
 	}
 
-	public UrlBuilder param(String name, String value)
+	public UrlBuilder bindToken(String name, String value)
 	{
 		if (value == null)
 		{
-			parameters.remove(name);
+			bindings.remove(name);
 		}
 		else
 		{
-			parameters.put(name, value);
+			bindings.put(name, value);
 		}
 
 		return this;
@@ -53,6 +53,6 @@ public class UrlBuilder
 
 	public String build()
 	{
-		return FORMATTER.format(urlPattern, parameters);
+		return FORMATTER.format(urlPattern, bindings);
 	}
 }

@@ -20,8 +20,8 @@ import java.util.List;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.fluent.LinkResolver;
-import com.strategicgains.hyperexpress.fluent.RelationshipBuilder;
-import com.strategicgains.hyperexpress.fluent.TokenBinderCallback;
+import com.strategicgains.hyperexpress.fluent.RelationshipDefinition;
+import com.strategicgains.hyperexpress.fluent.TokenBinder;
 import com.strategicgains.hyperexpress.fluent.TokenResolver;
 
 /**
@@ -35,7 +35,7 @@ public class HyperExpress
 	private static final HyperExpress INSTANCE = new HyperExpress();
 
 	private DefaultResourceFactory resourceFactory;
-	private RelationshipBuilder relationshipBuilder;
+	private RelationshipDefinition relationshipBuilder;
 	private LinkResolver linkResolver;
 	private ThreadLocal<TokenResolver> tokenResolver;
 
@@ -45,7 +45,7 @@ public class HyperExpress
 	private HyperExpress()
 	{
 		resourceFactory = new DefaultResourceFactory();
-		relationshipBuilder = new RelationshipBuilder();
+		relationshipBuilder = new RelationshipDefinition();
 		linkResolver = relationshipBuilder.createResolver();
 		tokenResolver = new ThreadLocal<TokenResolver>();
 	}
@@ -57,16 +57,6 @@ public class HyperExpress
     {
     	INSTANCE._registerResourceFactory(factoryStrategy, contentType);
     }
-
-	/**
-	 * @param factoryStrategy
-	 * @param contentType
-	 */
-    private void _registerResourceFactory(ResourceFactoryStrategy factoryStrategy, String contentType)
-    {
-    	resourceFactory.addStrategy(factoryStrategy, contentType);
-    }
-
 
 	public static Resource createResource(Object object, String contentType)
 	{
@@ -81,9 +71,9 @@ public class HyperExpress
 	/**
 	 * The HyperExpress to define relationships between resource types and namespaces.
 	 * 
-	 * @return the RelationshipBuilder contained in this singleton.
+	 * @return the RelationshipDefinition contained in this singleton.
 	 */
-	public static RelationshipBuilder defineRelationships()
+	public static RelationshipDefinition defineRelationships()
 	{
 		return INSTANCE.relationshipBuilder;
 	}
@@ -104,10 +94,13 @@ public class HyperExpress
 //		return bindToken(token, Identifiers.UUID.format(identifier));
 //	}
 
-	public static HyperExpress bindToken(TokenBinderCallback callback)
+	public static void bindTokensFor(Object object)
 	{
-		INSTANCE._addCallback(callback);
-		return null;
+		INSTANCE._bindTokensFor(object);
+	}
+	public static void collectionTokenBinder(TokenBinder callback)
+	{
+		INSTANCE._addTokenBinder(callback);
 	}
 
 	public static void clearTokenBindings()
@@ -119,6 +112,15 @@ public class HyperExpress
 	// SECTION: PRIVATE INSTANCE METHODS
 
 	/**
+	 * @param factoryStrategy
+	 * @param contentType
+	 */
+    private void _registerResourceFactory(ResourceFactoryStrategy factoryStrategy, String contentType)
+    {
+    	resourceFactory.addStrategy(factoryStrategy, contentType);
+    }
+
+	/**
 	 * @param object
 	 * @param contentType
 	 * @return
@@ -126,7 +128,7 @@ public class HyperExpress
     private Resource _createResource(Object object, String contentType)
     {
     	Resource r = resourceFactory.createResource(object, contentType);
-    	List<Link> links = linkResolver.resolve(object, _getTokenBindings());
+    	List<Link> links = linkResolver.resolve(object, _getTokenResolver());
     	r.addLinks(links);
     	r.addNamespaces(linkResolver.getNamespaces());
 	    return r;
@@ -140,14 +142,14 @@ public class HyperExpress
     private Resource _createCollectionResource(Class<?> componentType, String contentType)
     {
     	Resource r = resourceFactory.createResource(null, contentType);
-    	r.addLinks(linkResolver.resolveCollectionOf(componentType, _getTokenBindings()));
+    	r.addLinks(linkResolver.resolveCollectionOf(componentType, _getTokenResolver()));
     	r.addNamespaces(linkResolver.getNamespaces());
 	    return r;
     }
 
 	private TokenResolver _bindToken(String token, String value)
     {
-		TokenResolver tr = _getTokenBindings();
+		TokenResolver tr = _getTokenResolver();
 
 		if (tr == null)
 		{
@@ -158,9 +160,9 @@ public class HyperExpress
 		return tr.bindToken(token, value);
     }
 
-	private TokenResolver _addCallback(TokenBinderCallback callback)
+	private TokenResolver _addTokenBinder(TokenBinder callback)
     {
-		TokenResolver tr = _getTokenBindings();
+		TokenResolver tr = _getTokenResolver();
 
 		if (tr == null)
 		{
@@ -173,7 +175,7 @@ public class HyperExpress
 
 	private void _clearTokenBindings()
 	{
-		TokenResolver tr = _getTokenBindings();
+		TokenResolver tr = _getTokenResolver();
 
 		if (tr != null)
 		{
@@ -182,8 +184,18 @@ public class HyperExpress
 		}
 	}
 
-	private TokenResolver _getTokenBindings()
+	private TokenResolver _getTokenResolver()
 	{
 		return tokenResolver.get();
+	}
+
+	private void _bindTokensFor(Object object)
+	{
+		TokenResolver tr = _getTokenResolver();
+
+		if (tr != null)
+		{
+			tr.callTokenBinders(object);
+		}
 	}
 }

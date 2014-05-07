@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.strategicgains.hyperexpress.domain.Link;
-import com.strategicgains.hyperexpress.domain.LinkImpl;
+import com.strategicgains.hyperexpress.domain.LinkDefinition;
 import com.strategicgains.hyperexpress.util.MapStringFormat;
 
 /**
@@ -88,7 +88,7 @@ public class LinkBuilder
 	 */
 	public Link build()
 	{
-		Link link = new LinkImpl(attributes.get(REL_TYPE), buildHref());
+		Link link = new LinkDefinition(attributes.get(REL_TYPE), buildHref());
 
 		for (Entry<String, String> entry : attributes.entrySet())
 		{

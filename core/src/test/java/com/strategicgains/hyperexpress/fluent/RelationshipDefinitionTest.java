@@ -16,13 +16,13 @@ import com.strategicgains.hyperexpress.domain.Entry;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Namespace;
 
-public class RelationshipBuilderTest
+public class RelationshipDefinitionTest
 {
 	@Test
 	public void testWithNamespaces()
 	throws Exception
 	{
-		RelationshipBuilder rb = new RelationshipBuilder()
+		RelationshipDefinition rdef = new RelationshipDefinition()
 			.addNamespaces(
 				new Namespace("ea", "http://namespaces.example.com/{rel}"),
 				new Namespace("blog", "http://namespaces.example.com/{rel}")
@@ -58,7 +58,7 @@ public class RelationshipBuilderTest
 				.rel("ea:author", "/pi/users/{userId}")
 					.title("The comment author");
 
-		LinkResolver resolver = rb.createResolver();
+		LinkResolver resolver = rdef.createResolver();
 		TokenResolver ids = new TokenResolver()
 			.bindToken("blogId", "1234")
 			.bindToken("entryId", "5678")
@@ -135,7 +135,7 @@ public class RelationshipBuilderTest
 	@Test
 	public void testWithoutNamespaces()
 	{
-		RelationshipBuilder rb = new RelationshipBuilder()
+		RelationshipDefinition rdef = new RelationshipDefinition()
 			.forCollectionOf(Blog.class)
 				.rel(SELF, "/blogs")
 	
@@ -164,7 +164,7 @@ public class RelationshipBuilderTest
 					.title("The parent blog entry")
 				.rel("ea:author", "/pi/users/{userId}");
 
-		LinkResolver resolver = rb.createResolver();
+		LinkResolver resolver = rdef.createResolver();
 		TokenResolver ids = new TokenResolver()
 			.bindToken("blogId", "1234")
 			.bindToken("entryId", "5678")

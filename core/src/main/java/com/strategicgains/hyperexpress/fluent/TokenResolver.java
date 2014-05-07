@@ -28,7 +28,7 @@ import java.util.Map;
 public class TokenResolver
 {
 	private Map<String, String> parameters = new HashMap<>();
-	private List<TokenBinderCallback> callbacks = new ArrayList<TokenBinderCallback>();
+	private List<TokenBinder> callbacks = new ArrayList<TokenBinder>();
 
 	public TokenResolver bindToken(String name, String value)
     {
@@ -36,7 +36,7 @@ public class TokenResolver
 		return this;
     }
 
-    public TokenResolver callback(TokenBinderCallback callback)
+    public TokenResolver callback(TokenBinder callback)
     {
     	callbacks.add(callback);
 	    return this;
@@ -55,9 +55,9 @@ public class TokenResolver
 		return parameters.get(name);
 	}
 
-	public void extractFrom(Object object)
+	public void callTokenBinders(Object object)
 	{
-		for (TokenBinderCallback callback : callbacks)
+		for (TokenBinder callback : callbacks)
 		{
 			callback.bind(object);
 		}
