@@ -119,7 +119,7 @@ extends JsonSerializer<HalResource>
 	private void writeCuries(List<Namespace> namespaces, boolean isEmbedded, JsonGenerator jgen)
 	throws IOException, JsonGenerationException, JsonProcessingException
 	{
-		if (isEmbedded) return;
+		if (isEmbedded || namespaces.isEmpty()) return;
 
 		if (namespaces.size() == 1) // Write single namespace
 		{
