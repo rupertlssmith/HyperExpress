@@ -49,4 +49,43 @@ public class UrlBuilderTest
 			.bindToken("secondaryId", "wonderful")
 			.build());	
 	}
+
+	@Test
+	public void shouldExcludeQueryString()
+	{
+		assertEquals("/something/else/12345", new UrlBuilder(URL_PATTERN2)
+			.addQuery("limit={selfLimit}")
+			.addQuery("offset={selfOffset}")
+			.bindToken("rootId", "something")
+			.bindToken("secondaryId", "else")
+			.bindToken("id", "12345")
+			.build());	
+	}
+
+	@Test
+	public void shouldIncludeEntireQueryString()
+	{
+		assertEquals("/something/else/12345?limit=20&offset=40", new UrlBuilder(URL_PATTERN2)
+			.addQuery("limit={selfLimit}")
+			.addQuery("offset={selfOffset}")
+			.bindToken("rootId", "something")
+			.bindToken("secondaryId", "else")
+			.bindToken("id", "12345")
+			.bindToken("selfLimit", "20")
+			.bindToken("selfOffset", "40")
+			.build());	
+	}
+
+	@Test
+	public void shouldIncludeQueryString()
+	{
+		assertEquals("/something/else/12345?offset=40", new UrlBuilder(URL_PATTERN2)
+			.addQuery("limit={selfLimit}")
+			.addQuery("offset={selfOffset}")
+			.bindToken("rootId", "something")
+			.bindToken("secondaryId", "else")
+			.bindToken("id", "12345")
+			.bindToken("selfOffset", "40")
+			.build());	
+	}
 }
