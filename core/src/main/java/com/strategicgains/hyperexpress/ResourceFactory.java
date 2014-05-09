@@ -31,5 +31,5 @@ public interface ResourceFactory
 	 * @param contentType the content-type to use in determining which resource type to construct.
 	 * @return a Resource instance.
 	 */
-	public Resource createResource(Object object, String contentType);
+	Resource createResource(Object object, String contentType);
 }

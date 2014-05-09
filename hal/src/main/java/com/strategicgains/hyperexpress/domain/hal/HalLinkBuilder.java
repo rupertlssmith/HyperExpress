@@ -18,6 +18,8 @@ package com.strategicgains.hyperexpress.domain.hal;
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
 
 /**
+ * A convenience class for building HalLink implmenentations.
+ * 
  * @author toddf
  * @since Jan 10, 2014
  */

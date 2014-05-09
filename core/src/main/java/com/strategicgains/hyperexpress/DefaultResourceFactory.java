@@ -37,7 +37,7 @@ import com.strategicgains.hyperexpress.exception.ResourceException;
 public class DefaultResourceFactory
 implements ResourceFactory
 {
-	private Map<String, ResourceFactoryStrategy> strategies = new HashMap<String, ResourceFactoryStrategy>();
+	private Map<String, ResourceFactoryStrategy> factoryStrategies = new HashMap<String, ResourceFactoryStrategy>();
 
 	/**
 	 * Create a Resource using data from the given object for the requested content type.
@@ -48,7 +48,7 @@ implements ResourceFactory
 	@Override
 	public Resource createResource(Object object, String contentType)
 	{
-		ResourceFactoryStrategy strategy = strategies.get(contentType);
+		ResourceFactoryStrategy strategy = factoryStrategies.get(contentType);
 		
 		if (strategy == null)
 		{
@@ -64,15 +64,16 @@ implements ResourceFactory
 	 * @param strategy the ResourceFactoryStrategy to use when creating new instances.
 	 * @param contentType the content type the strategy should be invoked for.
 	 * @return this DefaultResourceFactory to facilitate method chaining.
+	 * @throws ResourceException if a strategy for a duplicate content type is added.
 	 */
-	public DefaultResourceFactory addStrategy(ResourceFactoryStrategy strategy, String contentType)
+	public DefaultResourceFactory addFactoryStrategy(ResourceFactoryStrategy strategy, String contentType)
 	{
-		if (strategies.containsKey(contentType))
+		if (factoryStrategies.containsKey(contentType))
 		{
 			throw new ResourceException("Duplicate content type: " + contentType);
 		}
 
-		strategies.put(contentType, strategy);
+		factoryStrategies.put(contentType, strategy);
 		return this;
 	}
 }

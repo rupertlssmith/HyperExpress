@@ -6,13 +6,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.junit.Test;
 
-import com.strategicgains.hyperexpress.builder.LinkResolver;
-import com.strategicgains.hyperexpress.builder.RelationshipDefinition;
-import com.strategicgains.hyperexpress.builder.TokenResolver;
 import com.strategicgains.hyperexpress.domain.Blog;
 import com.strategicgains.hyperexpress.domain.Comment;
 import com.strategicgains.hyperexpress.domain.Entry;
@@ -61,48 +57,26 @@ public class RelationshipDefinitionTest
 				.rel("ea:author", "/pi/users/{userId}")
 					.title("The comment author");
 
-		LinkResolver resolver = rdef.createResolver();
-		TokenResolver ids = new TokenResolver()
-			.bindToken("blogId", "1234")
-			.bindToken("entryId", "5678")
-			.bindToken("commentId", "0987")
-			.bindToken("userId", "7654");
+		verifyNamespacesExist(rdef.getNamespaces().values());
 
-		verifyNamespacesExist(resolver.getNamespaces());
-
-		List<Link> links = resolver.resolve(Blog.class, ids);
+		Collection<Link> links = rdef.getLinkTemplates(Blog.class).values();
 		assertNotNull(links);
 		assertEquals(3, links.size());
 
-		links = resolver.resolve(new Blog[0], ids);
+		links = rdef.getCollectionLinkTemplates(Blog.class).values();
 		assertNotNull(links);
 		assertEquals(1, links.size());
-		assertEquals(SELF, links.get(0).getRel());
-		assertEquals("/blogs", links.get(0).getHref());
+		Link link = links.iterator().next();
+		assertEquals(SELF, link.getRel());
+		assertEquals("/blogs", link.getHref());
 
-//		List<Blog> c = new ArrayList<Blog>();
-//		c.add(new Blog());
-//		links = resolver.resolve(c);
-//		assertNotNull(links);
-//		assertEquals(1, links.size());
-//		assertEquals(SELF, links.get(0).getRel());
-//		assertEquals("/blogs", links.get(0).getHref());
-
-		links = resolver.resolve(Entry.class, ids);
+		links = rdef.getLinkTemplates(Entry.class).values();
 		assertNotNull(links);
 		assertEquals(3, links.size());
 
-//		links = resolver.resolve(new ArrayList<Entry>());
-//		assertNotNull(links);
-//		assertEquals(2, links.size());
-
-		links = resolver.resolve(Comment.class, ids);
+		links = rdef.getLinkTemplates(Comment.class).values();
 		assertNotNull(links);
 		assertEquals(3, links.size());
-
-//		links = resolver.resolve(new ArrayList<Comment>());
-//		assertNotNull(links);
-//		assertEquals(3, links.size());
 	}
 
 	private void verifyNamespacesExist(Collection<Namespace> namespaces)
@@ -167,22 +141,15 @@ public class RelationshipDefinitionTest
 					.title("The parent blog entry")
 				.rel("ea:author", "/pi/users/{userId}");
 
-		LinkResolver resolver = rdef.createResolver();
-		TokenResolver ids = new TokenResolver()
-			.bindToken("blogId", "1234")
-			.bindToken("entryId", "5678")
-			.bindToken("commentId", "0987")
-			.bindToken("userId", "7654");
-
-		List<Link> links = resolver.resolve(Blog.class, ids);
+		Collection<Link> links = rdef.getLinkTemplates(Blog.class).values();
 		assertNotNull(links);
 		assertEquals(3, links.size());
 
-		links = resolver.resolve(Entry.class, ids);
+		links = rdef.getLinkTemplates(Entry.class).values();
 		assertNotNull(links);
 		assertEquals(3, links.size());
 
-		links = resolver.resolve(Comment.class, ids);
+		links = rdef.getLinkTemplates(Comment.class).values();
 		assertNotNull(links);
 		assertEquals(3, links.size());
 	}

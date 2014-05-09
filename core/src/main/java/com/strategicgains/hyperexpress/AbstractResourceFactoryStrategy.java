@@ -34,8 +34,8 @@ implements ResourceFactoryStrategy
 {
 	public static final int IGNORED_FIELD_MODIFIERS = Modifier.FINAL | Modifier.STATIC | Modifier.TRANSIENT | Modifier.VOLATILE;
 
-	private Set<Class<? extends Annotation>> includedAnnotations;
-	private Set<Class<? extends Annotation>> excludedAnnotations;
+	private Set<Class<? extends Annotation>> inclusionAnnotations;
+	private Set<Class<? extends Annotation>> exclusionAnnotations;
 
 	/**
 	 * Instead of requiring its own property/field annotations, this strategy supports the
@@ -53,12 +53,12 @@ implements ResourceFactoryStrategy
     {
 		if (annotations == null) return this;
 
-		if (includedAnnotations == null)
+		if (inclusionAnnotations == null)
 		{
-			includedAnnotations = new HashSet<>();
+			inclusionAnnotations = new HashSet<>();
 		}
 
-		includedAnnotations.addAll(Arrays.asList(annotations));
+		inclusionAnnotations.addAll(Arrays.asList(annotations));
 	    return this;
     }
 
@@ -77,12 +77,12 @@ implements ResourceFactoryStrategy
     {
 		if (annotations == null) return this;
 
-		if (excludedAnnotations == null)
+		if (exclusionAnnotations == null)
 		{
-			excludedAnnotations = new HashSet<>();
+			exclusionAnnotations = new HashSet<>();
 		}
 
-		excludedAnnotations.addAll(Arrays.asList(annotations));
+		exclusionAnnotations.addAll(Arrays.asList(annotations));
 	    return this;
     }
 
@@ -144,7 +144,7 @@ implements ResourceFactoryStrategy
 	 */
 	private boolean isIncluded(Field f)
     {
-		if ((includedAnnotations == null && excludedAnnotations == null)
+		if ((inclusionAnnotations == null && exclusionAnnotations == null)
 			|| f.getAnnotations().length == 0)
 		{
 			return ((f.getModifiers() & IGNORED_FIELD_MODIFIERS) == 0);
@@ -154,12 +154,12 @@ implements ResourceFactoryStrategy
 		{
 			Class<? extends Annotation> type = annotation.annotationType();
 
-			if (includedAnnotations != null && includedAnnotations.contains(type))
+			if (inclusionAnnotations != null && inclusionAnnotations.contains(type))
 			{
 				return true;
 			}
 
-			if (excludedAnnotations != null && excludedAnnotations.contains(type))
+			if (exclusionAnnotations != null && exclusionAnnotations.contains(type))
 			{
 				return false;
 			}

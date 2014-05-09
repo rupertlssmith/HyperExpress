@@ -39,12 +39,22 @@ public class UrlBuilder
 	private Map<String, String> tokenBindings = new HashMap<String, String>();
 
 	/**
+	 * Create an empty UrlBuilder, with no URL pattern. Using this constructor mandates
+	 * that you MUST use the build(String) form of build instead of the parameterless,
+	 * build(), as the latter will throw IllegalStateException in this state.
+	 */
+	public UrlBuilder()
+	{
+		super();
+	}
+
+	/**
 	 * Create a new UrlBuilder, passing in the URL pattern in which to
 	 * substitute tokens. This URL pattern may represent the entire URL
 	 * or just the path portion (relative path).
 	 * <p/>
 	 * The URL pattern is templated, in that it contains tokens to be
-	 * later substitued for actual values. The tokens are delimited with
+	 * later substituted for actual values. The tokens are delimited with
 	 * beginning and trailing curly-braces (e.g. '{token}').
 	 * <p/>
 	 * If used in conjunction with baseUrl(), this URL pattern must be
@@ -104,6 +114,14 @@ public class UrlBuilder
 	}
 
 	/**
+	 * Remove all the token bindings.
+	 */
+	public void clearTokenBindings()
+	{
+		tokenBindings.clear();
+	}
+
+	/**
 	 * 'Unbind' a substitution value from a token name.
 	 * 
 	 * @param tokenName the name of a previously-bound token name.
@@ -119,6 +137,7 @@ public class UrlBuilder
 	 * URL template parameters in the output string.
 	 * 
 	 * @return a URL string utilizing the current token bindings.
+	 * @throws IllegalStateException if not URL pattern is present.
 	 */
 	public String build()
 	{
@@ -181,6 +200,8 @@ public class UrlBuilder
 
 	private String buildFullUrlPattern()
 	{
+		if (urlPattern == null) throw new IllegalStateException("Null URL pattern");
+
 		String path = FORMATTER.format(urlPattern, tokenBindings);
 		return (baseUrl == null ? path : baseUrl + path);
 	}

@@ -234,11 +234,6 @@ public class RelationshipDefinition
     	return this;
     }
 
-	public LinkResolver createResolver()
-	{
-		return new LinkResolver(this);
-	}
-
 	public Map<String, Link> getLinkTemplates(Class<?> forClass)
 	{
 		if (forClass == null) return Collections.emptyMap();

@@ -31,7 +31,7 @@ extends Cloneable
 	 * 
 	 * @return the 'href' value for this link, or null.
 	 */
-	public String getHref();
+	String getHref();
 
 	/**
 	 * Set the 'href' value on this link.
@@ -39,14 +39,14 @@ extends Cloneable
 	 * @param href the URL or 'href' value to set on this link.
 	 * @return this Link instance (for method chaining).
 	 */
-	public Link setHref(String href);
+	Link setHref(String href);
 
 	/**
 	 * Retrieve the 'rel' or relationship name of this link.
 	 * 
 	 * @return the 'rel' value for this link, or null.
 	 */
-	public String getRel();
+	String getRel();
 
 	/**
 	 * Set the 'rel' value (or relationship name) on this link.
@@ -54,7 +54,7 @@ extends Cloneable
 	 * @param rel the relationship name to set on this link. 
 	 * @return this Link instance (for method chaining).
 	 */
-	public Link setRel(String rel);
+	Link setRel(String rel);
 
 	/**
 	 * Set the value of an arbitrary property on this link by name. As different linking
@@ -67,7 +67,7 @@ extends Cloneable
 	 * @param value the string value of the property.
 	 * @return this Link instance (for method chaining).
 	 */
-	public Link set(String name, String value);
+	Link set(String name, String value);
 
 	/**
 	 * Retrieve the value of an arbitrary property from this link. Or null, if the property
@@ -76,7 +76,7 @@ extends Cloneable
 	 * @param name the name of the property for which to retrieve a value.
 	 * @return the value of the property, or null.
 	 */
-	public String get(String name);
+	String get(String name);
 
 	/**
 	 * Answer whether this link has a value set for the given property name.
@@ -84,7 +84,15 @@ extends Cloneable
 	 * @param name the name of the property for which to check for a value.
 	 * @return true if the named property has been set on this link.
 	 */
-	public boolean has(String name);
+	boolean has(String name);
+
+	/**
+	 * Answer whether the link href contains any URL tokens (e.g. of the form '{tokenName}').
+	 * If 'true' is returned, this indicates that the URL is not fully populated.
+	 * 
+	 * @return true if the URL contains template tokens. Otherwise, false.
+	 */
+	boolean hasToken();
 
 	/**
 	 * Create a matching copy of this link instance. The returned instance is new, with copies
@@ -92,5 +100,5 @@ extends Cloneable
 	 * 
 	 * @return a new Link instance containing the same properties and values.
 	 */
-	public Link clone();
+	Link clone();
 }

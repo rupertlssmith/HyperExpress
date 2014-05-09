@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  * given destination link format.
  * <p/>
  * At a minimum, a LinkDefinition must contain a 'rel' and an 'href' property,
- * which correspond to the relation type and associated URL.
+ * which correspond to the relation type and associated URL, respectively.
  * <p/>
  * LinkDefinition is Cloneable.
  * 
@@ -120,7 +120,8 @@ implements Link
 		return (get(name) != null);
 	}
 
-	public boolean hasTemplate()
+	@Override
+	public boolean hasToken()
 	{
 		return TEMPLATE_PATTERN.matcher(getHref()).matches();
 	}
