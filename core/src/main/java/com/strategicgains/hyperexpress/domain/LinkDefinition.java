@@ -123,7 +123,7 @@ implements Link
 	@Override
 	public boolean hasToken()
 	{
-		return TEMPLATE_PATTERN.matcher(getHref()).matches();
+		return TEMPLATE_PATTERN.matcher(getHref()).find();
 	}
 
 	@Override

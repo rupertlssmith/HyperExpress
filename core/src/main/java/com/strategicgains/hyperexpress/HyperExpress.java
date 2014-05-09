@@ -115,7 +115,7 @@ public class HyperExpress
     {
     	Resource r = resourceFactory.createResource(object, contentType);
     	Collection<Link> templates = relationshipDefinition.getLinkTemplates(object.getClass()).values();
-    	r.addLinks(_resolveUrlTokens(templates, object, _getTokenResolver()));
+    	r.addLinks(_resolveUrlTokens(templates, object, _acquireTokenResolver()));
     	r.addNamespaces(relationshipDefinition.getNamespaces().values());
 	    return r;
     }
@@ -131,21 +131,22 @@ public class HyperExpress
     {
     	Resource root = resourceFactory.createResource(null, contentType);
     	Collection<Link> templates = relationshipDefinition.getCollectionLinkTemplates(componentType).values();
-    	root.addLinks(_resolveUrlTokens(templates, null, _getTokenResolver()));
-    		//linkResolver.resolveCollectionOf(componentType, _getTokenResolver()));
+    	root.addLinks(_resolveUrlTokens(templates, null, _acquireTokenResolver()));
     	root.addNamespaces(relationshipDefinition.getNamespaces().values());
 		Resource childResource = null;
 		String childRel = Pluralizer.pluralize(componentType.getSimpleName().toLowerCase());
 
-		for (Object component : components)
-		{
-			childResource = _createResource(component, contentType);
-			root.addResource(childRel, childResource);
-		}
-
-		if (components.isEmpty())
+		if (components == null || components.isEmpty())
 		{
 			root.addResources(childRel, Collections.EMPTY_LIST);
+		}
+		else
+		{
+			for (Object component : components)
+			{
+				childResource = _createResource(component, contentType);
+				root.addResource(childRel, childResource);
+			}
 		}
 
 	    return root;
@@ -153,28 +154,12 @@ public class HyperExpress
 
 	private TokenResolver _bindToken(String token, String value)
     {
-		TokenResolver tr = _getTokenResolver();
-
-		if (tr == null)
-		{
-			tr = new TokenResolver();
-			tokenResolver.set(tr);
-		}
-
-		return tr.bindToken(token, value);
+		return _acquireTokenResolver().bindToken(token, value);
     }
 
 	private TokenResolver _addTokenBinder(TokenBinder callback)
     {
-		TokenResolver tr = _getTokenResolver();
-
-		if (tr == null)
-		{
-			tr = new TokenResolver();
-			tokenResolver.set(tr);
-		}
-
-		return tr.addTokenBinder(callback);
+		return _acquireTokenResolver().addTokenBinder(callback);
     }
 
 	private void _clearTokenBindings()
@@ -186,6 +171,19 @@ public class HyperExpress
 			tr.clear();
 			tokenResolver.remove();
 		}
+	}
+
+	private TokenResolver _acquireTokenResolver()
+	{
+		TokenResolver tr = _getTokenResolver();
+
+		if (tr == null)
+		{
+			tr = new TokenResolver();
+			tokenResolver.set(tr);
+		}
+
+		return tr;
 	}
 
 	private TokenResolver _getTokenResolver()

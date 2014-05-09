@@ -43,6 +43,12 @@ public class LinkBuilder
 		return this;
 	}
 
+	public LinkBuilder addQuery(String query)
+	{
+		urlBuilder.addQuery(query);
+		return this;
+	}
+
 	public LinkBuilder rel(String rel)
 	{
 		return attribute(REL_TYPE, rel);
@@ -81,9 +87,8 @@ public class LinkBuilder
 	/**
 	 * 
 	 * @return a LinkDefinition instance
-	 * @throws LinkBuilderException
-	 *             if the LinkBuilder is in a state to build an invalid
-	 *             LinkDefintion.
+	 * @throws LinkBuilderException if the LinkBuilder is in a state to build an invalid
+	 * LinkDefintion.
 	 */
 	public Link build()
 	{
@@ -105,16 +110,16 @@ public class LinkBuilder
 		return link;
 	}
 
-	public Collection<Link> build(String token, String... ids)
+	public Collection<Link> build(String tokenName, String... values)
 	{
-		return build(token, Arrays.asList(ids));
+		return build(tokenName, Arrays.asList(values));
 	}
 
-	public Collection<Link> build(String token, Collection<String> ids)
+	public Collection<Link> build(String tokenName, Collection<String> values)
 	{
-		if (ids == null) return null;
+		if (values == null) return null;
 
-		Collection<String> urls = urlBuilder.build(token, ids);
+		Collection<String> urls = urlBuilder.build(tokenName, values);
 		Collection<Link> links = new ArrayList<Link>(urls.size());
 
 		for (String url : urls)
