@@ -18,11 +18,18 @@ package com.strategicgains.hyperexpress.domain;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 /**
- * A LinkImpl is a generic definition of a hypermedia link. It contains
+ * A LinkDefinition is a generic definition of a hypermedia link. It contains
  * attributes than can describe various output link formats such as HAL, Atom,
- * and JSON-LD.
+ * and JSON-LD.  It can contain, therefore, a superset of attributes for any
+ * given destination link format.
+ * <p/>
+ * At a minimum, a LinkDefinition must contain a 'rel' and an 'href' property,
+ * which correspond to the relation type and associated URL.
+ * <p/>
+ * LinkDefinition is Cloneable.
  * 
  * @author toddf
  * @since Oct 17, 2013
@@ -32,6 +39,11 @@ implements Link
 {
 	private static final String REL_TYPE = "rel";
 	private static final String HREF = "href";
+
+	// Regular expression for the hasTemplate() method.
+	private static final String TEMPLATE_REGEX = "\\{(\\w*?)\\}";
+	private static final Pattern TEMPLATE_PATTERN = Pattern.compile(TEMPLATE_REGEX);
+
 
 	private Map<String, String> attributes = new HashMap<String, String>();
 
@@ -106,6 +118,11 @@ implements Link
 	public boolean has(String name)
 	{
 		return (get(name) != null);
+	}
+
+	public boolean hasTemplate()
+	{
+		return TEMPLATE_PATTERN.matcher(getHref()).matches();
 	}
 
 	@Override

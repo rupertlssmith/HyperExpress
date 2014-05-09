@@ -30,6 +30,7 @@ import com.strategicgains.syntaxe.annotation.Required;
  */
 public class HalLink
 {
+	// The attributes from 'LinkDefinition' that a HAL link cares about.
 	public static final String TYPE = "type";
 	public static final String TITLE = "title";
 	public static final String TEMPLATED = "templated";
@@ -39,6 +40,7 @@ public class HalLink
 	public static final String HREF = "href";
 	public static final String DEPRECATION = "deprecation";
 
+	// Regular expression for the hasTemplate() method.
 	private static final String TEMPLATE_REGEX = "\\{(\\w*?)\\}";
 	private static final Pattern TEMPLATE_PATTERN = Pattern.compile(TEMPLATE_REGEX);
 
