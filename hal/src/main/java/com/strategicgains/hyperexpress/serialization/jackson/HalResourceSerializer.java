@@ -159,7 +159,9 @@ extends JsonSerializer<HalResource>
 
 				for (Resource r : entry.getValue())
 				{
+					jgen.writeStartObject();
 					renderJson((HalResource) r, jgen, true);
+					jgen.writeEndObject();
 				}
 
                 jgen.writeEndArray();
