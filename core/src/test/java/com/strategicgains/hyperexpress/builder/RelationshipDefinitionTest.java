@@ -1,4 +1,4 @@
-package com.strategicgains.hyperexpress.fluent;
+package com.strategicgains.hyperexpress.builder;
 
 import static com.strategicgains.hyperexpress.RelTypes.SELF;
 import static com.strategicgains.hyperexpress.RelTypes.UP;
@@ -10,6 +10,9 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.strategicgains.hyperexpress.builder.LinkResolver;
+import com.strategicgains.hyperexpress.builder.RelationshipDefinition;
+import com.strategicgains.hyperexpress.builder.TokenResolver;
 import com.strategicgains.hyperexpress.domain.Blog;
 import com.strategicgains.hyperexpress.domain.Comment;
 import com.strategicgains.hyperexpress.domain.Entry;

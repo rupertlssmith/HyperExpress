@@ -1,8 +1,10 @@
-package com.strategicgains.hyperexpress;
+package com.strategicgains.hyperexpress.builder;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import com.strategicgains.hyperexpress.builder.UrlBuilder;
 
 public class UrlBuilderTest
 {

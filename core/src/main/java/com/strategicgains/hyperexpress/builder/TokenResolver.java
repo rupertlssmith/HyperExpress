@@ -13,7 +13,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package com.strategicgains.hyperexpress.fluent;
+package com.strategicgains.hyperexpress.builder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,12 +27,12 @@ import java.util.Map;
  */
 public class TokenResolver
 {
-	private Map<String, String> parameters = new HashMap<>();
+	private Map<String, String> tokenBindings = new HashMap<>();
 	private List<TokenBinder> callbacks = new ArrayList<TokenBinder>();
 
 	public TokenResolver bindToken(String name, String value)
     {
-		parameters.put(name, value);
+		tokenBindings.put(name, value);
 		return this;
     }
 
@@ -47,12 +47,12 @@ public class TokenResolver
 	 */
 	public void clear()
 	{
-		parameters.clear();
+		tokenBindings.clear();
 	}
 
 	public String resolve(String name)
 	{
-		return parameters.get(name);
+		return tokenBindings.get(name);
 	}
 
 	public void callTokenBinders(Object object)
@@ -65,6 +65,6 @@ public class TokenResolver
 
 	public Map<String, String> asMap()
 	{
-		return Collections.unmodifiableMap(parameters);
+		return Collections.unmodifiableMap(tokenBindings);
 	}
 }

@@ -15,8 +15,6 @@
 */
 package com.strategicgains.hyperexpress;
 
-import java.lang.annotation.Annotation;
-
 import com.strategicgains.hyperexpress.domain.Resource;
 
 /**
@@ -27,7 +25,5 @@ import com.strategicgains.hyperexpress.domain.Resource;
  */
 public interface ResourceFactoryStrategy
 {
-	ResourceFactoryStrategy includeAnnotations(Class<? extends Annotation>... annotations);
-    ResourceFactoryStrategy excludeAnnotations(Class<? extends Annotation>... annotations);
 	Resource createResource(Object object);
 }

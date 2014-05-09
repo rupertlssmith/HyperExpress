@@ -13,7 +13,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package com.strategicgains.hyperexpress;
+package com.strategicgains.hyperexpress.builder;
 
 import static org.junit.Assert.assertEquals;
 
@@ -21,6 +21,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 
+import com.strategicgains.hyperexpress.RelTypes;
+import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.Link;
 
 /**
@@ -70,8 +72,8 @@ public class LinkBuilderTest
 		Collection<Link> links = new LinkBuilder(URL_PATTERN2)
 			.baseUrl(BASE_URL)
 			.rel(RelTypes.DESCRIBED_BY)
-			.urlParam("secondaryId", "second")
-			.urlParam("rootId", "first")
+			.bindToken("secondaryId", "second")
+			.bindToken("rootId", "first")
 			.build("id", "42", "22", "4");
 
 
@@ -104,7 +106,7 @@ public class LinkBuilderTest
 		Link link = new LinkBuilder(URL_PATTERN)
 			.baseUrl(BASE_URL)
 			.rel(RelTypes.SELF)
-			.urlParam("id", "42")
+			.bindToken("id", "42")
 			.build();
 		
 		assertEquals(BASE_URL + "/42", link.getHref());
@@ -117,9 +119,9 @@ public class LinkBuilderTest
 		Link link = new LinkBuilder(URL_PATTERN2)
 			.baseUrl(BASE_URL)
 			.rel(RelTypes.DESCRIBED_BY)
-			.urlParam("secondaryId", "second")
-			.urlParam("rootId", "first")
-			.urlParam("id", "42")
+			.bindToken("secondaryId", "second")
+			.bindToken("rootId", "first")
+			.bindToken("id", "42")
 			.build();
 		
 		assertEquals(BASE_URL + "/first/second/42", link.getHref());

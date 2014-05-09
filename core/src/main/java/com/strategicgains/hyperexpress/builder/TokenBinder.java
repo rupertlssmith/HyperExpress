@@ -13,13 +13,24 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package com.strategicgains.hyperexpress.fluent;
+package com.strategicgains.hyperexpress.builder;
 
 /**
+ * Defines the interface for a callback to bind instances within a collection resource.
+ * A TokenBinder implementation allows HyperExpress to iterate a collection and bind
+ * any values from that instance to the TokenResolver before creating links for that 
+ * resource.
+ * 
  * @author toddf
  * @since May 5, 2014
  */
 public interface TokenBinder
 {
+	/**
+	 * Bind instance values from this object into the TokenResolver before creating
+	 * links for this instance.
+	 * 
+	 * @param object an object for which to extract values for URL tokens.
+	 */
 	void bind(Object object);
 }

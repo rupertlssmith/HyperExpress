@@ -37,9 +37,19 @@ implements ResourceFactoryStrategy
 	private Set<Class<? extends Annotation>> includedAnnotations;
 	private Set<Class<? extends Annotation>> excludedAnnotations;
 
-    @Override
+	/**
+	 * Instead of requiring its own property/field annotations, this strategy supports the
+	 * ability to denote which fields you want to include in your resources by utilizing
+	 * *ANY* annotations.
+	 * <p/>
+	 * By default, this ResourceFactoryStrategy includes all properties, public and private,
+	 * except static, final, volatile and transient fields.
+	 * 
+	 * @param annotations the Field annotations that indicate which properties to copy to resources.
+	 * @return a reference to the ResourceFactoryStrategy to facilitate method chaining.
+	 */
     @SafeVarargs
-    public final ResourceFactoryStrategy includeAnnotations(Class<? extends Annotation>... annotations)
+    public final AbstractResourceFactoryStrategy includeAnnotations(Class<? extends Annotation>... annotations)
     {
 		if (annotations == null) return this;
 
@@ -52,9 +62,18 @@ implements ResourceFactoryStrategy
 	    return this;
     }
 
-	@Override
+    /**
+     * By default, AbstractResourceFactoryStrategy includes all properties from an object and copies
+     * them to the newly-created Resource.  It does exclude, final, static, transient and volatile fields.
+     * <p/>
+     * To leverage annotations on fields to exclude from inclusion, this method allows callers to
+     * indicate which fields to not include in newly-created Resource instances.
+     * 
+	 * @param annotations the Field annotations that indicate which properties not copied to resources.
+	 * @return a reference to the ResourceFactoryStrategy to facilitate method chaining.
+     */
     @SafeVarargs
-    public final ResourceFactoryStrategy excludeAnnotations(Class<? extends Annotation>... annotations)
+    public final AbstractResourceFactoryStrategy excludeAnnotations(Class<? extends Annotation>... annotations)
     {
 		if (annotations == null) return this;
 
@@ -67,11 +86,25 @@ implements ResourceFactoryStrategy
 	    return this;
     }
 
+    /**
+     * Entry-point into the deep-copy functionality.
+     * 
+     * @param from an Object instance, never null.
+     * @param to a presumably-empty Resource instance.
+     */
 	protected void copyProperties(Object from, Resource to)
 	{
 		copyProperties0(from.getClass(), from, to);
 	}
 
+	/**
+	 * Recursively-copies properties from the Object, up the inheritance hierarchy, to
+	 * the destination Resource.
+	 * 
+	 * @param type the Type of the object being copied. May be a super-type of the 'from' object.
+	 * @param from the instance of Object being copied.
+	 * @param to the destination Resource instance.
+	 */
 	private void copyProperties0(Class<?> type, Object from, Resource to)
 	{
 		if (type == null) return;
@@ -102,6 +135,13 @@ implements ResourceFactoryStrategy
 		copyProperties0(type.getSuperclass(), from, to);
 	}
 
+	/**
+	 * Answers whether the Field should be copied. By default it ignores (answers 'false' to)
+	 * static, final, volatile and transient fields.
+	 * 
+	 * @param f a Field of a Class.
+	 * @return true if the field should be copied into the resource. Otherwise, false.
+	 */
 	private boolean isIncluded(Field f)
     {
 		if ((includedAnnotations == null && excludedAnnotations == null)

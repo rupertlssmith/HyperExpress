@@ -13,7 +13,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
  */
-package com.strategicgains.hyperexpress.fluent;
+package com.strategicgains.hyperexpress.builder;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,6 +23,7 @@ import java.util.Map;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.LinkDefinition;
 import com.strategicgains.hyperexpress.domain.Namespace;
+import com.strategicgains.hyperexpress.exception.RelationshipException;
 
 /**
  * @author toddf

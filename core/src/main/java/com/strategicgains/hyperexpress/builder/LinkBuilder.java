@@ -1,4 +1,4 @@
-package com.strategicgains.hyperexpress;
+package com.strategicgains.hyperexpress.builder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,25 +9,22 @@ import java.util.Map.Entry;
 
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.LinkDefinition;
-import com.strategicgains.hyperexpress.util.MapStringFormat;
 
 /**
+ * Build LinkDefinition instances from a URL pattern, binding URL tokens to
+ * actual values.
  * 
  * @author toddf
  * @since May 5, 2014
  */
 public class LinkBuilder
 {
-	private static final MapStringFormat formatter = new MapStringFormat();
-
 	private static final String REL_TYPE = "rel";
 	private static final String TITLE = "title";
 	private static final String TYPE = "type";
 
-	private String baseUrl;
-	private String urlPattern;
+	private UrlBuilder urlBuilder;
 	private Map<String, String> attributes = new HashMap<String, String>();
-	private Map<String, String> parameters = new HashMap<String, String>();
 
 	/**
 	 * A link builder requires, at the very least, a URL
@@ -37,32 +34,32 @@ public class LinkBuilder
 	public LinkBuilder(String urlPattern)
 	{
 		super();
-		this.urlPattern = urlPattern;
+		urlBuilder = new UrlBuilder(urlPattern);
 	}
 
 	public LinkBuilder baseUrl(String url)
-    {
-    	this.baseUrl = url;
-    	return this;
-    }
+	{
+		urlBuilder.baseUrl(url);
+		return this;
+	}
 
 	public LinkBuilder rel(String rel)
-    {
-    	return attribute(REL_TYPE, rel);
-    }
+	{
+		return attribute(REL_TYPE, rel);
+	}
 
 	public LinkBuilder title(String title)
-    {
-    	return attribute(TITLE, title);
-    }
+	{
+		return attribute(TITLE, title);
+	}
 
 	public LinkBuilder type(String type)
-    {
-    	return attribute(TYPE, type);
-    }
+	{
+		return attribute(TYPE, type);
+	}
 
 	public LinkBuilder attribute(String name, String value)
-    {
+	{
 		if (value == null)
 		{
 			attributes.remove(name);
@@ -72,23 +69,30 @@ public class LinkBuilder
 			attributes.put(name, value);
 		}
 
-    	return this;
-    }
-	
-	public LinkBuilder urlParam(String name, String value)
+		return this;
+	}
+
+	public LinkBuilder bindToken(String token, String value)
 	{
-		parameters.put(name, value);
+		urlBuilder.bindToken(token, value);
 		return this;
 	}
 
 	/**
 	 * 
 	 * @return a LinkDefinition instance
-	 * @throws LinkBuilderException if the LinkBuilder is in a state to build an invalid LinkDefintion.
+	 * @throws LinkBuilderException
+	 *             if the LinkBuilder is in a state to build an invalid
+	 *             LinkDefintion.
 	 */
 	public Link build()
 	{
-		Link link = new LinkDefinition(attributes.get(REL_TYPE), buildHref());
+		return build(urlBuilder.build());
+	}
+
+	public Link build(String url)
+	{
+		Link link = new LinkDefinition(attributes.get(REL_TYPE), url);
 
 		for (Entry<String, String> entry : attributes.entrySet())
 		{
@@ -101,25 +105,24 @@ public class LinkBuilder
 		return link;
 	}
 
-	public Collection<Link> build(String idParameterName, String... ids)
+	public Collection<Link> build(String token, String... ids)
 	{
-		return build(idParameterName, Arrays.asList(ids));
+		return build(token, Arrays.asList(ids));
 	}
 
-	public Collection<Link> build(String idParameterName, Collection<String> ids)
+	public Collection<Link> build(String token, Collection<String> ids)
 	{
 		if (ids == null) return null;
 
-		Collection<Link> definitions = new ArrayList<Link>(ids.size());
+		Collection<String> urls = urlBuilder.build(token, ids);
+		Collection<Link> links = new ArrayList<Link>(urls.size());
 
-		for (String id : ids)
+		for (String url : urls)
 		{
-			parameters.put(idParameterName, id);
-			definitions.add(build());
+			links.add(build(url));
 		}
 
-		parameters.remove(idParameterName);
-		return definitions;
+		return links;
 	}
 
 	@Override
@@ -149,10 +152,4 @@ public class LinkBuilder
 		s.append("}");
 		return s.toString();
 	}
-
-	private String buildHref()
-    {
-		String path = formatter.format(urlPattern, parameters);
-		return (baseUrl == null ? path : baseUrl + path);
-    }
 }

@@ -17,12 +17,12 @@ package com.strategicgains.hyperexpress;
 
 import java.util.List;
 
+import com.strategicgains.hyperexpress.builder.LinkResolver;
+import com.strategicgains.hyperexpress.builder.RelationshipDefinition;
+import com.strategicgains.hyperexpress.builder.TokenBinder;
+import com.strategicgains.hyperexpress.builder.TokenResolver;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Resource;
-import com.strategicgains.hyperexpress.fluent.LinkResolver;
-import com.strategicgains.hyperexpress.fluent.RelationshipDefinition;
-import com.strategicgains.hyperexpress.fluent.TokenBinder;
-import com.strategicgains.hyperexpress.fluent.TokenResolver;
 
 /**
  * A Singleton object to manage creation of Link and Resource instances.

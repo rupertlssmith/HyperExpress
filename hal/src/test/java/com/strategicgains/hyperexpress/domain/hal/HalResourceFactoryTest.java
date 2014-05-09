@@ -1,12 +1,14 @@
 package com.strategicgains.hyperexpress.domain.hal;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.UUID;
 
 import org.junit.Test;
 
-import com.strategicgains.hyperexpress.ResourceFactoryStrategy;
+import com.strategicgains.hyperexpress.AbstractResourceFactoryStrategy;
 import com.strategicgains.hyperexpress.domain.Resource;
 
 public class HalResourceFactoryTest
@@ -36,7 +38,7 @@ public class HalResourceFactoryTest
 	@Test
 	public void shouldCreateBlogResourceWithAnnotatedFields()
 	{
-		ResourceFactoryStrategy factory = new HalResourceFactory()
+		AbstractResourceFactoryStrategy factory = new HalResourceFactory()
 			.includeAnnotations(Include.class)
 			.excludeAnnotations(Exclude.class);
 		Blog b = new Blog();

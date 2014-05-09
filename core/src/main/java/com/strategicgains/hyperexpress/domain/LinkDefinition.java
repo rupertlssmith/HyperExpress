@@ -20,8 +20,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * A LinkImpl is a generic definition of a hypermedia link. It contains attributes
- * than can describe various output link formats such as HAL, Atom, and JSON-LD.
+ * A LinkImpl is a generic definition of a hypermedia link. It contains
+ * attributes than can describe various output link formats such as HAL, Atom,
+ * and JSON-LD.
  * 
  * @author toddf
  * @since Oct 17, 2013
@@ -35,53 +36,53 @@ implements Link
 	private Map<String, String> attributes = new HashMap<String, String>();
 
 	public LinkDefinition(String rel, String href)
-    {
-	    super();
-	    setRel(rel);
-	    setHref(href);
-    }
+	{
+		super();
+		setRel(rel);
+		setHref(href);
+	}
 
 	public LinkDefinition(LinkDefinition that)
 	{
 		super();
-		
+
 		if (that != null) this.attributes.putAll(that.attributes);
 	}
 
 	@Override
-    public LinkDefinition clone()
-    {
+	public LinkDefinition clone()
+	{
 		return new LinkDefinition(this);
-    }
+	}
 
 	@Override
-    public String getHref()
+	public String getHref()
 	{
 		return get(HREF);
 	}
 
 	@Override
-    public LinkDefinition setHref(String href)
+	public LinkDefinition setHref(String href)
 	{
 		set(HREF, href);
 		return this;
 	}
 
 	@Override
-    public String getRel()
+	public String getRel()
 	{
 		return get(REL_TYPE);
 	}
 
 	@Override
-    public LinkDefinition setRel(String rel)
+	public LinkDefinition setRel(String rel)
 	{
 		set(REL_TYPE, rel);
 		return this;
 	}
 
 	@Override
-    public LinkDefinition set(String name, String value)
+	public LinkDefinition set(String name, String value)
 	{
 		if (value == null)
 		{
@@ -96,18 +97,18 @@ implements Link
 	}
 
 	@Override
-    public String get(String name)
+	public String get(String name)
 	{
 		return attributes.get(name);
 	}
 
 	@Override
-    public boolean has(String name)
+	public boolean has(String name)
 	{
 		return (get(name) != null);
 	}
 
-    @Override
+	@Override
 	public String toString()
 	{
 		StringBuilder s = new StringBuilder();
@@ -133,5 +134,38 @@ implements Link
 
 		s.append("}");
 		return s.toString();
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return 31 + ((attributes == null) ? 0 : attributes.hashCode());
+	}
+
+	@Override
+	public boolean equals(Object that)
+	{
+		if (this == that) return true;
+		if (that == null) return false;
+		if (getClass() != that.getClass()) return false;
+
+		return equals((LinkDefinition) that);
+	}
+
+	public boolean equals(LinkDefinition that)
+	{
+		if (attributes == null)
+		{
+			if (that.attributes != null)
+			{
+				return false;
+			}
+		}
+		else if (!attributes.equals(that.attributes))
+		{
+			return false;
+		}
+
+		return true;
 	}
 }

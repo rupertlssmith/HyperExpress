@@ -15,7 +15,7 @@
 */
 package com.strategicgains.hyperexpress.domain.hal;
 
-import com.strategicgains.hyperexpress.LinkBuilder;
+import com.strategicgains.hyperexpress.builder.LinkBuilder;
 
 /**
  * @author toddf
@@ -100,8 +100,8 @@ extends LinkBuilder
     }
 
 	@Override
-    public HalLinkBuilder urlParam(String name, String value)
+    public HalLinkBuilder bindToken(String name, String value)
     {
-	    return (HalLinkBuilder) super.urlParam(name, value);
+	    return (HalLinkBuilder) super.bindToken(name, value);
     }
 }

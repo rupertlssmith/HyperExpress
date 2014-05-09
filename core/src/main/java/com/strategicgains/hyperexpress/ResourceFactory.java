@@ -17,6 +17,7 @@ package com.strategicgains.hyperexpress;
 
 import com.strategicgains.hyperexpress.domain.Resource;
 
+
 /**
  * @author toddf
  * @since Apr 7, 2014

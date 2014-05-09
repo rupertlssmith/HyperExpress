@@ -13,7 +13,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package com.strategicgains.hyperexpress.fluent;
+package com.strategicgains.hyperexpress.builder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,29 +41,29 @@ public class LinkResolver
 		this.relationshipBuilder = builder;
     }
 
-	public List<Link> resolve(Object resource, TokenResolver idResolver)
+	public List<Link> resolve(Object resource, TokenResolver tokenResolver)
 	{
 		if (resource == null) throw new NullPointerException("Cannot resolve null resource");
 
-		return resolve(resource.getClass(), idResolver);
+		return resolve(resource.getClass(), tokenResolver);
 	}
 
-	public List<Link> resolve(Class<?> forClass, TokenResolver idResolver)
+	public List<Link> resolve(Class<?> forClass, TokenResolver tokenResolver)
 	{
 		Collection<Link> templates = relationshipBuilder.getLinkTemplates(forClass).values();
 
 		if (templates.isEmpty()) return Collections.emptyList();
 
-		return resolveUrlTokens(templates, idResolver);
+		return resolveUrlTokens(templates, tokenResolver);
 	}
 
-	public List<Link> resolveCollectionOf(Class<?> componentType, TokenResolver idResolver)
+	public List<Link> resolveCollectionOf(Class<?> componentType, TokenResolver tokenResolver)
 	{
 		Collection<Link> templates = relationshipBuilder.getCollectionLinkTemplates(componentType).values();
 
 		if (templates.isEmpty()) return Collections.emptyList();
 
-		return resolveUrlTokens(templates, idResolver);
+		return resolveUrlTokens(templates, tokenResolver);
 	}
 
 	public Collection<Namespace> getNamespaces()
@@ -71,10 +71,10 @@ public class LinkResolver
 		return relationshipBuilder.getNamespaces().values();
 	}
 
-	protected List<Link> resolveUrlTokens(Collection<Link> templates, TokenResolver idResolver)
+	protected List<Link> resolveUrlTokens(Collection<Link> templates, TokenResolver tokenResolver)
     {
 	    List<Link> links = new ArrayList<>(templates.size());
-		Map<String, String> ids = idResolver.asMap();
+		Map<String, String> ids = tokenResolver.asMap();
 
 		for (Link template : templates)
 		{
