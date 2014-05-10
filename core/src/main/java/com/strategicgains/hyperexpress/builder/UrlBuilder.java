@@ -84,6 +84,16 @@ public class UrlBuilder
 	}
 
 	/**
+	 * Retrieve the URL pattern set on this URL builder.
+	 * 
+	 * @return the URL pattern or null.
+	 */
+	public String urlPattern()
+	{
+		return urlPattern;
+	}
+
+	/**
 	 * Set the prefix portion of the URL which is to be pre-pended to the URL
 	 * pattern.
 	 * <p/>
@@ -100,6 +110,16 @@ public class UrlBuilder
 	{
 		this.baseUrl = baseUrl;
 		return this;
+	}
+
+	/**
+	 * Retrieve the base URL set on this URL builder.
+	 * 
+	 * @return the base URL or null.
+	 */
+	public String baseUrl()
+	{
+		return baseUrl;
 	}
 
 	/**
