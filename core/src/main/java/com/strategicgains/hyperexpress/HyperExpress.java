@@ -25,7 +25,7 @@ import com.strategicgains.hyperexpress.builder.TokenBinder;
 import com.strategicgains.hyperexpress.builder.TokenResolver;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Resource;
-import com.strategicgains.hyperexpress.util.Pluralizer;
+import com.strategicgains.hyperexpress.util.Strings;
 
 /**
  * A Singleton object to manage creation of Link and Resource instances.
@@ -134,7 +134,7 @@ public class HyperExpress
     	root.addLinks(_resolveUrlTokens(templates, null, _acquireTokenResolver()));
     	root.addNamespaces(relationshipDefinition.getNamespaces().values());
 		Resource childResource = null;
-		String childRel = Pluralizer.pluralize(componentType.getSimpleName().toLowerCase());
+		String childRel = Strings.pluralize(componentType.getSimpleName().toLowerCase());
 
 		if (components == null || components.isEmpty())
 		{

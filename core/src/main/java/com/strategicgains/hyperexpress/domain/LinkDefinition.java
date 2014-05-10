@@ -18,7 +18,8 @@ package com.strategicgains.hyperexpress.domain;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
+
+import com.strategicgains.hyperexpress.util.Strings;
 
 /**
  * A LinkDefinition is a generic definition of a hypermedia link. It contains
@@ -39,11 +40,6 @@ implements Link
 {
 	private static final String REL_TYPE = "rel";
 	private static final String HREF = "href";
-
-	// Regular expression for the hasTemplate() method.
-	private static final String TEMPLATE_REGEX = "\\{(\\w*?)\\}";
-	private static final Pattern TEMPLATE_PATTERN = Pattern.compile(TEMPLATE_REGEX);
-
 
 	private Map<String, String> attributes = new HashMap<String, String>();
 
@@ -123,7 +119,7 @@ implements Link
 	@Override
 	public boolean hasToken()
 	{
-		return TEMPLATE_PATTERN.matcher(getHref()).find();
+		return Strings.hasToken(getHref());
 	}
 
 	@Override

@@ -41,11 +41,11 @@ extends LinkBuilder
 	{
 		if (value == false)
 		{
-			attribute(TEMPLATED, null);
+			set(TEMPLATED, null);
 		}
 		else
 		{
-			attribute(TEMPLATED, Boolean.TRUE.toString());
+			set(TEMPLATED, Boolean.TRUE.toString());
 		}
 
 		return this;
@@ -59,17 +59,17 @@ extends LinkBuilder
 
 	public HalLinkBuilder deprecation(String deprecation)
 	{
-		return (HalLinkBuilder) attribute(DEPRECATION, deprecation);
+		return (HalLinkBuilder) set(DEPRECATION, deprecation);
 	}
 
 	public HalLinkBuilder name(String name)
 	{
-		return (HalLinkBuilder) attribute(NAME, name);
+		return (HalLinkBuilder) set(NAME, name);
 	}
 
 	public HalLinkBuilder profile(String profile)
 	{
-		return (HalLinkBuilder) attribute(PROFILE, profile);
+		return (HalLinkBuilder) set(PROFILE, profile);
 	}
 
 	@Override
@@ -80,7 +80,7 @@ extends LinkBuilder
 
 	public HalLinkBuilder hreflang(String hreflang)
 	{
-		return (HalLinkBuilder) attribute(HREFLANG, hreflang);
+		return (HalLinkBuilder) set(HREFLANG, hreflang);
 	}
 
 	@Override
@@ -96,9 +96,9 @@ extends LinkBuilder
     }
 
 	@Override
-    public HalLinkBuilder attribute(String name, String value)
+    public HalLinkBuilder set(String name, String value)
     {
-	    return (HalLinkBuilder) super.attribute(name, value);
+	    return (HalLinkBuilder) super.set(name, value);
     }
 
 	@Override

@@ -6,13 +6,18 @@ package com.strategicgains.hyperexpress.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 /**
  * @author toddf
  * @since May 7, 2014
  */
-public class Pluralizer
+public class Strings
 {
+	// Regular expression for the hasTokene(String) method.
+	private static final String TEMPLATE_REGEX = "\\{(\\w*?)\\}";
+	private static final Pattern TEMPLATE_PATTERN = Pattern.compile(TEMPLATE_REGEX);
+
 	/**
 	 * Regular expressions used to create plural forms of words.
 	 */
@@ -60,5 +65,23 @@ public class Pluralizer
 		}
 
 		return word.replaceFirst("([\\w]+)([^s])$", "$1$2s");
+	}
+
+
+	/**
+	 * Answer whether the string contains any tokens (e.g. of the form '{tokenName}').
+	 * If 'true' is returned, this indicates that the tokens are not fully populated
+	 * (by MapStringFormat, UrlBuilder, etc).
+	 * 
+	 * @return true if the string contains template tokens. Otherwise, false.
+	 */
+	public static boolean hasToken(String string)
+	{
+		return TEMPLATE_PATTERN.matcher(string).find();
+	}
+
+	private Strings()
+	{
+		// Prevents instantiation.
 	}
 }

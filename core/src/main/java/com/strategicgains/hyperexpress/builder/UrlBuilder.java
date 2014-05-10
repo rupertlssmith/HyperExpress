@@ -21,9 +21,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
+import java.util.Map.Entry;
 
 import com.strategicgains.hyperexpress.util.MapStringFormat;
+import com.strategicgains.hyperexpress.util.Strings;
 
 /**
  * Build URL strings from a URL pattern, binding URL tokens to actual values.
@@ -41,10 +42,6 @@ import com.strategicgains.hyperexpress.util.MapStringFormat;
 public class UrlBuilder
 {
 	private static final MapStringFormat FORMATTER = new MapStringFormat();
-
-	// Regular expression for the hasTemplate() method.
-	private static final String TEMPLATE_REGEX = "\\{(\\w*?)\\}";
-	private static final Pattern TEMPLATE_PATTERN = Pattern.compile(TEMPLATE_REGEX);
 
 	private String baseUrl;
 	private String urlPattern;
@@ -78,7 +75,7 @@ public class UrlBuilder
 	 * For example: '/users/{userId}' or
 	 * 'http://www.example.com/api/users/{userId}'
 	 * 
-	 * @param urlPattern
+	 * @param urlPattern a URL path with optional tokens of the form '{tokenName}'
 	 */
 	public UrlBuilder(String urlPattern)
 	{
@@ -105,10 +102,31 @@ public class UrlBuilder
 		return this;
 	}
 
-	public UrlBuilder addQuery(String query)
+	/**
+	 * Add an optional query-string segment to this UrlBuilder. If all of the
+	 * tokens in the query-string are bound, the segment is included in the
+	 * generated URL string during build().  However, if there are unbound
+	 * tokens in the resulting query-string segment, it is not included in the
+	 * generated URL string.
+	 * <p/>
+	 * Do not include any question mark ("?") or ampersand ("&") in the query-string
+	 * segment.
+	 * 
+	 * @param query a query-string segment to optionally include.
+	 * @return this UrlBuilder instance to facilitate method chaining.
+	 */
+	public UrlBuilder withQuery(String query)
 	{
 		queries.add(query);
 		return this;
+	}
+
+	/**
+	 * Remove the query-string segments from this UrlBuilder.
+	 */
+	public void clearQueries()
+	{
+		queries.clear();
 	}
 
 	/**
@@ -116,11 +134,8 @@ public class UrlBuilder
 	 * tokens in the URL pattern are delimited with curly-braces, the token name
 	 * does not contain the braces. The value is any URL-safe string value.
 	 * 
-	 * @param tokenName
-	 *            the name of a token in the URL pattern.
-	 * @param value
-	 *            the URL-safe string value to substitute for the token name in
-	 *            the URL pattern.
+	 * @param tokenName the name of a token in the URL pattern.
+	 * @param value the URL-safe string value to substitute for the token name in the URL pattern.
 	 * @return this UrlBuilder instance to facilitate method chaining.
 	 */
 	public UrlBuilder bindToken(String tokenName, String value)
@@ -146,7 +161,7 @@ public class UrlBuilder
 	}
 
 	/**
-	 * 'Unbind' a substitution value from a token name.
+	 * 'Unbind' a named substitution value from a token name.
 	 * 
 	 * @param tokenName the name of a previously-bound token name.
 	 */
@@ -191,14 +206,14 @@ public class UrlBuilder
 	 * the 'ids' array.
 	 * 
 	 * @param tokenName the name of a token in the URL pattern.
-	 * @param ids variable-length array of URL-safe string values to substitute
+	 * @param values variable-length array of URL-safe string values to substitute
 	 * for the token name in the URL pattern.
-	 * @return a Collection of URL strings, matching the size of the 'ids'
+	 * @return a Collection of URL strings, matching the size of the 'values'
 	 * array.
 	 */
-	public Collection<String> build(String tokenName, String... ids)
+	public Collection<String> build(String tokenName, String... values)
 	{
-		return build(tokenName, Arrays.asList(ids));
+		return build(tokenName, Arrays.asList(values));
 	}
 
 	/**
@@ -208,7 +223,7 @@ public class UrlBuilder
 	 * @param tokenName the name of a token in the URL pattern.
 	 * @param values variable-length array of URL-safe string values to substitute
 	 * for the token name in the URL pattern.
-	 * @return a Collection of URL strings, matching the size of the 'ids'
+	 * @return a Collection of URL strings, matching the size of the 'values'
 	 * collection.
 	 */
 	public Collection<String> build(String tokenName, Collection<String> values)
@@ -248,12 +263,16 @@ public class UrlBuilder
 		{
 			String boundQuery = FORMATTER.format(query, tokenBindings);
 
-			if (!hasToken(boundQuery))
+			if (!Strings.hasToken(boundQuery))
 			{
 				if (hasQuery)
+				{
 					sb.append("&");
+				}
 				else
+				{
 					sb.append("?");
+				}
 
 				sb.append(boundQuery);
 				hasQuery = true;
@@ -263,8 +282,61 @@ public class UrlBuilder
 		return (hasQuery ? sb.toString() : url);
 	}
 
-	private boolean hasToken(String string)
+	@Override
+	public String toString()
 	{
-		return TEMPLATE_PATTERN.matcher(string).find();
+		StringBuilder s = new StringBuilder();
+		s.append(this.getClass().getSimpleName());
+		s.append(": [baseUrl: ");
+		s.append(baseUrl == null ? "null" : baseUrl);
+		s.append(", urlPattern: ");
+		s.append(urlPattern == null ? "null" : urlPattern);
+        printBindings(s);
+		printQueryStrings(s);
+		return s.toString();
 	}
+
+	private void printBindings(StringBuilder s)
+    {
+	    s.append(", bindings: {");
+		boolean isFirst = true;
+
+		for (Entry<String, String> entry : tokenBindings.entrySet())
+		{
+			if (!isFirst)
+			{
+				s.append(", ");
+			}
+			else
+			{
+				isFirst = false;
+			}
+
+			s.append(entry.getKey());
+			s.append("=");
+			s.append(entry.getValue());
+		}
+    }
+
+	private void printQueryStrings(StringBuilder s)
+    {
+	    boolean isFirst = true;
+		s.append("}, query-strings: {");
+
+		for (String query : queries)
+		{
+			if (!isFirst)
+			{
+				s.append(", ");
+			}
+			else
+			{
+				isFirst = false;
+			}
+
+			s.append(query);
+		}
+
+		s.append("}]");
+    }
 }

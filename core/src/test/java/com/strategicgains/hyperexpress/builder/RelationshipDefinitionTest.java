@@ -28,6 +28,10 @@ public class RelationshipDefinitionTest
 			)
 
 			.forCollectionOf(Blog.class)
+//				.rel(SELF, new LinkBuilder("/blogs")
+//					.withQuery("limit={selfLimit}")
+//					.withQuery("offset={selfOffset}"))
+//						.optional()
 				.rel(SELF, "/blogs")
 
 			.forClass(Blog.class)
