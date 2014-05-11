@@ -15,16 +15,16 @@ public class TokenResolverTest
 	};
 
 	private TokenResolver resolver = new TokenResolver()
-		.bindToken("a", "a")
-		.bindToken("b", "b")
-		.bindToken("c", "c")
-		.bindToken("d", "d")
+		.bind("a", "a")
+		.bind("b", "b")
+		.bind("c", "c")
+		.bind("d", "d")
 		.addTokenBinder(new TokenBinder()
 		{
 			@Override
 			public void bind(Object object)
 			{
-				resolver.bindToken("e", String.valueOf(((Resolvable) object).e));
+				resolver.bind("e", String.valueOf(((Resolvable) object).e));
 			}
 		});
 
@@ -51,9 +51,9 @@ public class TokenResolverTest
 	{
 		Resolvable r = new Resolvable();
 		r.e = 13;
-		resolver.bindToken("f", "toddf");
+		resolver.bind("f", "toddf");
 		Collection<String> urls = resolver.resolve(Arrays.asList(URLS), r);
-		resolver.removeToken("f");
+		resolver.remove("f");
 		assertNotNull(urls);
 		verifyUrls(urls, "/a/a/b/b", "/c/c/d/d/e/13", "toddf");
 

@@ -60,7 +60,7 @@ public class HyperExpressTest
 	{
 		HyperExpress
 			.bindToken("selfOffset", "40")
-			.bindToken("selfLimit", "20");
+			.bind("selfLimit", "20");
 		Resource r = HyperExpress.createCollectionResource(null, Blog.class, "*");
 		assertNotNull(r.getLinks());
 		assertEquals(1, r.getLinks().size());
@@ -74,7 +74,7 @@ public class HyperExpressTest
 	{
 		HyperExpress
 			.bindToken("nextOffset", "40")
-			.bindToken("nextLimit", "20");
+			.bind("nextLimit", "20");
 		Resource r = HyperExpress.createCollectionResource(null, Blog.class, "*");
 		assertNotNull(r.getLinks());
 		assertEquals(2, r.getLinks().size());

@@ -18,12 +18,8 @@ package com.strategicgains.hyperexpress.builder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
-import com.strategicgains.hyperexpress.util.MapStringFormat;
 import com.strategicgains.hyperexpress.util.Strings;
 
 /**
@@ -41,12 +37,10 @@ import com.strategicgains.hyperexpress.util.Strings;
  */
 public class UrlBuilder
 {
-	private static final MapStringFormat FORMATTER = new MapStringFormat();
-
 	private String baseUrl;
 	private String urlPattern;
-	private List<String> queries = new ArrayList<String>();
-	private Map<String, String> tokenBindings = new HashMap<String, String>();
+	private List<String> queries;
+	private TokenResolver tokenResolver;
 
 	/**
 	 * Create an empty UrlBuilder, with no URL pattern. Using this constructor
@@ -137,7 +131,7 @@ public class UrlBuilder
 	 */
 	public UrlBuilder withQuery(String query)
 	{
-		queries.add(query);
+		queries().add(query);
 		return this;
 	}
 
@@ -146,7 +140,10 @@ public class UrlBuilder
 	 */
 	public void clearQueries()
 	{
-		queries.clear();
+		if (queries != null)
+		{
+			queries.clear();
+		}
 	}
 
 	/**
@@ -160,15 +157,7 @@ public class UrlBuilder
 	 */
 	public UrlBuilder bindToken(String tokenName, String value)
 	{
-		if (value == null)
-		{
-			tokenBindings.remove(tokenName);
-		}
-		else
-		{
-			tokenBindings.put(tokenName, value);
-		}
-
+		tokenResolver().bind(tokenName, value);
 		return this;
 	}
 
@@ -177,7 +166,10 @@ public class UrlBuilder
 	 */
 	public void clearTokenBindings()
 	{
-		tokenBindings.clear();
+		if (tokenResolver != null)
+		{
+			tokenResolver.clear();
+		}
 	}
 
 	/**
@@ -187,7 +179,10 @@ public class UrlBuilder
 	 */
 	public void removeBinding(String tokenName)
 	{
-		tokenBindings.remove(tokenName);
+		if (tokenResolver != null)
+		{
+			tokenResolver.remove(tokenName);
+		}
 	}
 
 	/**
@@ -213,7 +208,7 @@ public class UrlBuilder
 	 */
 	public String build(String urlPattern)
 	{
-		String url = FORMATTER.format(urlPattern, tokenBindings);
+		String url = tokenResolver().resolve(urlPattern);
 		return appendQueryString(url);
 	}
 
@@ -268,20 +263,20 @@ public class UrlBuilder
 		if (urlPattern == null)
 		    throw new IllegalStateException("Null URL pattern");
 
-		String path = FORMATTER.format(urlPattern, tokenBindings);
+		String path = tokenResolver().resolve(urlPattern);
 		return (baseUrl == null ? path : baseUrl + path);
 	}
 
 	private String appendQueryString(String url)
 	{
-		if (queries.isEmpty()) return url;
+		if (queries == null || queries.isEmpty()) return url;
 
 		StringBuilder sb = new StringBuilder(url);
 		boolean hasQuery = false;
 
 		for (String query : queries)
 		{
-			String boundQuery = FORMATTER.format(query, tokenBindings);
+			String boundQuery = tokenResolver().resolve(query);
 
 			if (!Strings.hasToken(boundQuery))
 			{
@@ -306,57 +301,58 @@ public class UrlBuilder
 	public String toString()
 	{
 		StringBuilder s = new StringBuilder();
-		s.append(this.getClass().getSimpleName());
-		s.append(": [baseUrl: ");
+		s.append("baseUrl: ");
 		s.append(baseUrl == null ? "null" : baseUrl);
 		s.append(", urlPattern: ");
 		s.append(urlPattern == null ? "null" : urlPattern);
-        printBindings(s);
+		s.append(", bindings: ");
+        s.append(tokenResolver == null ? "{}" : tokenResolver.toString());
 		printQueryStrings(s);
 		return s.toString();
 	}
-
-	private void printBindings(StringBuilder s)
-    {
-	    s.append(", bindings: {");
-		boolean isFirst = true;
-
-		for (Entry<String, String> entry : tokenBindings.entrySet())
-		{
-			if (!isFirst)
-			{
-				s.append(", ");
-			}
-			else
-			{
-				isFirst = false;
-			}
-
-			s.append(entry.getKey());
-			s.append("=");
-			s.append(entry.getValue());
-		}
-    }
 
 	private void printQueryStrings(StringBuilder s)
     {
 	    boolean isFirst = true;
 		s.append("}, query-strings: {");
 
-		for (String query : queries)
+		if (queries != null)
 		{
-			if (!isFirst)
+			for (String query : queries)
 			{
-				s.append(", ");
-			}
-			else
-			{
-				isFirst = false;
-			}
+				if (!isFirst)
+				{
+					s.append(", ");
+				}
+				else
+				{
+					isFirst = false;
+				}
 
-			s.append(query);
+				s.append(query);
+			}
 		}
 
-		s.append("}]");
+		s.append("}");
     }
+
+	private List<String> queries()
+	{
+		if (queries == null)
+		{
+			queries = new ArrayList<String>();
+		}
+
+		return queries;
+	}
+
+	private TokenResolver tokenResolver()
+	{
+		if (tokenResolver == null)
+		{
+			tokenResolver = new TokenResolver();
+		}
+
+		return tokenResolver;
+	}
 }

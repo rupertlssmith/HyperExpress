@@ -17,7 +17,12 @@ package com.strategicgains.hyperexpress.builder;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import com.strategicgains.hyperexpress.util.MapStringFormat;
 
 /**
  * TokenResolver is a utility class that uses UrlBuilder to replace tokens
@@ -30,31 +35,53 @@ import java.util.List;
  */
 public class TokenResolver
 {
-	private UrlBuilder urlBuilder = new UrlBuilder();
+	private static final MapStringFormat FORMATTER = new MapStringFormat();
+
+	private Map<String, String> tokenBindings = new HashMap<String, String>();
 	private List<TokenBinder> tokenBinders = new ArrayList<TokenBinder>();
 
 	/**
 	 * Bind a URL token to a value. During resolve(), any token names matching
 	 * the given token name here will be replaced with the given value.
 	 * 
-	 * @param tokenName
-	 * @param value
-	 * @return this instance of TokenResolver to facilitate method chaining.
+	 * Set a value to be substituted for a token in the URL pattern. While
+	 * tokens in the URL pattern are delimited with curly-braces, the token name
+	 * does not contain the braces. The value is any URL-safe string value.
+	 * 
+	 * @param tokenName the name of a token in the URL pattern.
+	 * @param value the string value to substitute for the token name in the URL pattern.
+	 * @return this TokenResolver instance to facilitate method chaining.
 	 */
-	public TokenResolver bindToken(String tokenName, String value)
+	public TokenResolver bind(String tokenName, String value)
 	{
-		urlBuilder.bindToken(tokenName, value);
+		if (value == null)
+		{
+			tokenBindings.remove(tokenName);
+		}
+		else
+		{
+			tokenBindings.put(tokenName, value);
+		}
+
 		return this;
 	}
 
 	/**
-	 * 'Unbind' a substitution value from a token name.
+	 * Removes all bound tokens. Does not remove token binder callbacks.
+	 */
+	public void clear()
+	{
+		tokenBindings.clear();
+	}
+
+	/**
+	 * 'Unbind' a named substitution value from a token name.
 	 * 
 	 * @param tokenName the name of a previously-bound token name.
 	 */
-	public void removeToken(String tokenName)
+	public void remove(String tokenName)
 	{
-		urlBuilder.removeBinding(tokenName);
+		tokenBindings.remove(tokenName);
 	}
 
 	/**
@@ -75,14 +102,6 @@ public class TokenResolver
 	}
 
 	/**
-	 * Removes all bound tokens. Does not remove token binder callbacks.
-	 */
-	public void clear()
-	{
-		urlBuilder.clearTokenBindings();
-	}
-
-	/**
 	 * Removes all bound tokens and token binder callbacks from this
 	 * TokenResolver, making it essentially empty. After reset() this
 	 * TokenResolver's state is as if it was newly instantiated.
@@ -94,14 +113,14 @@ public class TokenResolver
 	}
 
 	/**
-	 * Resolve the tokens in the URL pattern.
+	 * Resolve the tokens in the pattern string.
 	 * 
-	 * @param urlPattern
+	 * @param pattern
 	 * @return
 	 */
-	public String resolve(String urlPattern)
+	public String resolve(String pattern)
 	{
-		return urlBuilder.build(urlPattern);
+		return FORMATTER.format(pattern, tokenBindings);
 	}
 
 	/**
@@ -110,18 +129,18 @@ public class TokenResolver
 	 * object before resolving the tokens. If object is null, no token binders
 	 * are called.
 	 * 
-	 * @param urlPattern a URL pattern optionally containing tokens.
+	 * @param pattern a pattern string optionally containing tokens.
 	 * @param object an instance for which to call TokenBinders.
-	 * @return a URL with bound tokens substituted for values.
+	 * @return a string with bound tokens substituted for values.
 	 */
-	public String resolve(String urlPattern, Object object)
+	public String resolve(String pattern, Object object)
 	{
 		if (object != null)
 		{
 			callTokenBinders(object);
 		}
 
-		return resolve(urlPattern);
+		return resolve(pattern);
 	}
 
 	/**
@@ -129,16 +148,16 @@ public class TokenResolver
 	 * collection of resolved URLs. The resulting URLs may still contain tokens
 	 * if they do not have values bound.
 	 * 
-	 * @param urlPatterns a list of URL patterns
+	 * @param patterns a list of URL patterns
 	 * @return a collection of URLs with bound tokens substituted for values.
 	 */
-	public Collection<String> resolve(Collection<String> urlPatterns)
+	public Collection<String> resolve(Collection<String> patterns)
 	{
-		List<String> resolved = new ArrayList<String>(urlPatterns.size());
+		List<String> resolved = new ArrayList<String>(patterns.size());
 
-		for (String urlPattern : urlPatterns)
+		for (String pattern : patterns)
 		{
-			resolved.add(resolve(urlPattern));
+			resolved.add(resolve(pattern));
 		}
 
 		return resolved;
@@ -151,18 +170,18 @@ public class TokenResolver
 	 * token binders are called. The resulting URLs may still contain tokens if
 	 * they do not have values bound.
 	 * 
-	 * @param urlPatterns a collection of URL patterns optionally containing tokens.
+	 * @param patterns a collection of URL patterns optionally containing tokens.
 	 * @param object an instance for which to call TokenBinders.
 	 * @return a collection of URLs with bound tokens substituted for values.
 	 */
-	public Collection<String> resolve(Collection<String> urlPatterns, Object object)
+	public Collection<String> resolve(Collection<String> patterns, Object object)
 	{
 		if (object != null)
 		{
 			callTokenBinders(object);
 		}
 
-		return resolve(urlPatterns);
+		return resolve(patterns);
 	}
 
 	/**
@@ -181,4 +200,29 @@ public class TokenResolver
 			tokenBinder.bind(object);
 		}
 	}
+
+	public String toString()
+	{
+		StringBuilder s = new StringBuilder();
+	    s.append("{");
+		boolean isFirst = true;
+
+		for (Entry<String, String> entry : tokenBindings.entrySet())
+		{
+			if (!isFirst)
+			{
+				s.append(", ");
+			}
+			else
+			{
+				isFirst = false;
+			}
+
+			s.append(entry.getKey());
+			s.append("=");
+			s.append(entry.getValue());
+		}
+
+		return s.toString();
+    }
 }

@@ -154,7 +154,7 @@ public class HyperExpress
 
 	private TokenResolver _bindToken(String token, String value)
     {
-		return _acquireTokenResolver().bindToken(token, value);
+		return _acquireTokenResolver().bind(token, value);
     }
 
 	private TokenResolver _addTokenBinder(TokenBinder callback)
