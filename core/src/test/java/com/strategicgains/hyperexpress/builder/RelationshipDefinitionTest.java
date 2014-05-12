@@ -12,7 +12,6 @@ import org.junit.Test;
 import com.strategicgains.hyperexpress.domain.Blog;
 import com.strategicgains.hyperexpress.domain.Comment;
 import com.strategicgains.hyperexpress.domain.Entry;
-import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Namespace;
 
 public class RelationshipDefinitionTest
@@ -63,16 +62,16 @@ public class RelationshipDefinitionTest
 
 		verifyNamespacesExist(rdef.getNamespaces().values());
 
-		Collection<Link> links = rdef.getLinkTemplates(Blog.class).values();
+		Collection<LinkBuilder> links = rdef.getLinkTemplates(Blog.class).values();
 		assertNotNull(links);
 		assertEquals(3, links.size());
 
 		links = rdef.getCollectionLinkTemplates(Blog.class).values();
 		assertNotNull(links);
 		assertEquals(1, links.size());
-		Link link = links.iterator().next();
-		assertEquals(SELF, link.getRel());
-		assertEquals("/blogs", link.getHref());
+		LinkBuilder link = links.iterator().next();
+		assertEquals(SELF, link.rel());
+		assertEquals("/blogs", link.urlPattern());
 
 		links = rdef.getLinkTemplates(Entry.class).values();
 		assertNotNull(links);
@@ -145,7 +144,7 @@ public class RelationshipDefinitionTest
 					.title("The parent blog entry")
 				.rel("ea:author", "/pi/users/{userId}");
 
-		Collection<Link> links = rdef.getLinkTemplates(Blog.class).values();
+		Collection<LinkBuilder> links = rdef.getLinkTemplates(Blog.class).values();
 		assertNotNull(links);
 		assertEquals(3, links.size());
 

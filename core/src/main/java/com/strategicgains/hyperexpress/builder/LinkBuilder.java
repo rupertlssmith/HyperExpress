@@ -232,7 +232,7 @@ public class LinkBuilder
 	 */
 	public LinkBuilder bindToken(String tokenName, String value)
 	{
-		urlBuilder.bindToken(tokenName, value);
+		urlBuilder.bind(tokenName, value);
 		return this;
 	}
 

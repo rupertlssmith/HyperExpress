@@ -41,28 +41,28 @@ public class MapStringFormat
 
 	public MapStringFormat(String startDelimiter, String endDelimiter)
 	{
-		setStartDelimiter(startDelimiter);
-		setEndDelimiter(endDelimiter);
+		startDelimiter(startDelimiter);
+		endDelimiter(endDelimiter);
 	}
 
 	// PROTOCOL: ACCESSING
 
-	public String getEndDelimiter()
+	public String endDelimiter()
 	{
 		return endDelimiter;
 	}
 
-	public String getStartDelimiter()
-	{
-		return startDelimiter;
-	}
-
-	public void setEndDelimiter(String delimiter)
+	public void endDelimiter(String delimiter)
 	{
 		endDelimiter = delimiter;
 	}
 
-	public void setStartDelimiter(String delimiter)
+	public String startDelimiter()
+	{
+		return startDelimiter;
+	}
+
+	public void startDelimiter(String delimiter)
 	{
 		startDelimiter = delimiter;
 	}
@@ -71,16 +71,7 @@ public class MapStringFormat
 	{
 		if (parameters.length % 2 != 0) throw new IllegalArgumentException("Parameters must be in name/value pairs");
 
-		String result = string;
-		StringBuilder sb = new StringBuilder();
-
-		for (int i = 0; i < parameters.length; i += 2)
-		{
-			constructParameterName(sb, parameters[i]);
-			result = result.replaceAll(sb.toString(), parameters[i + 1]);
-		}
-
-		return result;
+		return format(string, toMap(parameters));
 	}
 
 	/**
@@ -114,10 +105,10 @@ public class MapStringFormat
 	{
 		sb.setLength(0);
 		sb.append('\\');
-		sb.append(getStartDelimiter());
+		sb.append(startDelimiter());
 		sb.append(key);
 		sb.append('\\');
-		sb.append(getEndDelimiter());
+		sb.append(endDelimiter());
 		return sb.toString();
 	}
 

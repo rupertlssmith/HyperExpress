@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.builder.RelationshipDefinition;
 import com.strategicgains.hyperexpress.builder.TokenBinder;
 import com.strategicgains.hyperexpress.builder.TokenResolver;
@@ -114,7 +115,7 @@ public class HyperExpress
     private Resource _createResource(Object object, String contentType)
     {
     	Resource r = resourceFactory.createResource(object, contentType);
-    	Collection<Link> templates = relationshipDefinition.getLinkTemplates(object.getClass()).values();
+    	Collection<LinkBuilder> templates = relationshipDefinition.getLinkTemplates(object.getClass()).values();
     	r.addLinks(_resolveUrlTokens(templates, object, _acquireTokenResolver()));
     	r.addNamespaces(relationshipDefinition.getNamespaces().values());
 	    return r;
@@ -130,7 +131,7 @@ public class HyperExpress
     private Resource _createCollectionResource(Collection<Object> components, Class<?> componentType, String contentType)
     {
     	Resource root = resourceFactory.createResource(null, contentType);
-    	Collection<Link> templates = relationshipDefinition.getCollectionLinkTemplates(componentType).values();
+    	Collection<LinkBuilder> templates = relationshipDefinition.getCollectionLinkTemplates(componentType).values();
     	root.addLinks(_resolveUrlTokens(templates, null, _acquireTokenResolver()));
     	root.addNamespaces(relationshipDefinition.getNamespaces().values());
 		Resource childResource = null;
@@ -191,15 +192,14 @@ public class HyperExpress
 		return tokenResolver.get();
 	}
 
-	private List<Link> _resolveUrlTokens(Collection<Link> templates, Object object, TokenResolver tokenResolver)
+	private List<Link> _resolveUrlTokens(Collection<LinkBuilder> templates, Object object, TokenResolver tokenResolver)
     {
 	    List<Link> links = new ArrayList<>(templates.size());
 
-		for (Link template : templates)
+		for (LinkBuilder template : templates)
 		{
-			Link link = template.clone();
-			String href = tokenResolver.resolve(link.getHref(), object);
-			link.setHref(href);
+			Link link = template.build();
+			tokenResolver.resolve(link.getHref(), object);
 
 			if (link.has("optional") && link.hasToken())
 			{

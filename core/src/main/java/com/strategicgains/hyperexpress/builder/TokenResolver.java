@@ -37,8 +37,8 @@ public class TokenResolver
 {
 	private static final MapStringFormat FORMATTER = new MapStringFormat();
 
-	private Map<String, String> tokenBindings = new HashMap<String, String>();
-	private List<TokenBinder> tokenBinders = new ArrayList<TokenBinder>();
+	private Map<String, String> values = new HashMap<String, String>();
+	private List<TokenBinder> binders = new ArrayList<TokenBinder>();
 
 	/**
 	 * Bind a URL token to a value. During resolve(), any token names matching
@@ -56,11 +56,11 @@ public class TokenResolver
 	{
 		if (value == null)
 		{
-			tokenBindings.remove(tokenName);
+			values.remove(tokenName);
 		}
 		else
 		{
-			tokenBindings.put(tokenName, value);
+			values.put(tokenName, value);
 		}
 
 		return this;
@@ -71,7 +71,7 @@ public class TokenResolver
 	 */
 	public void clear()
 	{
-		tokenBindings.clear();
+		values.clear();
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class TokenResolver
 	 */
 	public void remove(String tokenName)
 	{
-		tokenBindings.remove(tokenName);
+		values.remove(tokenName);
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class TokenResolver
 	{
 		if (callback == null) return this;
 
-		tokenBinders.add(callback);
+		binders.add(callback);
 		return this;
 	}
 
@@ -109,7 +109,7 @@ public class TokenResolver
 	public void reset()
 	{
 		clear();
-		tokenBinders.clear();
+		binders.clear();
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class TokenResolver
 	 */
 	public String resolve(String pattern)
 	{
-		return FORMATTER.format(pattern, tokenBindings);
+		return FORMATTER.format(pattern, values);
 	}
 
 	/**
@@ -195,7 +195,7 @@ public class TokenResolver
 	{
 		if (object == null) return;
 
-		for (TokenBinder tokenBinder : tokenBinders)
+		for (TokenBinder tokenBinder : binders)
 		{
 			tokenBinder.bind(object);
 		}
@@ -207,7 +207,7 @@ public class TokenResolver
 	    s.append("{");
 		boolean isFirst = true;
 
-		for (Entry<String, String> entry : tokenBindings.entrySet())
+		for (Entry<String, String> entry : values.entrySet())
 		{
 			if (!isFirst)
 			{

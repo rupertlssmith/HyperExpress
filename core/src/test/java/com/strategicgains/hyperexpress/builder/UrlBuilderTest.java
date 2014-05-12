@@ -15,7 +15,7 @@ public class UrlBuilderTest
 	public void shouldBuildSimpleUrl()
 	{
 		assertEquals("/todd:was,here", new UrlBuilder(URL_PATTERN)
-			.bindToken("id", "todd:was,here")
+			.bind("id", "todd:was,here")
 			.build());
 	}
 
@@ -23,9 +23,9 @@ public class UrlBuilderTest
 	public void shouldBuildComplexUrl()
 	{
 		assertEquals("/something/else/12345", new UrlBuilder(URL_PATTERN2)
-			.bindToken("rootId", "something")
-			.bindToken("secondaryId", "else")
-			.bindToken("id", "12345")
+			.bind("rootId", "something")
+			.bind("secondaryId", "else")
+			.bind("id", "12345")
 			.build());	
 	}
 
@@ -34,19 +34,19 @@ public class UrlBuilderTest
 	{
 		UrlBuilder b = new UrlBuilder(URL_PATTERN2);
 		assertEquals("/something/else/12345", b
-			.bindToken("rootId", "something")
-			.bindToken("secondaryId", "else")
-			.bindToken("id", "12345")
+			.bind("rootId", "something")
+			.bind("secondaryId", "else")
+			.bind("id", "12345")
 			.build());	
 
 		assertEquals("/anything/maybe/54321", b
-			.bindToken("rootId", "anything")
-			.bindToken("secondaryId", "maybe")
-			.bindToken("id", "54321")
+			.bind("rootId", "anything")
+			.bind("secondaryId", "maybe")
+			.bind("id", "54321")
 			.build());	
 
 		assertEquals("/anything/wonderful/54321", b
-			.bindToken("secondaryId", "wonderful")
+			.bind("secondaryId", "wonderful")
 			.build());	
 	}
 
@@ -56,9 +56,9 @@ public class UrlBuilderTest
 		assertEquals("/something/else/12345", new UrlBuilder(URL_PATTERN2)
 			.withQuery("limit={selfLimit}")
 			.withQuery("offset={selfOffset}")
-			.bindToken("rootId", "something")
-			.bindToken("secondaryId", "else")
-			.bindToken("id", "12345")
+			.bind("rootId", "something")
+			.bind("secondaryId", "else")
+			.bind("id", "12345")
 			.build());	
 	}
 
@@ -68,11 +68,11 @@ public class UrlBuilderTest
 		assertEquals("/something/else/12345?limit=20&offset=40", new UrlBuilder(URL_PATTERN2)
 			.withQuery("limit={selfLimit}")
 			.withQuery("offset={selfOffset}")
-			.bindToken("rootId", "something")
-			.bindToken("secondaryId", "else")
-			.bindToken("id", "12345")
-			.bindToken("selfLimit", "20")
-			.bindToken("selfOffset", "40")
+			.bind("rootId", "something")
+			.bind("secondaryId", "else")
+			.bind("id", "12345")
+			.bind("selfLimit", "20")
+			.bind("selfOffset", "40")
 			.build());	
 	}
 
@@ -82,10 +82,25 @@ public class UrlBuilderTest
 		assertEquals("/something/else/12345?offset=40", new UrlBuilder(URL_PATTERN2)
 			.withQuery("limit={selfLimit}")
 			.withQuery("offset={selfOffset}")
-			.bindToken("rootId", "something")
-			.bindToken("secondaryId", "else")
-			.bindToken("id", "12345")
-			.bindToken("selfOffset", "40")
+			.bind("rootId", "something")
+			.bind("secondaryId", "else")
+			.bind("id", "12345")
+			.bind("selfOffset", "40")
+			.build());	
+	}
+
+	@Test
+	public void shouldUseExternalTokenResolver()
+	{
+		assertEquals("/something/else/12345?limit=20&offset=40", new UrlBuilder(URL_PATTERN2)
+			.withQuery("limit={selfLimit}")
+			.withQuery("offset={selfOffset}")
+			.tokenResolver(new TokenResolver()
+				.bind("rootId", "something")
+				.bind("secondaryId", "else")
+				.bind("id", "12345")
+				.bind("selfLimit", "20")
+				.bind("selfOffset", "40"))
 			.build());	
 	}
 }

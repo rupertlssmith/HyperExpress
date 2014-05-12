@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.strategicgains.hyperexpress.domain.Link;
-import com.strategicgains.hyperexpress.domain.LinkDefinition;
 import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.exception.RelationshipException;
 
@@ -52,9 +50,9 @@ public class RelationshipDefinition
 	private static final String LENGTH = "length";
 
 	private Map<String, Namespace> namespaces = new LinkedHashMap<>();
-	private Map<String, Map<String, Link>> relsByClass = new LinkedHashMap<>();
-	private Map<String, Link> links;
-	private Link link;
+	private Map<String, Map<String, LinkBuilder>> relsByClass = new LinkedHashMap<>();
+	private Map<String, LinkBuilder> links;
+	private LinkBuilder link;
 
 	/**
 	 * Adds one or more namespaces to this relationship builder.
@@ -124,7 +122,7 @@ public class RelationshipDefinition
 
 	public RelationshipDefinition rel(String name, String href)
 	{
-		link = new LinkDefinition(name, href);
+		link = new LinkBuilder(href).rel(name);
 		links.put(name, link);
 		return this;
 	}
@@ -234,7 +232,7 @@ public class RelationshipDefinition
     	return this;
     }
 
-	public Map<String, Link> getLinkTemplates(Class<?> forClass)
+	public Map<String, LinkBuilder> getLinkTemplates(Class<?> forClass)
 	{
 		if (forClass == null) return Collections.emptyMap();
 
@@ -246,7 +244,7 @@ public class RelationshipDefinition
 		return getLinkTemplatesForName(forClass.getName());
 	}
 
-	public Map<String, Link> getCollectionLinkTemplates(Class<?> componentType)
+	public Map<String, LinkBuilder> getCollectionLinkTemplates(Class<?> componentType)
 	{
 		if (componentType == null) return Collections.emptyMap();
 
@@ -259,9 +257,9 @@ public class RelationshipDefinition
 	}
 
 	@SuppressWarnings("unchecked")
-    private Map<String, Link> getLinkTemplatesForName(String className)
+    private Map<String, LinkBuilder> getLinkTemplatesForName(String className)
 	{
-		Map<String, Link> templates = relsByClass.get(className);
+		Map<String, LinkBuilder> templates = relsByClass.get(className);
 		
 		return (templates != null ? Collections.unmodifiableMap(templates) : Collections.EMPTY_MAP);
 	}

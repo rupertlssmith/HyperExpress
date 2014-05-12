@@ -78,6 +78,18 @@ public class UrlBuilder
 	}
 
 	/**
+	 * Set the URL pattern for the URL builder.
+	 * 
+	 * @param urlPattern a URL path with optional tokens of the form '{tokenName}'
+	 * @return this UrlBuilder instance to facilitate method chaining.
+	 */
+	public UrlBuilder urlPattern(String urlPattern)
+	{
+		this.urlPattern = urlPattern;
+		return this;
+	}
+
+	/**
 	 * Retrieve the URL pattern set on this URL builder.
 	 * 
 	 * @return the URL pattern or null.
@@ -155,10 +167,43 @@ public class UrlBuilder
 	 * @param value the URL-safe string value to substitute for the token name in the URL pattern.
 	 * @return this UrlBuilder instance to facilitate method chaining.
 	 */
-	public UrlBuilder bindToken(String tokenName, String value)
+	public UrlBuilder bind(String tokenName, String value)
 	{
 		tokenResolver().bind(tokenName, value);
 		return this;
+	}
+
+	/**
+	 * Set the TokenResolver on this URL builder to an external Token Resolver
+	 * instance. Calls to bindToken() on this UrlBuilder will alter the token
+	 * resolver.  Calls on the external token resolver will alter the bindings
+	 * of this UrlBuilder.
+	 * 
+	 * @param resolver an external TokenResolver instance.
+	 * @return this UrlBuilder instance to facilitate method chaining.
+	 */
+	public UrlBuilder tokenResolver(TokenResolver resolver)
+	{
+		this.tokenResolver = resolver;
+		return this;
+	}
+
+	/**
+	 * Retrieve the TokenResolver from this URL builder, externalizing it.
+	 * Calls to bindToken() on this UrlBuilder will alter the token
+	 * resolver.  Calls on the external token resolver will alter the bindings
+	 * of this UrlBuilder.
+	 * 
+	 * @return the TokenResolver for this UrlBuilder.
+	 */
+	public TokenResolver tokenResolver()
+	{
+		if (tokenResolver == null)
+		{
+			tokenResolver = new TokenResolver();
+		}
+
+		return tokenResolver;
 	}
 
 	/**
@@ -195,7 +240,12 @@ public class UrlBuilder
 	 */
 	public String build()
 	{
-		return build(buildFullUrlPattern());
+		return build(buildFullUrlPattern(), tokenResolver);
+	}
+
+	public String build(TokenResolver tokenResolver)
+	{
+		return build(buildFullUrlPattern(), tokenResolver);
 	}
 
 	/**
@@ -206,9 +256,11 @@ public class UrlBuilder
 	 * with this builder. May not be null.
 	 * @return a URL string.
 	 */
-	public String build(String urlPattern)
+	public String build(String urlPattern, TokenResolver resolver)
 	{
-		String url = tokenResolver().resolve(urlPattern);
+		if (tokenResolver == null) return urlPattern;
+
+		String url = tokenResolver.resolve(urlPattern);
 		return appendQueryString(url);
 	}
 
@@ -250,7 +302,7 @@ public class UrlBuilder
 
 		for (String id : values)
 		{
-			bindToken(tokenName, id);
+			bind(tokenName, id);
 			urls.add(build(href));
 		}
 
@@ -344,15 +396,5 @@ public class UrlBuilder
 		}
 
 		return queries;
-	}
-
-	private TokenResolver tokenResolver()
-	{
-		if (tokenResolver == null)
-		{
-			tokenResolver = new TokenResolver();
-		}
-
-		return tokenResolver;
 	}
 }
