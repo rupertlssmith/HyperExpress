@@ -25,10 +25,10 @@ import java.util.Map.Entry;
 import com.strategicgains.hyperexpress.util.MapStringFormat;
 
 /**
- * TokenResolver is a utility class that uses UrlBuilder to replace tokens
+ * TokenResolver is a utility class that replaces tokens (e.g. '{tokenName}')
  * in strings with values. It allows the addition of TokenBinder instances,
- * which can extract token values from Object instances before replacing
- * tokens in a URL.
+ * which are simply callbacks that can extract token values from Object
+ * instances before replacing tokens in a string.
  * 
  * @author toddf
  * @since Apr 28, 2014
@@ -41,14 +41,14 @@ public class TokenResolver
 	private List<TokenBinder> binders = new ArrayList<TokenBinder>();
 
 	/**
-	 * Bind a URL token to a value. During resolve(), any token names matching
+	 * Bind a token to a value. During resolve(), any token names matching
 	 * the given token name here will be replaced with the given value.
 	 * 
-	 * Set a value to be substituted for a token in the URL pattern. While
-	 * tokens in the URL pattern are delimited with curly-braces, the token name
-	 * does not contain the braces. The value is any URL-safe string value.
+	 * Set a value to be substituted for a token in the string pattern. While
+	 * tokens in the pattern are delimited with curly-braces, the token name
+	 * does not contain the braces. The value is any string value.
 	 * 
-	 * @param tokenName the name of a token in the URL pattern.
+	 * @param tokenName the name of a token in the string pattern.
 	 * @param value the string value to substitute for the token name in the URL pattern.
 	 * @return this TokenResolver instance to facilitate method chaining.
 	 */
@@ -93,7 +93,7 @@ public class TokenResolver
 	 * @param callback a TokenBinder implementation.
 	 * @return this instance of TokenResolver to facilitate method chaining.
 	 */
-	public TokenResolver addTokenBinder(TokenBinder callback)
+	public TokenResolver binder(TokenBinder callback)
 	{
 		if (callback == null) return this;
 
@@ -124,7 +124,7 @@ public class TokenResolver
 	}
 
 	/**
-	 * Resolve the tokens in a URL pattern, binding additional token values from
+	 * Resolve the tokens in a string pattern, binding additional token values from
 	 * the given Object first. Any TokenBinder callbacks are called for the
 	 * object before resolving the tokens. If object is null, no token binders
 	 * are called.
@@ -140,16 +140,16 @@ public class TokenResolver
 			callTokenBinders(object);
 		}
 
-		return resolve(pattern);
+		return FORMATTER.format(pattern, values);
 	}
 
 	/**
-	 * Resolve the tokens in the collection of URL patterns, returning a
-	 * collection of resolved URLs. The resulting URLs may still contain tokens
-	 * if they do not have values bound.
+	 * Resolve the tokens in the collection of string patterns, returning a
+	 * collection of resolved strings. The resulting strings may still contain tokens
+	 * if they do not have token values bound.
 	 * 
-	 * @param patterns a list of URL patterns
-	 * @return a collection of URLs with bound tokens substituted for values.
+	 * @param patterns a list of string patterns
+	 * @return a collection of strings with bound tokens substituted for values.
 	 */
 	public Collection<String> resolve(Collection<String> patterns)
 	{
@@ -164,15 +164,15 @@ public class TokenResolver
 	}
 
 	/**
-	 * Resolve the tokens in a collection of URL patterns, binding additional
+	 * Resolve the tokens in a collection of string patterns, binding additional
 	 * token values from the given Object first. Any TokenBinder callbacks are
 	 * called for the object before resolving the tokens. If object is null, no
-	 * token binders are called. The resulting URLs may still contain tokens if
+	 * token binders are called. The resulting strings may still contain tokens if
 	 * they do not have values bound.
 	 * 
-	 * @param patterns a collection of URL patterns optionally containing tokens.
+	 * @param patterns a collection of string patterns optionally containing tokens.
 	 * @param object an instance for which to call TokenBinders.
-	 * @return a collection of URLs with bound tokens substituted for values.
+	 * @return a collection of strings with bound tokens substituted for values.
 	 */
 	public Collection<String> resolve(Collection<String> patterns, Object object)
 	{
@@ -197,7 +197,7 @@ public class TokenResolver
 
 		for (TokenBinder tokenBinder : binders)
 		{
-			tokenBinder.bind(object);
+			tokenBinder.bind(object, this);
 		}
 	}
 

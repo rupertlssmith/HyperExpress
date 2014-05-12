@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.strategicgains.hyperexpress.builder.TokenResolver;
 import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.exception.ResourceException;
 
@@ -35,7 +36,7 @@ public class HalResourceImplTest
 	public void shouldAllowMissingRel()
 	{
 		HalResource r = new HalResource();
-		r.addLink(new HalLinkBuilder("/something").build());
+		r.addLink(new HalLinkBuilder("/something").build(new TokenResolver()));
 	}
 
 	@Test(expected=ResourceException.class)

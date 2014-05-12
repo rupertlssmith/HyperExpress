@@ -51,8 +51,8 @@ public class RelationshipDefinition
 
 	private Map<String, Namespace> namespaces = new LinkedHashMap<>();
 	private Map<String, Map<String, LinkBuilder>> relsByClass = new LinkedHashMap<>();
-	private Map<String, LinkBuilder> links;
-	private LinkBuilder link;
+	private Map<String, LinkBuilder> linkBuilders;
+	private LinkBuilder linkBuilder;
 
 	/**
 	 * Adds one or more namespaces to this relationship builder.
@@ -109,12 +109,12 @@ public class RelationshipDefinition
 	{
 		if (name == null) return this;
 
-		links = relsByClass.get(name);
+		linkBuilders = relsByClass.get(name);
 
-		if (links == null)
+		if (linkBuilders == null)
 		{
-			links = new HashMap<>();
-			relsByClass.put(name, links);
+			linkBuilders = new HashMap<>();
+			relsByClass.put(name, linkBuilders);
 		}
 
 		return this;
@@ -122,8 +122,14 @@ public class RelationshipDefinition
 
 	public RelationshipDefinition rel(String name, String href)
 	{
-		link = new LinkBuilder(href).rel(name);
-		links.put(name, link);
+		return rel(name, new LinkBuilder(href));
+	}
+
+	public RelationshipDefinition rel(String name, LinkBuilder builder)
+	{
+		linkBuilder = builder;
+		linkBuilder.rel(name);
+		linkBuilders.put(name, linkBuilder);
 		return this;
 	}
 
@@ -226,29 +232,44 @@ public class RelationshipDefinition
 	 */
 	public RelationshipDefinition attribute(String name, String value)
     {
-		if (link == null) throw new RelationshipException("Attempt to set attribute on null link: " + name + ". Call 'rel()' first.");
+		if (linkBuilder == null) throw new RelationshipException("Attempt to set attribute on null link: " + name + ". Call 'rel()' first.");
 
-		link.set(name, value);
+		linkBuilder.set(name, value);
     	return this;
     }
 
-	public Map<String, LinkBuilder> getLinkTemplates(Class<?> forClass)
+	/**
+	 * Add an optional query-string argument to the latest rel(). If the query-string segment contains
+	 * tokens and is not fully populate, it will not appear in the generated link.
+	 * 
+	 * @param querySegment an optional query-string segment. Optionally contains tokens.
+	 * @return this RelationshipDefinition to facilitate method chaining.
+	 */
+	public RelationshipDefinition withQuery(String querySegment)
+	{
+		if (linkBuilder == null) throw new RelationshipException("Attempt to set query-string segment on null link: " + querySegment + ". Call 'rel()' first.");
+
+		linkBuilder.withQuery(querySegment);
+		return this;
+	}
+
+	public Map<String, LinkBuilder> getLinkBuilders(Class<?> forClass)
 	{
 		if (forClass == null) return Collections.emptyMap();
 
 		if (forClass.isArray())
 		{
-			return getLinkTemplatesForName(forClass.getComponentType().getName() + ".Collection");
+			return getLinkBuildersForName(forClass.getComponentType().getName() + ".Collection");
 		}
 
-		return getLinkTemplatesForName(forClass.getName());
+		return getLinkBuildersForName(forClass.getName());
 	}
 
-	public Map<String, LinkBuilder> getCollectionLinkTemplates(Class<?> componentType)
+	public Map<String, LinkBuilder> getCollectionLinkBuilders(Class<?> componentType)
 	{
 		if (componentType == null) return Collections.emptyMap();
 
-		return getLinkTemplatesForName(componentType.getName() + ".Collection");
+		return getLinkBuildersForName(componentType.getName() + ".Collection");
 	}
 
 	public Map<String, Namespace> getNamespaces()
@@ -257,10 +278,10 @@ public class RelationshipDefinition
 	}
 
 	@SuppressWarnings("unchecked")
-    private Map<String, LinkBuilder> getLinkTemplatesForName(String className)
+    private Map<String, LinkBuilder> getLinkBuildersForName(String className)
 	{
-		Map<String, LinkBuilder> templates = relsByClass.get(className);
+		Map<String, LinkBuilder> builders = relsByClass.get(className);
 		
-		return (templates != null ? Collections.unmodifiableMap(templates) : Collections.EMPTY_MAP);
+		return (builders != null ? Collections.unmodifiableMap(builders) : Collections.EMPTY_MAP);
 	}
 }

@@ -75,17 +75,22 @@ public class HyperExpress
 	 * 
 	 * @return the RelationshipDefinition contained in this singleton.
 	 */
-	public static RelationshipDefinition defineRelationships()
+	public static RelationshipDefinition relationships()
 	{
 		return INSTANCE.relationshipDefinition;
 	}
 
-	public static TokenResolver bindToken(String token, String value)
+	public static void relationships(RelationshipDefinition relationships)
+	{
+		INSTANCE.relationshipDefinition = relationships;
+	}
+
+	public static TokenResolver bind(String token, String value)
 	{
 		return INSTANCE._bindToken(token, value);
 	}
 
-	public static void collectionTokenBinder(TokenBinder callback)
+	public static void tokenBinder(TokenBinder callback)
 	{
 		INSTANCE._addTokenBinder(callback);
 	}
@@ -115,8 +120,8 @@ public class HyperExpress
     private Resource _createResource(Object object, String contentType)
     {
     	Resource r = resourceFactory.createResource(object, contentType);
-    	Collection<LinkBuilder> templates = relationshipDefinition.getLinkTemplates(object.getClass()).values();
-    	r.addLinks(_resolveUrlTokens(templates, object, _acquireTokenResolver()));
+    	Collection<LinkBuilder> linkBuilders = relationshipDefinition.getLinkBuilders(object.getClass()).values();
+    	r.addLinks(_resolveUrlTokens(linkBuilders, object, _acquireTokenResolver()));
     	r.addNamespaces(relationshipDefinition.getNamespaces().values());
 	    return r;
     }
@@ -131,7 +136,7 @@ public class HyperExpress
     private Resource _createCollectionResource(Collection<Object> components, Class<?> componentType, String contentType)
     {
     	Resource root = resourceFactory.createResource(null, contentType);
-    	Collection<LinkBuilder> templates = relationshipDefinition.getCollectionLinkTemplates(componentType).values();
+    	Collection<LinkBuilder> templates = relationshipDefinition.getCollectionLinkBuilders(componentType).values();
     	root.addLinks(_resolveUrlTokens(templates, null, _acquireTokenResolver()));
     	root.addNamespaces(relationshipDefinition.getNamespaces().values());
 		Resource childResource = null;
@@ -160,7 +165,7 @@ public class HyperExpress
 
 	private TokenResolver _addTokenBinder(TokenBinder callback)
     {
-		return _acquireTokenResolver().addTokenBinder(callback);
+		return _acquireTokenResolver().binder(callback);
     }
 
 	private void _clearTokenBindings()
@@ -198,7 +203,7 @@ public class HyperExpress
 
 		for (LinkBuilder template : templates)
 		{
-			Link link = template.build();
+			Link link = template.build(object, tokenResolver);
 			tokenResolver.resolve(link.getHref(), object);
 
 			if (link.has("optional") && link.hasToken())

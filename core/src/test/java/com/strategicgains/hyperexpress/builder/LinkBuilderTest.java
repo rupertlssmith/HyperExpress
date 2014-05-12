@@ -17,12 +17,9 @@ package com.strategicgains.hyperexpress.builder;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Collection;
-
 import org.junit.Test;
 
 import com.strategicgains.hyperexpress.RelTypes;
-import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.Link;
 
 /**
@@ -35,70 +32,68 @@ public class LinkBuilderTest
 	private static final String URL_PATTERN = "/{id}";
 	private static final String URL_PATTERN2 = "/{rootId}/{secondaryId}/{id}";
 
-	@Test
-	public void shouldBuildSimpleMultipleIdTemplate()
-	{
-		Collection<Link> links = new LinkBuilder(URL_PATTERN)
-			.baseUrl(BASE_URL)
-			.rel(RelTypes.RELATED)
-			.build("id", "42", "22", "4");
+//	@Test
+//	public void shouldBuildSimpleMultipleIdTemplate()
+//	{
+//		Collection<Link> links = new LinkBuilder(URL_PATTERN)
+//			.baseUrl(BASE_URL)
+//			.rel(RelTypes.RELATED)
+//			.build("id", "42", "22", "4");
+//
+//		assertEquals(3, links.size());
+//		int i = 0;
+//
+//		for (Link link : links)
+//		{
+//			if (i == 0)
+//			{
+//				assertEquals(BASE_URL + "/42", link.getHref());
+//			}
+//			else if (i == 1)
+//			{
+//				assertEquals(BASE_URL + "/22", link.getHref());				
+//			}
+//			else if (i == 2)
+//			{
+//				assertEquals(BASE_URL + "/4", link.getHref());
+//			}
+//
+//			assertEquals(RelTypes.RELATED, link.getRel());
+//			++i;
+//		}
+//	}
 
-		assertEquals(3, links.size());
-		int i = 0;
-
-		for (Link link : links)
-		{
-			if (i == 0)
-			{
-				assertEquals(BASE_URL + "/42", link.getHref());
-			}
-			else if (i == 1)
-			{
-				assertEquals(BASE_URL + "/22", link.getHref());				
-			}
-			else if (i == 2)
-			{
-				assertEquals(BASE_URL + "/4", link.getHref());
-			}
-
-			assertEquals(RelTypes.RELATED, link.getRel());
-			++i;
-		}
-	}
-
-	@Test
-	public void shouldBuildComplexMultipleIdTemplate()
-	{
-		Collection<Link> links = new LinkBuilder(URL_PATTERN2)
-			.baseUrl(BASE_URL)
-			.rel(RelTypes.DESCRIBED_BY)
-			.bindToken("secondaryId", "second")
-			.bindToken("rootId", "first")
-			.build("id", "42", "22", "4");
-
-
-		assertEquals(3, links.size());
-		int i = 0;
-
-		for (Link link : links)
-		{
-			if (i == 0)
-			{
-				assertEquals(BASE_URL + "/first/second/42", link.getHref());
-			}
-			else if (i == 1)
-			{
-				assertEquals(BASE_URL + "/first/second/22", link.getHref());
-			}
-			else if (i == 2)
-			{
-				assertEquals(BASE_URL + "/first/second/4", link.getHref());
-			}
-
-			assertEquals(RelTypes.DESCRIBED_BY, link.getRel());
-			++i;
-		}
-	}
+//	@Test
+//	public void shouldBuildComplexMultipleIdTemplate()
+//	{
+//		Collection<Link> links = new LinkBuilder(URL_PATTERN2)
+//			.baseUrl(BASE_URL)
+//			.rel(RelTypes.DESCRIBED_BY)
+//			.build("id", "42", "22", "4");
+//
+//
+//		assertEquals(3, links.size());
+//		int i = 0;
+//
+//		for (Link link : links)
+//		{
+//			if (i == 0)
+//			{
+//				assertEquals(BASE_URL + "/first/second/42", link.getHref());
+//			}
+//			else if (i == 1)
+//			{
+//				assertEquals(BASE_URL + "/first/second/22", link.getHref());
+//			}
+//			else if (i == 2)
+//			{
+//				assertEquals(BASE_URL + "/first/second/4", link.getHref());
+//			}
+//
+//			assertEquals(RelTypes.DESCRIBED_BY, link.getRel());
+//			++i;
+//		}
+//	}
 
 	@Test
 	public void shouldBuildSimpleSingleIdTemplate()
@@ -106,8 +101,9 @@ public class LinkBuilderTest
 		Link link = new LinkBuilder(URL_PATTERN)
 			.baseUrl(BASE_URL)
 			.rel(RelTypes.SELF)
-			.bindToken("id", "42")
-			.build();
+			.build(new TokenResolver()
+				.bind("id", "42")
+			);
 		
 		assertEquals(BASE_URL + "/42", link.getHref());
 		assertEquals(RelTypes.SELF, link.getRel());
@@ -116,13 +112,16 @@ public class LinkBuilderTest
 	@Test
 	public void shouldBuildComplexSingleIdTemplate()
 	{
+		TokenResolver r = new TokenResolver()
+			.bind("rootId", "first")
+			.bind("secondaryId", "second")
+			.bind("id", "42")
+			.bind("ignored", "ignored");
+
 		Link link = new LinkBuilder(URL_PATTERN2)
 			.baseUrl(BASE_URL)
 			.rel(RelTypes.DESCRIBED_BY)
-			.bindToken("secondaryId", "second")
-			.bindToken("rootId", "first")
-			.bindToken("id", "42")
-			.build();
+			.build(r);
 		
 		assertEquals(BASE_URL + "/first/second/42", link.getHref());
 		assertEquals(RelTypes.DESCRIBED_BY, link.getRel());
@@ -131,6 +130,6 @@ public class LinkBuilderTest
 	@Test
 	public void shouldAllowMissingRel()
 	{
-		new LinkBuilder(URL_PATTERN).build();
+		new LinkBuilder(URL_PATTERN).build(new TokenResolver());
 	}
 }

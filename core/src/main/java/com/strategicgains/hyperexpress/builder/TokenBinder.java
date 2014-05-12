@@ -31,6 +31,7 @@ public interface TokenBinder
 	 * links for this instance.
 	 * 
 	 * @param object an object for which to extract values for URL tokens.
+	 * @param resolver a TokenResolver into which token values may be bound.
 	 */
-	void bind(Object object);
+	void bind(Object object, TokenResolver resolver);
 }

@@ -25,7 +25,7 @@ public class HyperExpressTest
 	public static void setUpBeforeClass() throws Exception
 	{
 		HyperExpress.registerResourceFactoryStrategy(new NullResourceFactoryStrategy(), "*");
-		HyperExpress.defineRelationships()
+		HyperExpress.relationships()
 		.addNamespaces(
 			new Namespace("ea", "http://namespaces.example.com/{rel}"),
 			new Namespace("blog", "http://namespaces.example.com/{rel}")
@@ -59,7 +59,7 @@ public class HyperExpressTest
 	public void shouldContainOptionalQueryStringParameters()
 	{
 		HyperExpress
-			.bindToken("selfOffset", "40")
+			.bind("selfOffset", "40")
 			.bind("selfLimit", "20");
 		Resource r = HyperExpress.createCollectionResource(null, Blog.class, "*");
 		assertNotNull(r.getLinks());
@@ -73,7 +73,7 @@ public class HyperExpressTest
 	public void shouldContainOptionalLinks()
 	{
 		HyperExpress
-			.bindToken("nextOffset", "40")
+			.bind("nextOffset", "40")
 			.bind("nextLimit", "20");
 		Resource r = HyperExpress.createCollectionResource(null, Blog.class, "*");
 		assertNotNull(r.getLinks());

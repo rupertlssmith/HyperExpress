@@ -16,20 +16,17 @@
 package com.strategicgains.hyperexpress.builder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import com.strategicgains.hyperexpress.util.Strings;
 
 /**
  * Build URL strings from a URL pattern, binding URL tokens to actual values.
- * This class is not thread safe, as the token bindings are fully mutable.
  * <p/>
  * There is also building of dynamic query strings. By calling addQuery() with a
  * tokenized query-string segment (e.g. "limit={limit}"), the builder will
  * include query-string arguments that get fully populated. If there is no
- * parmater bound to a particular query-string segment, it is not included in
+ * parameter bound to a particular query-string segment, it is not included in
  * the constructed URL string.
  * 
  * @author toddf
@@ -40,7 +37,6 @@ public class UrlBuilder
 	private String baseUrl;
 	private String urlPattern;
 	private List<String> queries;
-	private TokenResolver tokenResolver;
 
 	/**
 	 * Create an empty UrlBuilder, with no URL pattern. Using this constructor
@@ -158,156 +154,36 @@ public class UrlBuilder
 		}
 	}
 
-	/**
-	 * Set a value to be substituted for a token in the URL pattern. While
-	 * tokens in the URL pattern are delimited with curly-braces, the token name
-	 * does not contain the braces. The value is any URL-safe string value.
-	 * 
-	 * @param tokenName the name of a token in the URL pattern.
-	 * @param value the URL-safe string value to substitute for the token name in the URL pattern.
-	 * @return this UrlBuilder instance to facilitate method chaining.
-	 */
-	public UrlBuilder bind(String tokenName, String value)
-	{
-		tokenResolver().bind(tokenName, value);
-		return this;
-	}
-
-	/**
-	 * Set the TokenResolver on this URL builder to an external Token Resolver
-	 * instance. Calls to bindToken() on this UrlBuilder will alter the token
-	 * resolver.  Calls on the external token resolver will alter the bindings
-	 * of this UrlBuilder.
-	 * 
-	 * @param resolver an external TokenResolver instance.
-	 * @return this UrlBuilder instance to facilitate method chaining.
-	 */
-	public UrlBuilder tokenResolver(TokenResolver resolver)
-	{
-		this.tokenResolver = resolver;
-		return this;
-	}
-
-	/**
-	 * Retrieve the TokenResolver from this URL builder, externalizing it.
-	 * Calls to bindToken() on this UrlBuilder will alter the token
-	 * resolver.  Calls on the external token resolver will alter the bindings
-	 * of this UrlBuilder.
-	 * 
-	 * @return the TokenResolver for this UrlBuilder.
-	 */
-	public TokenResolver tokenResolver()
-	{
-		if (tokenResolver == null)
-		{
-			tokenResolver = new TokenResolver();
-		}
-
-		return tokenResolver;
-	}
-
-	/**
-	 * Remove all the token bindings.
-	 */
-	public void clearTokenBindings()
-	{
-		if (tokenResolver != null)
-		{
-			tokenResolver.clear();
-		}
-	}
-
-	/**
-	 * 'Unbind' a named substitution value from a token name.
-	 * 
-	 * @param tokenName the name of a previously-bound token name.
-	 */
-	public void removeBinding(String tokenName)
-	{
-		if (tokenResolver != null)
-		{
-			tokenResolver.remove(tokenName);
-		}
-	}
-
-	/**
-	 * Build a new URL from the URL pattern, utilizing the current token
-	 * bindings. If any tokens are not bound, they will not be substituted,
-	 * remaining as URL template parameters in the output string.
-	 * 
-	 * @return a URL string utilizing the current token bindings.
-	 * @throws IllegalStateException if no URL pattern is present (it is null).
-	 */
-	public String build()
-	{
-		return build(buildFullUrlPattern(), tokenResolver);
-	}
-
 	public String build(TokenResolver tokenResolver)
 	{
-		return build(buildFullUrlPattern(), tokenResolver);
+		return build(buildFullUrlPattern(), null, tokenResolver);
+	}
+
+	public String build(Object object, TokenResolver tokenResolver)
+	{
+		return build(buildFullUrlPattern(), object, tokenResolver);
 	}
 
 	/**
-	 * Build a new URL from the give URL pattern, utilizing the current token
-	 * bindings.
+	 * Build a new URL from the given URL pattern. Optional query-string parameters
+	 * may be appended. Tokens are resolved using the passed-in TokenResolver.
 	 * 
 	 * @param urlPattern a URL pattern to bind, instead of using the one associated 
 	 * with this builder. May not be null.
+	 * @param tokenResolver a TokenResolver instance set with bound token values.
 	 * @return a URL string.
 	 */
-	public String build(String urlPattern, TokenResolver resolver)
+	public String build(String urlPattern, TokenResolver tokenResolver)
+	{
+		return build(urlPattern, null, tokenResolver);
+	}
+
+	public String build(String urlPattern, Object object, TokenResolver tokenResolver)
 	{
 		if (tokenResolver == null) return urlPattern;
 
-		String url = tokenResolver.resolve(urlPattern);
-		return appendQueryString(url);
-	}
-
-	/**
-	 * Sometimes, it is useful to bind *most* (all but one) of the tokens in a
-	 * URL then, given a collection of IDs, build a collection of URLs for each
-	 * of those IDs, binding them in individually.
-	 * <p/>
-	 * This method builds a collection of URL strings, one for each ID given in
-	 * the 'ids' array.
-	 * 
-	 * @param tokenName the name of a token in the URL pattern.
-	 * @param values variable-length array of URL-safe string values to substitute
-	 * for the token name in the URL pattern.
-	 * @return a Collection of URL strings, matching the size of the 'values'
-	 * array.
-	 */
-	public Collection<String> build(String tokenName, String... values)
-	{
-		return build(tokenName, Arrays.asList(values));
-	}
-
-	/**
-	 * This method builds a collection of URL strings, one for each ID given in
-	 * the 'ids' collection.
-	 * 
-	 * @param tokenName the name of a token in the URL pattern.
-	 * @param values variable-length array of URL-safe string values to substitute
-	 * for the token name in the URL pattern.
-	 * @return a Collection of URL strings, matching the size of the 'values'
-	 * collection.
-	 */
-	public Collection<String> build(String tokenName, Collection<String> values)
-	{
-		if (values == null) return null;
-
-		Collection<String> urls = new ArrayList<String>(values.size());
-		String href = buildFullUrlPattern();
-
-		for (String id : values)
-		{
-			bind(tokenName, id);
-			urls.add(build(href));
-		}
-
-		removeBinding(tokenName);
-		return urls;
+		String url = tokenResolver.resolve(urlPattern, object);
+		return appendQueryString(url, tokenResolver);
 	}
 
 	private String buildFullUrlPattern()
@@ -315,20 +191,19 @@ public class UrlBuilder
 		if (urlPattern == null)
 		    throw new IllegalStateException("Null URL pattern");
 
-		String path = tokenResolver().resolve(urlPattern);
-		return (baseUrl == null ? path : baseUrl + path);
+		return (baseUrl == null ? urlPattern : baseUrl + urlPattern);
 	}
 
-	private String appendQueryString(String url)
+	private String appendQueryString(String url, TokenResolver tokenResolver)
 	{
 		if (queries == null || queries.isEmpty()) return url;
 
 		StringBuilder sb = new StringBuilder(url);
-		boolean hasQuery = false;
+		boolean hasQuery = url.contains("?");
 
 		for (String query : queries)
 		{
-			String boundQuery = tokenResolver().resolve(query);
+			String boundQuery = tokenResolver.resolve(query);
 
 			if (!Strings.hasToken(boundQuery))
 			{
@@ -357,8 +232,6 @@ public class UrlBuilder
 		s.append(baseUrl == null ? "null" : baseUrl);
 		s.append(", urlPattern: ");
 		s.append(urlPattern == null ? "null" : urlPattern);
-		s.append(", bindings: ");
-        s.append(tokenResolver == null ? "{}" : tokenResolver.toString());
 		printQueryStrings(s);
 		return s.toString();
 	}

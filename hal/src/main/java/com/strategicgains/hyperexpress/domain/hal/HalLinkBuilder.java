@@ -100,10 +100,4 @@ extends LinkBuilder
     {
 	    return (HalLinkBuilder) super.set(name, value);
     }
-
-	@Override
-    public HalLinkBuilder bindToken(String name, String value)
-    {
-	    return (HalLinkBuilder) super.bindToken(name, value);
-    }
 }

@@ -1,8 +1,5 @@
 package com.strategicgains.hyperexpress.builder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -221,106 +218,22 @@ public class LinkBuilder
 		return this;
 	}
 
-	/**
-	 * Set a value to be substituted for a token in the URL pattern. While
-	 * tokens in the URL pattern are delimited with curly-braces, the token name
-	 * does not contain the braces. The value is any URL-safe string value.
-	 * 
-	 * @param tokenName the name of a token in the URL pattern.
-	 * @param value the URL-safe string value to substitute for the token name in the URL pattern.
-	 * @return this LinkBuilder instance to facilitate method chaining.
-	 */
-	public LinkBuilder bindToken(String tokenName, String value)
+	public Link build(TokenResolver tokenResolver)
 	{
-		urlBuilder.bind(tokenName, value);
-		return this;
-	}
-
-	/**
-	 * Remove all the token bindings.
-	 */
-	public void clearTokenBindings()
-	{
-		urlBuilder.clearTokenBindings();
-	}
-
-	/**
-	 * 'Unbind' a named substitution value from a token name.
-	 * 
-	 * @param tokenName the name of a previously-bound token name.
-	 */
-	public void removeBinding(String tokenName)
-	{
-		urlBuilder.removeBinding(tokenName);
+		return createLink(urlBuilder.build(tokenResolver));
 	}
 
 	/**
 	 * Build a Link instance.
 	 * 
+	 * @param tokenResolver a TokenResolver with token bindings.
 	 * @return a new Link instance
 	 * @throws LinkBuilderException if the LinkBuilder is in a state to build an invalid
 	 * LinkDefintion.
 	 */
-	public Link build()
+	public Link build(Object object, TokenResolver tokenResolver)
 	{
-		return createLink(urlBuilder.build());
-	}
-
-	/**
-	 * Build a new URL from the give URL pattern, utilizing the current token
-	 * bindings.
-	 * 
-	 * @param urlPattern a URL pattern to bind, instead of using the one associated 
-	 * with this builder. May not be null.
-	 * @return a new Link instance.
-	 */
-	public Link build(String urlPattern)
-	{
-		return createLink(urlBuilder.build(urlPattern));
-	}
-
-	/**
-	 * Create a Collection of Links using the bindings in the LinkBuilder,
-	 * but also bind multiple values to the give token name. This is useful
-	 * for collection instances where you want to return links for every
-	 * ID in a collection. This method returns one link for every value given
-	 * in the 'values' array.
-	 * 
-	 * @param tokenName the name of a token in the URL pattern.
-	 * @param values a variable-length array of URL-safe string values to
-	 * substitute for the token name in the URL pattern.
-	 * @return a Collection of Link instances, one for each value given in the 'values' array.
-	 */
-	public Collection<Link> build(String tokenName, String... values)
-	{
-		return build(tokenName, Arrays.asList(values));
-	}
-
-	/**
-	 * Create a Collection of Links using the bindings in the LinkBuilder,
-	 * but also bind multiple values to the give token name. This is useful
-	 * for collection instances where you want to return links for every
-	 * ID in a collection. This method returns one link for every value given
-	 * in the 'values' collection.
-	 * 
-	 * @param tokenName the name of a token in the URL pattern.
-	 * @param values a Collection of URL-safe string values to substitute for
-	 * the token name in the URL pattern.
-	 * @return a Collection of Link instances, one for each value given in the 'values' array.
-	 */
-	public Collection<Link> build(String tokenName, Collection<String> values)
-	{
-		if (values == null) return null;
-
-		Collection<String> urls = urlBuilder.build(tokenName, values);
-		Collection<Link> links = new ArrayList<Link>(urls.size());
-
-		for (String url : urls)
-		{
-			links.add(createLink(url));
-		}
-
-		return links;
+		return createLink(urlBuilder.build(object, tokenResolver));
 	}
 
 	@Override
