@@ -30,6 +30,14 @@ implements Cloneable
 	private String href;
 
 	/**
+	 * Required for deserialization. As there are no setters on this object.
+	 */
+	public Namespace()
+	{
+		super();
+	}
+
+	/**
 	 * Create a new namespace, providing a name and href.
 	 * 
 	 * @param name the name of the namespace.
@@ -37,7 +45,7 @@ implements Cloneable
 	 */
 	public Namespace(String name, String href)
     {
-		super();
+		this();
 
 		if (name == null) throw new ResourceException("Namespace name cannot be null");
 		if (href == null) throw new ResourceException("Namespace href cannot be null");

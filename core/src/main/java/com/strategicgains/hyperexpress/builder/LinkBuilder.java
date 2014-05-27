@@ -102,6 +102,17 @@ public class LinkBuilder
 	}
 
 	/**
+	 * Remove all attribute settings from this UrlBuilder.
+	 * Properties such as 'rel', 'href', 'type' and 'title'
+	 * are removed. Does not clear queries or URL-related
+	 * properties, namely baseUrl or URl pattern.
+	 */
+	public void clearAttributes()
+	{
+		attributes.clear();
+	}
+
+	/**
 	 * Remove the query-string segments from this UrlBuilder.
 	 */
 	public void clearQueries()
@@ -117,6 +128,12 @@ public class LinkBuilder
 	public String urlPattern()
 	{
 		return urlBuilder.urlPattern();
+	}
+
+	public LinkBuilder urlPattern(String pattern)
+	{
+		urlBuilder.urlPattern(pattern);
+		return this;
 	}
 
 	/**
@@ -216,6 +233,11 @@ public class LinkBuilder
 		}
 
 		return this;
+	}
+
+	public Link build()
+	{
+		return build(null);
 	}
 
 	public Link build(TokenResolver tokenResolver)

@@ -69,7 +69,13 @@ public class UrlBuilder
 	 */
 	public UrlBuilder(String urlPattern)
 	{
-		super();
+		this();
+
+		if (urlPattern == null)
+		{
+			throw new NullPointerException("URL Pattern cannot be null using this constructor. Use the no-argument constructor, UrlBuilder().");
+		}
+
 		this.urlPattern = urlPattern;
 	}
 
@@ -154,11 +160,49 @@ public class UrlBuilder
 		}
 	}
 
+	@Override
+	public String toString()
+	{
+		StringBuilder s = new StringBuilder();
+		s.append("baseUrl: ");
+		s.append(baseUrl == null ? "null" : baseUrl);
+		s.append(", urlPattern: ");
+		s.append(urlPattern == null ? "null" : urlPattern);
+		printQueryStrings(s);
+		return s.toString();
+	}
+
+	/**
+	 * Builds a URL but does not perform any token replacement.
+	 * Equivalent to (and short-hand for) build(null).
+	 * 
+	 * @return
+	 */
+	public String build()
+	{
+		return build(null);
+	}
+
+	/**
+	 * Build a URL, resolving any tokens using the given TokenResolver.
+	 * 
+	 * @param tokenResolver a TokenResolver to perform token substitution.
+	 * @return a URL string.
+	 */
 	public String build(TokenResolver tokenResolver)
 	{
 		return build(buildFullUrlPattern(), null, tokenResolver);
 	}
 
+	/**
+	 * Build a URL, resolving any tokens using the given TokenResolver. Additionally,
+	 * will call any TokenBinders for the given Object instance to bind values from
+	 * it into the URL.
+	 * 
+	 * @param object an object of which to bind properties into the URL parameters.
+	 * @param tokenResolver a TokenResolver to perform token substitution.
+	 * @return a URL string.
+	 */
 	public String build(Object object, TokenResolver tokenResolver)
 	{
 		return build(buildFullUrlPattern(), object, tokenResolver);
@@ -178,6 +222,16 @@ public class UrlBuilder
 		return build(urlPattern, null, tokenResolver);
 	}
 
+	/**
+	 * Build a URL, resolving any tokens using the given TokenResolver. Additionally,
+	 * will call any TokenBinders for the given Object instance to bind values from
+	 * it into the URL.
+	 * 
+	 * @param urlPattern a URL pattern, with optional tokens.
+	 * @param object an object of which to bind properties into the URL parameters.
+	 * @param tokenResolver a TokenResolver to perform token substitution.
+	 * @return a URL string.
+	 */
 	public String build(String urlPattern, Object object, TokenResolver tokenResolver)
 	{
 		if (tokenResolver == null) return urlPattern;
@@ -222,18 +276,6 @@ public class UrlBuilder
 		}
 
 		return (hasQuery ? sb.toString() : url);
-	}
-
-	@Override
-	public String toString()
-	{
-		StringBuilder s = new StringBuilder();
-		s.append("baseUrl: ");
-		s.append(baseUrl == null ? "null" : baseUrl);
-		s.append(", urlPattern: ");
-		s.append(urlPattern == null ? "null" : urlPattern);
-		printQueryStrings(s);
-		return s.toString();
 	}
 
 	private void printQueryStrings(StringBuilder s)
