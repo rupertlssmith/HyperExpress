@@ -24,7 +24,7 @@ package com.strategicgains.hyperexpress.builder;
  * @author toddf
  * @since May 5, 2014
  */
-public interface TokenBinder
+public interface TokenBinder<T>
 {
 	/**
 	 * Bind instance values from this object into the TokenResolver before creating
@@ -33,5 +33,5 @@ public interface TokenBinder
 	 * @param object an object for which to extract values for URL tokens.
 	 * @param resolver a TokenResolver into which token values may be bound.
 	 */
-	void bind(Object object, TokenResolver resolver);
+	void bind(T object, TokenResolver resolver);
 }
