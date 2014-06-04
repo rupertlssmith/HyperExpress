@@ -38,7 +38,7 @@ public class TokenResolver
 	private static final MapStringFormat FORMATTER = new MapStringFormat();
 
 	private Map<String, String> values = new HashMap<String, String>();
-	private List<TokenBinder> binders = new ArrayList<TokenBinder>();
+	private List<TokenBinder<?>> binders = new ArrayList<TokenBinder<?>>();
 
 	/**
 	 * Bind a token to a value. During resolve(), any token names matching
@@ -89,16 +89,28 @@ public class TokenResolver
 	 * take an Object instance such as, resolve(String, Object) and
 	 * resolve(Collection<String>, Object), the TokenBinder.bind(Object) method
 	 * is called to bind additional tokens that may come from the object.
+	 * <p/>
+	 * <Strong>LIMITATION:</strong> As TokenBinder is typed, calling binder()
+	 * with TokenBinder instances for different generic types will cause
+	 * a {@link ClassCastException} during resolve().
 	 * 
 	 * @param callback a TokenBinder implementation.
 	 * @return this instance of TokenResolver to facilitate method chaining.
 	 */
-	public TokenResolver binder(TokenBinder callback)
+	public <T> TokenResolver binder(TokenBinder<T> callback)
 	{
 		if (callback == null) return this;
 
 		binders.add(callback);
 		return this;
+	}
+
+	/**
+	 * Removes all token binder callbacks from this TokenResolver.
+	 */
+	public void clearBinders()
+	{
+		binders.clear();
 	}
 
 	/**
@@ -128,10 +140,15 @@ public class TokenResolver
 	 * the given Object first. Any TokenBinder callbacks are called for the
 	 * object before resolving the tokens. If object is null, no token binders
 	 * are called.
+	 * <p/>
+	 * <Strong>LIMITATION:</strong> As TokenBinder is typed, calling binder()
+	 * with TokenBinder instances for different generic types will cause
+	 * a {@link ClassCastException} during resolve().
 	 * 
 	 * @param pattern a pattern string optionally containing tokens.
 	 * @param object an instance for which to call TokenBinders.
 	 * @return a string with bound tokens substituted for values.
+	 * @throws ClassCastException if binder() called with TokenBinder instances for different generic types.
 	 */
 	public String resolve(String pattern, Object object)
 	{
@@ -191,7 +208,10 @@ public class TokenResolver
 	 * 
 	 * @param object an object for which to extract token bindings.
 	 */
-	private void callTokenBinders(Object object)
+	@SuppressWarnings({
+        "rawtypes", "unchecked"
+    })
+    private void callTokenBinders(Object object)
 	{
 		if (object == null) return;
 
