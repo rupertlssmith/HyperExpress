@@ -30,6 +30,27 @@ import com.strategicgains.hyperexpress.util.Strings;
 
 /**
  * A Singleton object to manage creation of Link and Resource instances.
+ * <p/>
+ * Before HyperExpress can create resources for a given media type, each media type
+ * must be registered with a corresponding ResourceFactoryStrategy. This enables
+ * createResource() and createCollectionResource() to know what type of resource to
+ * create based on content-type.
+ * <p/>
+ * To support HAL (Hypertext Application Language) style resources, register the HAL
+ * resource factory as follows:
+ * <p/>
+ * <code>
+ * HyperExpress.registerResourceFactoryStrategy(new HalResourceFactory(), "application/hal+json");
+ * </code>
+ * <p/>
+ * If you want HAL links for both application/json and application/hal+json media types, register
+ * them as follows:
+ * <p/>
+ * <code>
+ * HalResourceFactory halFactory = new HalResourceFactory();
+ * HyperExpress.registerResourceFactoryStrategy(halFactory, "application/hal+json");
+ * HyperExpress.registerResourceFactoryStrategy(halFactory, "application/json");
+ * </code>
  * 
  * @author toddf
  * @since May 5, 2014
@@ -55,46 +76,139 @@ public class HyperExpress
 
 	// SECTION: STATIC - PUBLIC METHODS
 
+	/**
+	 * Register a ResourceFactoryStrategy for a content-type. In order for createResource() and
+	 * createCollectionResource() to know what type of resource to create based on content-type,
+	 * ResourceFactoryStrategy instances must be registered for each media type support. For
+	 * example, to support HAL (Hypertext Application Language) style resources, register the
+	 * HAL resource factory as follows:
+	 * <p/>
+	 * <code>
+	 * HyperExpress.registerResourceFactoryStrategy(new HalResourceFactory(), "application/hal+json");
+	 * </code>
+	 * <p/>
+	 * If you want HAL links for both application/json and application/hal+json media types, register
+	 * them as follows:
+	 * <p/>
+	 * <code>
+	 * HalResourceFactory halFactory = new HalResourceFactory();
+	 * HyperExpress.registerResourceFactoryStrategy(halFactory, "application/hal+json");
+	 * HyperExpress.registerResourceFactoryStrategy(halFactory, "application/json");
+	 * </code>
+	 * 
+	 * @param factoryStrategy
+	 * @param contentType
+	 * @see HalResourceFactory
+	 */
     public static void registerResourceFactoryStrategy(ResourceFactoryStrategy factoryStrategy, String contentType)
     {
     	INSTANCE._registerResourceFactoryStrategy(factoryStrategy, contentType);
     }
 
+    /**
+     * Create a resource instance from the object for the given content type. Properties from
+     * the object are copied into the resulting Resource. Also, links are injected for appropriate
+     * relationships defined via HyperExpress.relationships(), using any HyperExpress.bind() or
+     * HyperExpress.tokenBinder() settings to populate the tokens in the URLs.
+     * 
+     * @param object
+     * @param contentType
+     * @return
+     */
 	public static Resource createResource(Object object, String contentType)
 	{
 		return INSTANCE._createResource(object, contentType);
 	}
 
+	/**
+	 * Creates a collection resource, embedding the components in a rel name derived from the component type
+	 * simple class name. The class name is lower-cased and pluralized in order to create the rel name.
+	 * 
+	 * @param components the objects to embed. They will be converted to Resource instances also.
+	 * @param componentType the object type of the components.
+	 * @param contentType the desired content type of the resource (e.g. "application/hal+json")
+	 * @return a new Resource instance with the collection embedded (as Resources).
+	 */
 	public static Resource createCollectionResource(Collection<Object> components, Class<?> componentType, String contentType)
 	{
 		return INSTANCE._createCollectionResource(components, componentType, contentType);
 	}
 
 	/**
+	 * Creates a collection resource, embedding the components in the given componentRel name.
+	 * 
+	 * @param components the objects to embed. They will be converted to Resource instances also.
+	 * @param componentType the object type of the components.
+	 * @param componentRel the 'rel' name to use when embedding the resources.
+	 * @param contentType the desired content type of the resource (e.g. "application/hal+json")
+	 * @return a new Resource instance with the collection embedded (as Resources).
+	 */
+	public static Resource createCollectionResource(Collection<Object> components, Class<?> componentType, String componentRel, String contentType)
+	{
+		return INSTANCE._createCollectionResource(components, componentType, componentRel, contentType);
+	}
+
+	/**
 	 * The HyperExpress to define relationships between resource types and namespaces.
 	 * 
 	 * @return the RelationshipDefinition contained in this singleton.
+	 * @see RelationshipDefinition
 	 */
 	public static RelationshipDefinition relationships()
 	{
 		return INSTANCE.relationshipDefinition;
 	}
 
+	/**
+	 * Set the RelationshipDefinition for HyperExpress.
+	 * 
+	 * @param relationships a RelationshipDefinition
+	 * @see RelationshipDefinition
+	 */
 	public static void relationships(RelationshipDefinition relationships)
 	{
 		INSTANCE.relationshipDefinition = relationships;
 	}
 
+	/**
+	 * Bind a URL token to a string value. During resource creation, any URL
+	 * tokens matching the given token string are replace with the provided
+	 * value.
+	 * <p/>
+	 * The TokenResolver bindings are specific to the current thread.
+	 * 
+	 * @param token a URL token name.
+	 * @param value the substitution value.
+	 * @return the underlying TokenResolver for this binding.
+	 */
 	public static TokenResolver bind(String token, String value)
 	{
 		return INSTANCE._bindToken(token, value);
 	}
 
-	public static void tokenBinder(TokenBinder callback)
+	/**
+	 * Bind a TokenBinder to the elements in a collection resource.
+	 * When a collection resource is created via createCollectionResource(),
+	 * the TokenBinder is called for each element in the collection to bind
+	 * URL tokens to individual properties within the element, if necessary.
+	 * <p/>
+	 * The TokenBinder is specific to the current thread.
+	 * 
+	 * @param callback a TokenBinder
+	 */
+	public static <T> void tokenBinder(TokenBinder<T> callback)
 	{
 		INSTANCE._addTokenBinder(callback);
 	}
 
+	/**
+	 * Remove all the token substitution bindings and TokenBinder callbacks from 
+	 * this thread's TokenResolver instance.
+	 * <p/>
+	 * It is recommended to call clearTokenBindings() after each request is complete
+	 * to prevent TokenResolver and TokenBinder instance buildup. Otherwise, they
+	 * are additive.
+	 */
 	public static void clearTokenBindings()
 	{
 		INSTANCE._clearTokenBindings();
@@ -127,43 +241,60 @@ public class HyperExpress
     }
 
 	/**
+	 * Creates a collection resource, embedding the components in a rel name derived from the component type
+	 * simple class name. The class name is lower-cased and pluralized in order to create the rel name.
+	 * 
 	 * @param components
 	 * @param componentType
 	 * @param contentType
 	 * @return a new Resource instance with the collection embedded (as Resources).
 	 */
+	private Resource _createCollectionResource(Collection<Object> components, Class<?> componentType, String contentType)
+	{
+		String componentRel = Strings.pluralize(componentType.getSimpleName().toLowerCase());
+		return _createCollectionResource(components, componentType, componentRel, contentType);
+	}
+
+	/**
+	 * Creates a collection resource, embedding the components in the given componentRel name.
+	 * 
+	 * @param components
+	 * @param componentType
+	 * @param componentRel
+	 * @param contentType
+	 * @return a new Resource instance with the collection embedded (as Resources).
+	 */
     @SuppressWarnings("unchecked")
-    private Resource _createCollectionResource(Collection<Object> components, Class<?> componentType, String contentType)
-    {
-    	Resource root = resourceFactory.createResource(null, contentType);
-    	Collection<LinkBuilder> templates = relationshipDefinition.getCollectionLinkBuilders(componentType).values();
-    	root.addLinks(_resolveUrlTokens(templates, null, _acquireTokenResolver()));
-    	root.addNamespaces(relationshipDefinition.getNamespaces().values());
+	private Resource _createCollectionResource(Collection<Object> components, Class<?> componentType, String componentRel, String contentType)
+	{
+		Resource root = resourceFactory.createResource(null, contentType);
+		Collection<LinkBuilder> templates = relationshipDefinition.getCollectionLinkBuilders(componentType).values();
+		root.addLinks(_resolveUrlTokens(templates, null, _acquireTokenResolver()));
+		root.addNamespaces(relationshipDefinition.getNamespaces().values());
 		Resource childResource = null;
-		String childRel = Strings.pluralize(componentType.getSimpleName().toLowerCase());
 
 		if (components == null || components.isEmpty())
 		{
-			root.addResources(childRel, Collections.EMPTY_LIST);
+			root.addResources(componentRel, Collections.EMPTY_LIST);
 		}
 		else
 		{
 			for (Object component : components)
 			{
 				childResource = _createResource(component, contentType);
-				root.addResource(childRel, childResource);
+				root.addResource(componentRel, childResource);
 			}
 		}
 
-	    return root;
-    }
+		return root;
+	}
 
 	private TokenResolver _bindToken(String token, String value)
     {
 		return _acquireTokenResolver().bind(token, value);
     }
 
-	private TokenResolver _addTokenBinder(TokenBinder callback)
+	private <T> TokenResolver _addTokenBinder(TokenBinder<T> callback)
     {
 		return _acquireTokenResolver().binder(callback);
     }
