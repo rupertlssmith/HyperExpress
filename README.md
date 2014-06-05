@@ -18,17 +18,17 @@ output rendering being abstracted and dependent on the requested content type.
 
 There are three concepts that play together to accomplish this:
 
-* **RelationshipBuilder** = Use this to describe relationships between resources and namespaces.
-* **LinkResolver** = Given a RelationshipBuilder, this class provides links (from the RelationshipBuilder) relevant for a given resource type.
+* **RelationshipDefinition** = Use this to describe relationships between resources and namespaces.
 * **TokenResolver** = For relationships (in the RelationshipBuilder) that have templated URLs, this class is able to populate the URL parameters, substituting actual values for the tokens (e.g. '{userId}').
+* **TokenBinder** = For a collection of resources, resolves tokens in a URL by binding properties from individual objects in the collection to identifiers in the URL.
 
-Additionally, there are a couple of helper classes to assist in creating URLs and Links en masse:
+Additionally, there are a couple of helper classes:
 
 * **MapStringFormat** = which will substitute names in a string with provided values (such as an URL).
 * **RelTypes** = contains constants for REST-related standard Iana.org link-relation types.
 
-The HyperExpress-Core project is primarily abstract implementations. The real functionality is in the sub-projects, such
-as HyperExpress-HAL, which has HAL-specific rendering of Resource implementations.
+The HyperExpress-Core project is primarily abstract implementations. Specific functionality is in the sub-projects, such
+as HyperExpress-HAL, which has HAL-specific rendering (and parsing) of Resource implementations.
 
 Please see HyperExpress-HAL for usage information: https://github.com/RestExpress/HyperExpress/tree/master/hal
 
@@ -53,6 +53,8 @@ method, although it can be created outside the HyperExpress singleton class also
 
 Let's say we have a Blogging system with Blog, Entry and Comment resources. RelationshipDefinition
 syntax for some of the relationships between them might be as follows:
+
+**Caveat:** a Relationship definition captures the canonical or static relationships for a given type (or class). To add dynamic, context-sensitive links, you'll need to add them to the Resource yourself using Resource.addLink() methods.
 
 ```java
 HyperExpress.relationships();
