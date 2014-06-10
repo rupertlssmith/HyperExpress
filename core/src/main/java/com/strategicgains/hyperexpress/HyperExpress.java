@@ -129,7 +129,7 @@ public class HyperExpress
 	 * @param contentType the desired content type of the resource (e.g. "application/hal+json")
 	 * @return a new Resource instance with the collection embedded (as Resources).
 	 */
-	public static Resource createCollectionResource(Collection<Object> components, Class<?> componentType, String contentType)
+	public static Resource createCollectionResource(Collection<?> components, Class<?> componentType, String contentType)
 	{
 		return INSTANCE._createCollectionResource(components, componentType, contentType);
 	}
@@ -143,7 +143,7 @@ public class HyperExpress
 	 * @param contentType the desired content type of the resource (e.g. "application/hal+json")
 	 * @return a new Resource instance with the collection embedded (as Resources).
 	 */
-	public static Resource createCollectionResource(Collection<Object> components, Class<?> componentType, String componentRel, String contentType)
+	public static Resource createCollectionResource(Collection<?> components, Class<?> componentType, String componentRel, String contentType)
 	{
 		return INSTANCE._createCollectionResource(components, componentType, componentRel, contentType);
 	}
@@ -249,7 +249,7 @@ public class HyperExpress
 	 * @param contentType
 	 * @return a new Resource instance with the collection embedded (as Resources).
 	 */
-	private Resource _createCollectionResource(Collection<Object> components, Class<?> componentType, String contentType)
+	private Resource _createCollectionResource(Collection<?> components, Class<?> componentType, String contentType)
 	{
 		String componentRel = Strings.pluralize(componentType.getSimpleName().toLowerCase());
 		return _createCollectionResource(components, componentType, componentRel, contentType);
@@ -265,7 +265,7 @@ public class HyperExpress
 	 * @return a new Resource instance with the collection embedded (as Resources).
 	 */
     @SuppressWarnings("unchecked")
-	private Resource _createCollectionResource(Collection<Object> components, Class<?> componentType, String componentRel, String contentType)
+	private Resource _createCollectionResource(Collection<?> components, Class<?> componentType, String componentRel, String contentType)
 	{
 		Resource root = resourceFactory.createResource(null, contentType);
 		Collection<LinkBuilder> templates = relationshipDefinition.getCollectionLinkBuilders(componentType).values();

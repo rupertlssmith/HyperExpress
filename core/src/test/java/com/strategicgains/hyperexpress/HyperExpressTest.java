@@ -7,6 +7,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -99,5 +101,13 @@ public class HyperExpressTest
 					break;
 			}
 		}
+	}
+
+	@Test
+	public void shouldHandleCollection()
+	{
+		ArrayList<Blog> blogs = new ArrayList<>();
+		Resource r = HyperExpress.createCollectionResource(blogs, Blog.class, "*");
+		assertNotNull(r);
 	}
 }
