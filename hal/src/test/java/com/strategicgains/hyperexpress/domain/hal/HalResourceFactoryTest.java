@@ -1,8 +1,6 @@
 package com.strategicgains.hyperexpress.domain.hal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import java.util.UUID;
 
@@ -57,5 +55,17 @@ public class HalResourceFactoryTest
 		assertNotNull(r.getProperty("somethingVolatile"));
 		assertNotNull(r.getProperty("somethingStatic"));
 		assertNotNull(r.getProperty("IGNORED"));
+	}
+
+	@Test
+	public void shouldCreateResourceFromNull()
+	{
+		HalResourceFactory factory = new HalResourceFactory();
+		Resource r = factory.createResource(null);
+		assertNotNull(r);
+		assertFalse(r.hasLinks());
+		assertFalse(r.hasNamespaces());
+		assertFalse(r.hasProperties());
+		assertFalse(r.hasResources());
 	}
 }

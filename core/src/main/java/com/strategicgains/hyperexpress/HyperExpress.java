@@ -231,14 +231,19 @@ public class HyperExpress
 	 * @param contentType
 	 * @return
 	 */
-    private Resource _createResource(Object object, String contentType)
-    {
-    	Resource r = resourceFactory.createResource(object, contentType);
-    	Collection<LinkBuilder> linkBuilders = relationshipDefinition.getLinkBuilders(object.getClass()).values();
-    	r.addLinks(_resolveUrlTokens(linkBuilders, object, _acquireTokenResolver()));
-    	r.addNamespaces(relationshipDefinition.getNamespaces().values());
-	    return r;
-    }
+	private Resource _createResource(Object object, String contentType)
+	{
+		Resource r = resourceFactory.createResource(object, contentType);
+
+		if (object != null)
+		{
+			Collection<LinkBuilder> linkBuilders = relationshipDefinition.getLinkBuilders(object.getClass()).values();
+			r.addLinks(_resolveUrlTokens(linkBuilders, object, _acquireTokenResolver()));
+		}
+
+		r.addNamespaces(relationshipDefinition.getNamespaces().values());
+		return r;
+	}
 
 	/**
 	 * Creates a collection resource, embedding the components in a rel name derived from the component type
