@@ -2,6 +2,8 @@
 
 **Waffle.io** [![Stories in Ready](https://badge.waffle.io/RestExpress/HyperExpress.png?label=ready)](https://waffle.io/RestExpress/HyperExpress)
 
+http://www.youtube.com/watch?v=TQqc7goKVsM&list=UUzaZL1VLtdVTiZ8k07z65jg&feature=share
+
 HyperExpress
 ============
 
@@ -63,21 +65,31 @@ Maven resources:
 ```
 
 Next, add resource factories to HyperExpress so HyperExpress knows which factory to use depending on the MediaType of the request.
+In order for createResource() and createCollectionResource() to know what type of resource to create based on content-type,
+ResourceFactoryStrategy instances must be registered for each media type support.
 
-Right now, HyperExpress just supports HAL, but there are more media types on the way.  This is how we configure HyperExpress
-for HAL to support both plain JSON and HAL-JSON:
+Right now, HyperExpress just supports HAL, but there are more media types on the way. To support HAL
+(Hypertext Application Language) style resources, register the HAL resource factory as follows:
 
 ```java
-ResourceFactoryStrategy hal = new HalResourceFactory();
-HyperExpress.registerResourceFactoryStrategy(hal, "application/json");
-HyperExpress.registerResourceFactoryStrategy(hal, "application/hal+json");
+HyperExpress.registerResourceFactoryStrategy(new HalResourceFactory(), "application/hal+json");
+```
+If you want HAL links for both application/json and application/hal+json media types, register
+them as follows:
+
+```java
+HalResourceFactory halFactory = new HalResourceFactory();
+HyperExpress.registerResourceFactoryStrategy(halFactory, "application/hal+json");
+HyperExpress.registerResourceFactoryStrategy(halFactory, "application/json");
 ```
 
 HyperExpress-HAL has a serializer and deserializer for Jackson, which you insert into your Jackson module like so:
 
+```java
 // Support HalResource (de)serialization.
 module.addDeserializer(HalResource.class, new HalResourceDeserializer());
 module.addSerializer(HalResource.class, new HalResourceSerializer());
+```
 
 Now you're ready to generate Resource representations.
 
@@ -167,14 +179,39 @@ Once we have the static relationships defined, it's time to map domain propertie
 Resolving URL Tokens
 --------------------
 
-HyperExpress.bind(String, String) will bind a token to a string value.
-HyperExpress.tokenBinder(TokenBinder) will uses the TokenBinder as a callback during HyperExpress.createCollectionResource(), binding each object in a collection to the links for that instance.
+There are two ways to resolve data properties in a model to template URL tokens. The first
+is simply using HyperExpress.bind(String token, String value), which simply maps the URL
+token to the given value.
+
+The following would bind the token "{blogId}" in any of the above-defined URL templates to the string "1234",
+"{entryId}" to "5678" and "{commentId}" to "90123" during creation of a resource:
+
+```java
+HyperExpress.bind("blogId", "1234")
+	.bind("entryId", "5678")
+	.bind("commentId", "90123");
+```
+
+**HyperExpress.bind(String, String)** - Bind a URL token to a string value. During resource creation, any URL tokens matching the given token string are replace with the provided value. The TokenResolver bindings are specific to the current thread.
+**HyperExpress.tokenBinder(TokenBinder)** - Uses the TokenBinder as a callback during HyperExpress.createCollectionResource(), binding each object in a collection to the links for that instance.
+It binds a TokenBinder to the elements in a collection resource. When a collection resource is created via createCollectionResource(),
+the TokenBinder is called for each element in the collection to bind URL tokens to individual properties within the element, if necessary. The TokenBinder is specific to the current thread.
 
 Creating Resources
 ------------------
 
-HyperExpress.createResource() creates a single instance resource.
-HyperExpress.createCollectionResource() creates a resource with embedded resources, each with their own links.
+HyperExpress distinguishes between single resources and collection resources at creation time.
+This allows you to create a Resource from a collection of domain instances, or from a single domain object.
+In the former, HyperExpress will create a root resource and inject links from the RelationshipDefinition
+using the forCollectionOf(Class) group of templates as links.  It will then embed each element of the collection
+in that root resource, adding links for each instance using the forClass(Class) group of templates.
+
+HyperExpress.createResource(Object, String) creates a resource instance from the object for the given content type.
+Properties from the object are copied into the resulting Resource. Also, links are injected for appropriate
+relationships defined via HyperExpress.relationships(), using any HyperExpress.bind() or HyperExpress.tokenBinder()
+settings to populate the tokens in the URLs.
+
+HyperExpress.createCollectionResource(Collection, Class, String, String) creates a collection resource, embedding the individual components of the collection.
 
 Cleaning Up
 -----------
@@ -188,5 +225,3 @@ Once the resources have been created, clean up the token bindings for that threa
 ```java
 HyperExpress.clearTokenBindings();
 ```
-
-
