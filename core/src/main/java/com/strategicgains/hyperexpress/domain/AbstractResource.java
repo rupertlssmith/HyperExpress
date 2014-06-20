@@ -39,7 +39,37 @@ implements Resource
 	private HashMap<String, List<Resource>> resources = new HashMap<String, List<Resource>>();
 
 	/**
-	 * Ensures the property name is unique.
+	 * Initialize the contents of this resource from another. The contents
+	 * from the other resource are not copied, they are referenced (to
+	 * reduce GC impacts).
+	 * 
+	 * @param that the resource from which to copy contents.
+	 * @return this Resource instance (for method chaining).
+	 */
+	public Resource initialize(Resource that)
+	{
+		addNamespaces(that.getNamespaces());
+		addLinks(that.getLinks());
+
+		for (Map.Entry<String, Object> entry : that.getProperties().entrySet())
+		{
+			this.addProperty(entry.getKey(), entry.getValue());
+		}
+
+		for (Map.Entry<String, List<Resource>> entry : that.getResources().entrySet())
+		{
+			this.addResources(entry.getKey(), entry.getValue());
+		}
+
+		return this;
+	}
+
+	/**
+	 * Adds a property to this resource, ensuring the property name is unique.
+	 * 
+	 * @param name the property name
+	 * @param value the value of the named property
+	 * @throws ResourceException if the name of the property is not unique.
 	 */
 	@Override
 	public Resource addProperty(String name, Object value)

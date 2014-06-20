@@ -180,7 +180,7 @@ public interface Resource
 	 * Get the embedded resource from this resource for the give relationship name.
 	 * 
 	 * @param rel the relationship name for which to retrieve embedded resources.
-	 * @return a list of embedded resource instantce. Possibly empty. Never null.
+	 * @return a list of embedded resource instance. Possibly empty. Never null.
 	 */
 	List<Resource> getResources(String rel);
 
@@ -190,4 +190,12 @@ public interface Resource
 	 * @return true if the resource has embedded resources. Otherwise, false.
 	 */
 	boolean hasResources();
+
+	/**
+	 * Initialize this resource from the contents of another.
+	 * 
+	 * @param from the Resource instance from which to copy.
+	 * @return this Resource instance (for method chaining).
+	 */
+	Resource initialize(Resource from);
 }

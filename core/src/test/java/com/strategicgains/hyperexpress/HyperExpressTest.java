@@ -4,13 +4,17 @@ import static com.strategicgains.hyperexpress.RelTypes.NEXT;
 import static com.strategicgains.hyperexpress.RelTypes.PREV;
 import static com.strategicgains.hyperexpress.RelTypes.SELF;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -45,6 +49,12 @@ public class HyperExpressTest
 	{
 	}
 
+	@After
+	public void cleanup()
+	{
+		HyperExpress.clearTokenBindings();
+	}
+
 	@Test
 	public void shouldIgnoreOptionalLinks()
 	{
@@ -68,6 +78,7 @@ public class HyperExpressTest
 		Link link = r.getLinks().iterator().next();
 		assertEquals(SELF, link.getRel());
 //		assertEquals("/blogs?limit=20&offset=40", link.getHref());
+		HyperExpress.clearTokenBindings();
 	}
 
 	@Test
@@ -108,5 +119,41 @@ public class HyperExpressTest
 		ArrayList<Blog> blogs = new ArrayList<>();
 		Resource r = HyperExpress.createCollectionResource(blogs, Blog.class, "*");
 		assertNotNull(r);
+	}
+
+	@Test
+	public void shouldCreateEmptyResourceFromResource()
+	{
+		Resource r = HyperExpress.createResource(new AgnosticResource(), "*");
+		assertEmptyResource(r);
+	}
+
+	@Test
+	public void shouldCreateCollectionResourceFromResourceCollection()
+	{
+		Collection<Resource> resources = new ArrayList<Resource>();
+		resources.add(new AgnosticResource());
+		Resource r = HyperExpress.createCollectionResource(resources, Blog.class, "blogs", "*");
+		assertNotNull(r);
+		assertTrue(r.hasNamespaces());
+		assertEquals(2, r.getNamespaces().size());
+		assertTrue(r.hasLinks());
+		assertEquals(1, r.getLinks().size());
+		assertEquals("self", r.getLinks().get(0).getRel());
+		assertEquals("/blogs", r.getLinks().get(0).getHref());
+		assertFalse(r.hasProperties());
+		assertTrue(r.hasResources());
+		assertEquals(1, r.getResources("blogs").size());
+		assertEmptyResource(r.getResources("blogs").get(0));
+	}
+
+	private void assertEmptyResource(Resource r)
+	{
+		assertNotNull(r);
+		assertTrue(r.hasNamespaces());
+		assertEquals(2, r.getNamespaces().size());
+		assertFalse(r.hasLinks());
+		assertFalse(r.hasProperties());
+		assertFalse(r.hasResources());
 	}
 }

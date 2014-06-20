@@ -15,7 +15,6 @@
 */
 package com.strategicgains.hyperexpress;
 
-import com.strategicgains.hyperexpress.domain.AbstractResource;
 import com.strategicgains.hyperexpress.domain.Resource;
 
 /**
@@ -36,10 +35,5 @@ extends AbstractResourceFactoryStrategy
 		}
 
 		return to;
-	}
-
-	public class AgnosticResource
-	extends AbstractResource
-	{
 	}
 }

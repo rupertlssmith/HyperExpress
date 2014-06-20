@@ -108,6 +108,11 @@ implements ResourceFactoryStrategy
 	private void copyProperties0(Class<?> type, Object from, Resource to)
 	{
 		if (type == null) return;
+		if (Resource.class.isAssignableFrom(type))
+		{
+			to.initialize((Resource) from);
+			return;
+		}
 
 		Field[] fields = getDeclaredFields(type);
 
