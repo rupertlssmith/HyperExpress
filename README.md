@@ -40,10 +40,12 @@ How-To
 There are three phases in which HyperExpress helps you out managing links in your resources;
 
 * Defining Relationships (between resources)
-* Resolving URL tokens (a token in a URL is replaced with ID)
+* Resolving URL tokens (a token in a URL is replaced with an ID)
 * Creating Resources using a Factory
 
-After that, it's the simple matter of serializing the Resource to JSON (or XMl, or whatever).
+After that, it's the 'simple' matter of serializing the Resource to JSON (or XMl, or whatever).
+HyperExpress-HAL has a serializer and deserializer for Jackson. Assuming you have your
+own Jackson configuration, simply plug these in to your module (see the HyperExpress-HAL README).
 
 Defining Relationships
 ----------------------
