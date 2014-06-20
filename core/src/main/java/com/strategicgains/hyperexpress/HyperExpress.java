@@ -234,14 +234,7 @@ public class HyperExpress
 	private Resource _createResource(Object object, String contentType)
 	{
 		Resource r = resourceFactory.createResource(object, contentType);
-
-		if (object != null)
-		{
-			Collection<LinkBuilder> linkBuilders = relationshipDefinition.getLinkBuilders(object.getClass()).values();
-			r.addLinks(_resolveUrlTokens(linkBuilders, object, _acquireTokenResolver()));
-		}
-
-		r.addNamespaces(relationshipDefinition.getNamespaces().values());
+		assignResourceLinks(r, object, (object == null ? null : object.getClass()));
 		return r;
 	}
 
@@ -262,6 +255,11 @@ public class HyperExpress
 
 	/**
 	 * Creates a collection resource, embedding the components in the given componentRel name.
+	 * <p/>
+	 * If the components collection contains Resource instances, no new Resource instances are
+	 * created. Instead, they are simply embedded into a root Resource. However, they
+	 * do get links and namespaces assigned to them based on the RelationshipDefinition currently
+	 * in play.
 	 * 
 	 * @param components
 	 * @param componentType
@@ -284,9 +282,21 @@ public class HyperExpress
 		}
 		else
 		{
+			boolean isResourceCollection = false;
+
 			for (Object component : components)
 			{
-				childResource = _createResource(component, contentType);
+				if (isResourceCollection || Resource.class.isAssignableFrom(component.getClass()))
+				{
+					isResourceCollection = true;
+					childResource = (Resource) component;
+					assignResourceLinks(childResource, component, componentType);
+				}
+				else
+				{
+					childResource = _createResource(component, contentType);
+				}
+
 				root.addResource(componentRel, childResource);
 			}
 		}
@@ -355,4 +365,14 @@ public class HyperExpress
 		return links;
     }
 
+	private void assignResourceLinks(Resource r, Object object, Class<?> objectType)
+    {
+	    if (object != null)
+		{
+			Collection<LinkBuilder> linkBuilders = relationshipDefinition.getLinkBuilders(objectType).values();
+			r.addLinks(_resolveUrlTokens(linkBuilders, object, _acquireTokenResolver()));
+		}
+
+		r.addNamespaces(relationshipDefinition.getNamespaces().values());
+    }
 }
