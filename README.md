@@ -2,7 +2,7 @@
 
 **Waffle.io** [![Stories in Ready](https://badge.waffle.io/RestExpress/HyperExpress.png?label=ready)](https://waffle.io/RestExpress/HyperExpress)
 
-http://www.youtube.com/watch?v=TQqc7goKVsM&list=UUzaZL1VLtdVTiZ8k07z65jg&feature=share
+[(Video) Introduction to HyperExpress](http://www.youtube.com/watch?v=TQqc7goKVsM&list=UUzaZL1VLtdVTiZ8k07z65jg&feature=share)
 
 HyperExpress
 ============
@@ -105,6 +105,9 @@ syntax for some of the relationships between them might be as follows:
 **Caveat:** a Relationship definition captures the canonical or static relationships for a given type (or class). To add dynamic, context-sensitive links, you'll need to add them to the Resource yourself using Resource.addLink() methods.
 
 ```java
+import static com.strategicgains.hyperexpress.RelTypes.*;
+...
+
 HyperExpress.relationships()
 
 // Namespaces, CURIEs
@@ -183,6 +186,8 @@ There are two ways to resolve data properties in a model to template URL tokens.
 is simply using HyperExpress.bind(String token, String value), which simply maps the URL
 token to the given value.
 
+**HyperExpress.bind(String, String)** - Bind a URL token to a string value. During resource creation, any URL tokens matching the given token string are replace with the provided value. The TokenResolver bindings are specific to the current thread.
+
 The following would bind the token "{blogId}" in any of the above-defined URL templates to the string "1234",
 "{entryId}" to "5678" and "{commentId}" to "90123" during creation of a resource:
 
@@ -192,10 +197,30 @@ HyperExpress.bind("blogId", "1234")
 	.bind("commentId", "90123");
 ```
 
-**HyperExpress.bind(String, String)** - Bind a URL token to a string value. During resource creation, any URL tokens matching the given token string are replace with the provided value. The TokenResolver bindings are specific to the current thread.
+The second method is to use a TokenBinder that is effectively a callback and works well for collection resources, where each
+item in the collection might have links also.
+
 **HyperExpress.tokenBinder(TokenBinder)** - Uses the TokenBinder as a callback during HyperExpress.createCollectionResource(), binding each object in a collection to the links for that instance.
 It binds a TokenBinder to the elements in a collection resource. When a collection resource is created via createCollectionResource(),
 the TokenBinder is called for each element in the collection to bind URL tokens to individual properties within the element, if necessary. The TokenBinder is specific to the current thread.
+
+If we were creating a resource from a collection of Comment instances, the following would bind values from each individual
+comment to URL tokens.  Specifically, the token "{blogId}" is bound to the blog ID contained in the comment. Respectively, 
+"{entryId}" and "{commentId}" are also bound with respect to the comment instance:
+
+```java
+// Bind each resources in the collection with link URL tokens, etc. here...
+HyperExpress.tokenBinder(new TokenBinder<Comment>()
+{
+	@Override
+	public void bind(Comment comment, TokenResolver resolver)
+	{
+		resolver.bind("blogId", comment.getBlogId())
+			.bind("entryId", comment.getEntryId())
+			.bind("commentId", comment.getId());
+	}
+});
+```
 
 Creating Resources
 ------------------
@@ -211,7 +236,26 @@ Properties from the object are copied into the resulting Resource. Also, links a
 relationships defined via HyperExpress.relationships(), using any HyperExpress.bind() or HyperExpress.tokenBinder()
 settings to populate the tokens in the URLs.
 
+```java
+String responseMediaType = ... // however we determine the outbound media type.
+Blog blog = ...  // Let's say it gets read from the database.
+Resource resource = HyperExpress.createResource(blog, responseMediaType);
+```
+
+The 'resource' object now contains all the non-null properties of 'blog' with links injected. Given the RelationshipDefinition above forClass(Blog.class), 
+it has four links with relation types, "blog:author", "blog:entries", "self", "up".  It can now be serialized.
+
 HyperExpress.createCollectionResource(Collection, Class, String, String) creates a collection resource, embedding the individual components of the collection.
+
+```java
+String responseMediaType = ... // however we determine the outbound media type.
+List<Blog> blogs = ...  // say, it gets read from the database.
+Resource resource = HyperExpress.createCollectionResource(blogs, Blog.class, "blogs", responseMediaType);
+```
+
+In this case, the 'resource' object contains a root resource, with links injected using the forCollectionOf(Blog.class) section above.  The root
+resource has at least a "self" link, and possibly "next" and "previous" links. Additionally, each blog instance in the 'blogs' collection
+is embedded in the root resource, with each of those embedded resources having their own links, "blog:author", "blog:entries", "self", "up".
 
 Cleaning Up
 -----------
