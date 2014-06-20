@@ -9,6 +9,7 @@ Offers a simple way to add hypermedia links to your domain models or DTOs before
 HyperExpress supports several ways to generate links in responses.  If you want to create Link instances
 or URLs (using token substitution in URLs patterns) by hand using the Builder pattern (Location header anyone?):
 
+* **HyperExpress** = a Singleton entry-point for HyperExpress functionality.
 * **LinkBuilder** = Create Link instance using the builder pattern, optionally using URL token substitution.
 * **UrlBuilder** = Create a string URL from a URL pattern, substituting URL tokens to produce a fully-populated URL.
 
@@ -39,7 +40,8 @@ How-To
 
 There are three phases in which HyperExpress helps you out managing links in your resources;
 
-* Defining Relationships (between resources)
+* Configuring HyperExpress for Media Types
+* Defining Static Relationships (between resources)
 * Resolving URL tokens (a token in a URL is replaced with an ID)
 * Creating Resources using a Factory
 
@@ -47,8 +49,40 @@ After that, it's the 'simple' matter of serializing the Resource to JSON (or XMl
 HyperExpress-HAL has a serializer and deserializer for Jackson. Assuming you have your
 own Jackson configuration, simply plug these in to your module (see the HyperExpress-HAL README).
 
-Defining Relationships
-----------------------
+Configuring HyperExpress
+========================
+
+Maven resources:
+
+```xml
+<dependency>
+    <groupId>com.strategicgains</groupId>
+    <artifactId>HyperExpress-HAL</artifactId>
+    <version>2.0-rc3</version>
+</dependency>
+```
+
+Next, add resource factories to HyperExpress so HyperExpress knows which factory to use depending on the MediaType of the request.
+
+Right now, HyperExpress just supports HAL, but there are more media types on the way.  This is how we configure HyperExpress
+for HAL to support both plain JSON and HAL-JSON:
+
+```java
+ResourceFactoryStrategy hal = new HalResourceFactory();
+HyperExpress.registerResourceFactoryStrategy(hal, "application/json");
+HyperExpress.registerResourceFactoryStrategy(hal, "application/hal+json");
+```
+
+HyperExpress-HAL has a serializer and deserializer for Jackson, which you insert into your Jackson module like so:
+
+// Support HalResource (de)serialization.
+module.addDeserializer(HalResource.class, new HalResourceDeserializer());
+module.addSerializer(HalResource.class, new HalResourceSerializer());
+
+Now you're ready to generate Resource representations.
+
+Defining Static Relationships
+-----------------------------
 
 HyperExpress has a RelationshipDefinition class, accessed via the HyperExpress.relationships()
 method, although it can be created outside the HyperExpress singleton class also.
@@ -59,7 +93,7 @@ syntax for some of the relationships between them might be as follows:
 **Caveat:** a Relationship definition captures the canonical or static relationships for a given type (or class). To add dynamic, context-sensitive links, you'll need to add them to the Resource yourself using Resource.addLink() methods.
 
 ```java
-HyperExpress.relationships();
+HyperExpress.relationships()
 
 // Namespaces, CURIEs
 .addNamespaces(
@@ -128,4 +162,31 @@ HyperExpress.relationships();
 
 Note that the namespaces apply to all resources and are oriented toward CURIE format (see: http://www.w3.org/TR/curie/).
 
-More on the way... ;-)
+Once we have the static relationships defined, it's time to map domain properties to those template URL ID tokens.
+
+Resolving URL Tokens
+--------------------
+
+HyperExpress.bind(String, String) will bind a token to a string value.
+HyperExpress.tokenBinder(TokenBinder) will uses the TokenBinder as a callback during HyperExpress.createCollectionResource(), binding each object in a collection to the links for that instance.
+
+Creating Resources
+------------------
+
+HyperExpress.createResource() creates a single instance resource.
+HyperExpress.createCollectionResource() creates a resource with embedded resources, each with their own links.
+
+Cleaning Up
+-----------
+
+HyperExpress maintains a ThreadLocal for all of the token bindings.  This means makes things thread safe.
+However, it also means that HyperExpresss is holding references to all those bindings, which will cause
+VM bloat over time.
+
+Once the resources have been created, clean up the token bindings for that thread by calling:
+
+```java
+HyperExpress.clearTokenBindings();
+```
+
+
