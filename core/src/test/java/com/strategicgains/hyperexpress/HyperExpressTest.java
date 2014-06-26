@@ -20,6 +20,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.strategicgains.hyperexpress.domain.Blog;
+import com.strategicgains.hyperexpress.domain.Entry;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.domain.Resource;
@@ -38,10 +39,16 @@ public class HyperExpressTest
 
 		.forCollectionOf(Blog.class)
 			.rel(SELF, "/blogs")
-//				.query("limit={selfLimit}")
-//				.query("offset={selfOffset}")
+				.withQuery("limit={selfLimit}")
+				.withQuery("offset={selfOffset}")
 			.rel(NEXT, "/blogs?limit={nextLimit}&offset={nextOffset}").optional()
-			.rel(PREV, "/blogs?limit={prevLimit}&offset={prevOffset}").optional();
+			.rel(PREV, "/blogs?limit={prevLimit}&offset={prevOffset}").optional()
+
+		.forClass(Entry.class)
+			.rel(SELF, "/entries/{entryId}")
+			.rel("edit", "/entries/{entryId}/edit")
+				.attribute("method", "PUT")
+				.optional("{adminRole}");
 	}
 
 	@AfterClass
@@ -64,6 +71,21 @@ public class HyperExpressTest
 		Link link = r.getLinks().iterator().next();
 		assertEquals(SELF, link.getRel());
 		assertEquals("/blogs", link.getHref());
+
+		r = HyperExpress.createResource(new Entry(), "*");
+		assertNotNull(r.getLinks());
+		assertEquals(1, r.getLinks().size());
+		link = r.getLinks().iterator().next();
+		assertEquals(SELF, link.getRel());
+		assertEquals("/entries/{entryId}", link.getHref());		
+
+		HyperExpress.bind("adminRole", "false");
+		r = HyperExpress.createResource(new Entry(), "*");
+		assertNotNull(r.getLinks());
+		assertEquals(1, r.getLinks().size());
+		link = r.getLinks().iterator().next();
+		assertEquals(SELF, link.getRel());
+		assertEquals("/entries/{entryId}", link.getHref());		
 	}
 
 	@Test
@@ -77,7 +99,7 @@ public class HyperExpressTest
 		assertEquals(1, r.getLinks().size());
 		Link link = r.getLinks().iterator().next();
 		assertEquals(SELF, link.getRel());
-//		assertEquals("/blogs?limit=20&offset=40", link.getHref());
+		assertEquals("/blogs?limit=20&offset=40", link.getHref());
 		HyperExpress.clearTokenBindings();
 	}
 
@@ -104,6 +126,66 @@ public class HyperExpressTest
 
 				case NEXT:
 					assertEquals("/blogs?limit=20&offset=40", link.getHref());
+					break;
+
+				default:
+					fail("Unexpected 'rel' " + link.getRel());
+					break;
+			}
+		}
+	}
+
+	@Test
+	public void shouldContainOptionallyBoundLinksWithBoolean()
+	{
+		HyperExpress.bind("adminRole", Boolean.TRUE.toString());
+		Resource r = HyperExpress.createResource(new Entry(), "*");
+		assertNotNull(r.getLinks());
+		assertEquals(2, r.getLinks().size());
+		Iterator<Link> iter = r.getLinks().iterator();
+
+		while(iter.hasNext())
+		{
+			Link link = iter.next();
+
+			switch (link.getRel())
+            {
+				case SELF:
+					assertEquals("/entries/{entryId}", link.getHref());
+					break;
+
+				case "edit":
+					assertEquals("/entries/{entryId}/edit", link.getHref());
+					break;
+
+				default:
+					fail("Unexpected 'rel' " + link.getRel());
+					break;
+			}
+		}
+	}
+
+	@Test
+	public void shouldContainOptionallyBoundLinksWithString()
+	{
+		HyperExpress.bind("adminRole", "admin");
+		Resource r = HyperExpress.createResource(new Entry(), "*");
+		assertNotNull(r.getLinks());
+		assertEquals(2, r.getLinks().size());
+		Iterator<Link> iter = r.getLinks().iterator();
+
+		while(iter.hasNext())
+		{
+			Link link = iter.next();
+
+			switch (link.getRel())
+            {
+				case SELF:
+					assertEquals("/entries/{entryId}", link.getHref());
+					break;
+
+				case "edit":
+					assertEquals("/entries/{entryId}/edit", link.getHref());
 					break;
 
 				default:

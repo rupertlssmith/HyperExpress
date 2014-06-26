@@ -350,11 +350,25 @@ public class HyperExpress
 		for (LinkBuilder template : templates)
 		{
 			Link link = template.build(object, tokenResolver);
-			tokenResolver.resolve(link.getHref(), object);
+			String optional = link.get(RelationshipDefinition.OPTIONAL);
 
-			if (link.has("optional") && link.hasToken())
+			if (optional != null)
 			{
-				// ignore it.
+				link.set(RelationshipDefinition.OPTIONAL, null);
+
+				if (optional.trim().equalsIgnoreCase("true") && link.hasToken())
+				{
+					continue;
+				}
+				else
+				{
+					String value = tokenResolver.resolve(optional, object);
+
+					if (!value.startsWith("{") && !value.trim().equalsIgnoreCase("false"))
+					{
+						links.add(link);
+					}
+				}
 			}
 			else
 			{

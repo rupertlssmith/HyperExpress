@@ -29,7 +29,7 @@ import com.strategicgains.hyperexpress.exception.RelationshipException;
  */
 public class RelationshipDefinition
 {
-    private static final String OPTIONAL = "optional";
+	public static final String OPTIONAL = "__optional";
 	private static final String TITLE = "title";
 	private static final String TYPE = "type";
 	private static final String HREFLANG = "hreflang";
@@ -217,6 +217,31 @@ public class RelationshipDefinition
 	public RelationshipDefinition optional()
 	{
 		return attribute(OPTIONAL, Boolean.TRUE.toString());
+	}
+
+	/**
+	 * Indicates that the link should be included in a response if the provided token
+	 * gets bound. This is useful for links that are conditional in the response depending
+	 * on information NOT in the link URL.
+	 * <p/>
+	 * For example: definition.optional("{adminRole}");
+	 * <p/>
+	 * Then for binding, anything other than "false" or null will include the link in the output.
+	 * <p/>
+	 * For example: HyperExpress.bind("adminRole", (role.equals("admin") ? "true" : "false"));<br/>
+	 * or HyperExpress.bind("adminRole", (role.equals("admin") ? "admin" : null));
+	 * 
+	 * @param token a URL token name, with or without beginning and ending curly-braces.
+	 * @return
+	 */
+	public RelationshipDefinition optional(String token)
+	{
+		if (token.startsWith("{") && token.endsWith("}"))
+		{
+			return attribute(OPTIONAL, token);
+		}
+
+		return attribute(OPTIONAL, "{" + token + "}");
 	}
 
 	/**
