@@ -45,6 +45,23 @@ extends JsonSerializer<HalResource>
 	private static final String EMBEDDED = "_embedded";
 	private static final String LINKS = "_links";
 
+	/**
+	 * Determines whether each rel in the _links property is forced to always use an array, or is dynamically either
+	 * a single object or an array.
+	 */
+	private boolean forceLinkArrays = false;
+
+	public HalResourceSerializer()
+	{
+		this(false);
+	}
+
+	public HalResourceSerializer(boolean shouldForceLinkArrays)
+	{
+		super();
+		this.forceLinkArrays = shouldForceLinkArrays;
+	}
+
 	@Override
 	public void serialize(HalResource resource, JsonGenerator jgen, SerializerProvider provider)
 	throws IOException, JsonProcessingException
@@ -74,7 +91,7 @@ extends JsonSerializer<HalResource>
 
 		for (Entry<String, List<HalLink>> entry : linksByRel.entrySet())
 		{
-			if (entry.getValue().size() == 1) // Write single link
+			if (!forceLinkArrays && entry.getValue().size() == 1) // Write single link
 			{
 				jgen.writeObjectField(entry.getKey(), entry.getValue().iterator().next());
 			}
