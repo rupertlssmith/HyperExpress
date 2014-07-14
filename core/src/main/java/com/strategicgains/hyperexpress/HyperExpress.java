@@ -343,34 +343,15 @@ public class HyperExpress
 		return tokenResolver.get();
 	}
 
-	private List<Link> _resolveUrlTokens(Collection<LinkBuilder> templates, Object object, TokenResolver tokenResolver)
+	private List<Link> _resolveUrlTokens(Collection<LinkBuilder> linkBuilders, Object object, TokenResolver tokenResolver)
     {
-	    List<Link> links = new ArrayList<>(templates.size());
+	    List<Link> links = new ArrayList<>(linkBuilders.size());
 
-		for (LinkBuilder template : templates)
+		for (LinkBuilder linkBuilder : linkBuilders)
 		{
-			Link link = template.build(object, tokenResolver);
-			String optional = link.get(RelationshipDefinition.OPTIONAL);
-
-			if (optional != null)
-			{
-				link.set(RelationshipDefinition.OPTIONAL, null);
-
-				if (optional.trim().equalsIgnoreCase("true") && link.hasToken())
-				{
-					continue;
-				}
-				else
-				{
-					String value = tokenResolver.resolve(optional, object);
-
-					if (!value.startsWith("{") && !value.trim().equalsIgnoreCase("false"))
-					{
-						links.add(link);
-					}
-				}
-			}
-			else
+			Link link = linkBuilder.build(object, tokenResolver);
+			
+			if (link != null)
 			{
 				links.add(link);
 			}

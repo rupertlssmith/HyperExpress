@@ -29,7 +29,6 @@ import com.strategicgains.hyperexpress.exception.RelationshipException;
  */
 public class RelationshipDefinition
 {
-	public static final String OPTIONAL = "__optional";
 	private static final String TITLE = "title";
 	private static final String TYPE = "type";
 	private static final String HREFLANG = "hreflang";
@@ -50,9 +49,9 @@ public class RelationshipDefinition
 	private static final String LENGTH = "length";
 
 	private Map<String, Namespace> namespaces = new LinkedHashMap<>();
-	private Map<String, Map<String, LinkBuilder>> relsByClass = new LinkedHashMap<>();
-	private Map<String, LinkBuilder> linkBuilders;
-	private LinkBuilder linkBuilder;
+	private Map<String, Map<String, OptionalLinkBuilder>> relsByClass = new LinkedHashMap<>();
+	private Map<String, OptionalLinkBuilder> linkBuilders;
+	private OptionalLinkBuilder linkBuilder;
 
 	/**
 	 * Adds one or more namespaces to this relationship builder.
@@ -122,13 +121,13 @@ public class RelationshipDefinition
 
 	public RelationshipDefinition rel(String name, String href)
 	{
-		return rel(name, new LinkBuilder(href));
+		return rel(name, new OptionalLinkBuilder(href));
 	}
 
-	public RelationshipDefinition rel(String name, LinkBuilder builder)
+	public RelationshipDefinition rel(String name, OptionalLinkBuilder builder)
 	{
-		linkBuilder = builder;
-		linkBuilder.rel(name);
+		builder.rel(name);
+		this.linkBuilder = builder;
 		linkBuilders.put(name, linkBuilder);
 		return this;
 	}
@@ -216,7 +215,10 @@ public class RelationshipDefinition
 	 */
 	public RelationshipDefinition optional()
 	{
-		return attribute(OPTIONAL, Boolean.TRUE.toString());
+		if (linkBuilder == null) throw new RelationshipException("Attempt to set optional on null link. Call 'rel()' first.");
+
+		linkBuilder.optional();
+		return this;
 	}
 
 	/**
@@ -236,12 +238,10 @@ public class RelationshipDefinition
 	 */
 	public RelationshipDefinition optional(String token)
 	{
-		if (token.startsWith("{") && token.endsWith("}"))
-		{
-			return attribute(OPTIONAL, token);
-		}
+		if (linkBuilder == null) throw new RelationshipException("Attempt to set optional on null link: " + token + ". Call 'rel()' first.");
 
-		return attribute(OPTIONAL, "{" + token + "}");
+		linkBuilder.optional(token);
+		return this;
 	}
 
 	/**
@@ -302,10 +302,10 @@ public class RelationshipDefinition
 		return Collections.unmodifiableMap(namespaces);
 	}
 
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     private Map<String, LinkBuilder> getLinkBuildersForName(String className)
 	{
-		Map<String, LinkBuilder> builders = relsByClass.get(className);
+		Map<String, OptionalLinkBuilder> builders = relsByClass.get(className);
 		
 		return (builders != null ? Collections.unmodifiableMap(builders) : Collections.EMPTY_MAP);
 	}
