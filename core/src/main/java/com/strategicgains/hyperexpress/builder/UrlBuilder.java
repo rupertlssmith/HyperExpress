@@ -33,6 +33,7 @@ import com.strategicgains.hyperexpress.util.Strings;
  * @since Jan 10, 2014
  */
 public class UrlBuilder
+implements Cloneable
 {
 	private String baseUrl;
 	private String urlPattern;
@@ -158,6 +159,15 @@ public class UrlBuilder
 		{
 			queries.clear();
 		}
+	}
+
+	@Override
+	public UrlBuilder clone()
+	{
+		UrlBuilder b = new UrlBuilder(this.urlPattern);
+		b.baseUrl = this.baseUrl;
+		b.queries = (this.queries == null ? null : new ArrayList<String>(this.queries));
+		return b;
 	}
 
 	@Override
