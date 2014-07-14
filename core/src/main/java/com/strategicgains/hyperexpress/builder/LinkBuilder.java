@@ -62,6 +62,13 @@ public class LinkBuilder
 		urlBuilder = new UrlBuilder(urlPattern);
 	}
 
+	public LinkBuilder(LinkBuilder that)
+	{
+		super();
+		this.urlBuilder = that.urlBuilder.clone();
+		this.attributes = new HashMap<String, String>(that.attributes);
+	}
+
 	/**
 	 * Set the prefix portion of the URL which is to be pre-pended to the URL
 	 * pattern.
