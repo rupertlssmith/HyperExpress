@@ -28,6 +28,7 @@ implements Cloneable
 {
 	private String name;
 	private String href;
+	private Boolean templated;
 
 	/**
 	 * Required for deserialization. As there are no setters on this object.
@@ -122,5 +123,16 @@ implements Cloneable
 	public int hashCode()
 	{
 		return 42 + name.hashCode() + href.hashCode();
+	}
+
+	public Namespace templated(Boolean templated)
+	{
+		this.templated = templated;
+		return this;
+	}
+
+	public boolean isTemplated()
+	{
+		return (templated == null ? false : templated);
 	}
 }
