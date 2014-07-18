@@ -19,12 +19,12 @@ public class TokenResolverTest
 		.bind("b", "b")
 		.bind("c", "c")
 		.bind("d", "d")
-		.binder(new TokenBinder()
+		.binder(new TokenBinder<Resolvable>()
 		{
 			@Override
-			public void bind(Object object, TokenResolver r)
+			public void bind(Resolvable object, TokenResolver r)
 			{
-				r.bind("e", String.valueOf(((Resolvable) object).e));
+				r.bind("e", String.valueOf(object.e));
 			}
 		});
 
