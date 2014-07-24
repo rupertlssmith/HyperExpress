@@ -117,6 +117,7 @@ public interface Resource
 	 * @return this Resource instance (for method chaining).
 	 */
 	Resource addLink(Link link);
+	Resource addLinks(Link link);
 
 	/**
 	 * Define a link relationship from the resource to an href with the given relationship name.
@@ -126,6 +127,22 @@ public interface Resource
 	 * @return this Resource instance (for method chaining).
 	 */
 	Resource addLink(String rel, String href);
+
+	/**
+	 * Define a link relationship from the resource to an href with the given relationship name,
+	 * implying that the relationship is a collection.
+	 * <p/>
+	 * As some media types (e.g. HAL) output different results depending on whether
+	 * the link collection size is one, or multiple, this method 'hints' to the serializer
+	 * that this relationship should ALWAYS be an array (in the case of JSON) or list.
+	 * However, if the output media type doesn't support the concept, then this method
+	 * and addLink(String, String) have no difference.
+	 * 
+	 * @param rel the name of the relationship, or 'rel type'
+	 * @param href the URL to the resulting resource.
+	 * @return this Resource instance (for method chaining).
+	 */
+	Resource addLinks(String rel, String href);
 
 	/**
 	 * Define link relationships from the resource to other URLs.
@@ -150,13 +167,29 @@ public interface Resource
 	boolean hasLinks();
 
 	/**
-	 * Embed another resource into this resource instance.
+	 * Embed a single resource into this resource instance.
 	 * 
 	 * @param rel the name of the relationship between this resource and the embedded resource.
 	 * @param resource the resource instance to embed.
 	 * @return this Resource instance (for method chaining).
 	 */
 	Resource addResource(String rel, Resource resource);
+
+	/**
+	 * Embed another resource into this resource instance. implying that the output
+	 * is a collection of resources.
+	 * <p/>
+	 * As some media types (e.g. HAL) output different results depending on whether
+	 * the collection size is one, or multiple, this method 'hints' to the serializer
+	 * that this relationship should ALWAYS be an array (in the case of JSON) or list.
+	 * However, if the output media type doesn't support the concept, then this method
+	 * and addResource(String, Resource) have no difference.
+	 * 
+	 * @param rel the name of the relationship between this resource and the embedded resource.
+	 * @param resource the resource instance to embed.
+	 * @return this Resource instance (for method chaining).
+	 */
+	Resource addResources(String rel, Resource resource);
 
 	/**
 	 * Embed an entire collection of resources in this resource.
@@ -198,4 +231,6 @@ public interface Resource
 	 * @return this Resource instance (for method chaining).
 	 */
 	Resource initialize(Resource from);
+	boolean isLinkArray(String rel);
+	boolean isResourceArray(String rel);
 }

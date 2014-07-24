@@ -17,8 +17,10 @@ package com.strategicgains.hyperexpress.builder;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.exception.RelationshipException;
@@ -52,6 +54,7 @@ public class RelationshipDefinition
 	private Map<String, Map<String, OptionalLinkBuilder>> relsByClass = new LinkedHashMap<>();
 	private Map<String, OptionalLinkBuilder> linkBuilders;
 	private OptionalLinkBuilder linkBuilder;
+	private Set<String> arrayRels = new HashSet<String>();
 
 	/**
 	 * Adds one or more namespaces to this relationship builder.
@@ -119,11 +122,25 @@ public class RelationshipDefinition
 		return this;
 	}
 
+	/**
+	 * Define a relationship for the given rel name to a URL.
+	 * 
+	 * @param name the relationship name (rel name).
+	 * @param href the URL, possibly templated.
+	 * @return this RelationshipDefinition
+	 */
 	public RelationshipDefinition rel(String name, String href)
 	{
 		return rel(name, new OptionalLinkBuilder(href));
 	}
 
+	/**
+	 * Define a relationship for the give rel name to a LinkBuilder.
+	 * 
+	 * @param name the relationship name (rel name).
+	 * @param builder an OptionalLinkBuilder instance.
+	 * @return this RelationshipDefinition
+	 */
 	public RelationshipDefinition rel(String name, OptionalLinkBuilder builder)
 	{
 		builder.rel(name);
@@ -132,23 +149,70 @@ public class RelationshipDefinition
 		return this;
 	}
 
+	/**
+	 * Define a relationship for the given rel name to a URL. If supported,
+	 * the output rendering (serialization) will be an array (or list) instead
+	 * of a single object for this rel name.
+	 * 
+	 * @param name the relationship name (rel name).
+	 * @param href the URL, possibly templated.
+	 * @return this RelationshipDefinition
+	 */
+	public RelationshipDefinition rels(String name, String href)
+	{
+		return rels(name, new OptionalLinkBuilder(href));
+	}
+
+	/**
+	 * Define a relationship for the give rel name to a LinkBuilder. If supported,
+	 * the output rendering (serialization) will be an array (or list) instead
+	 * of a single object for this rel name.
+	 * 
+	 * @param name the relationship name (rel name).
+	 * @param builder an OptionalLinkBuilder instance.
+	 * @return this RelationshipDefinition
+	 */
+	public RelationshipDefinition rels(String name, OptionalLinkBuilder builder)
+	{
+		arrayRels.add(name);
+		return rel(name, builder);
+	}
+
+	/**
+	 * Set the title on the latest rel().
+	 * 
+	 * @param title
+	 * @return
+	 */
 	public RelationshipDefinition title(String title)
 	{
 		return attribute(TITLE, title);
 	}
 
+	/**
+	 * Set the 'hreflang' property on the latest rel().
+	 * 
+	 * @param value
+	 * @return
+	 */
 	public RelationshipDefinition hreflang(String value)
 	{
 		return attribute(HREFLANG, value);
 	}
 
+	/**
+	 * Set the 'type' property on the latest rel().
+	 * 
+	 * @param type
+	 * @return
+	 */
 	public RelationshipDefinition type(String type)
     {
     	return attribute(TYPE, type);
     }
 
 	/**
-	 * HAL-specific.
+	 * HAL-specific. Set the 'name' property of the latest rel().
 	 * 
 	 * @param name
 	 * @return
@@ -159,7 +223,7 @@ public class RelationshipDefinition
 	}
 
 	/**
-	 * HAL-specific.
+	 * HAL-specific. Set the 'templated' property of the latest rel().
 	 * 
 	 * @param value
 	 * @return
@@ -300,6 +364,11 @@ public class RelationshipDefinition
 	public Map<String, Namespace> getNamespaces()
 	{
 		return Collections.unmodifiableMap(namespaces);
+	}
+
+	public boolean isArrayRel(String rel)
+	{
+		return arrayRels.contains(rel);
 	}
 
     @SuppressWarnings("unchecked")

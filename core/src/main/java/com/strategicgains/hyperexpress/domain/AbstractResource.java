@@ -19,8 +19,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.strategicgains.hyperexpress.exception.ResourceException;
 
@@ -34,9 +37,12 @@ public abstract class AbstractResource
 implements Resource
 {
 	private List<Namespace> namespaces = new ArrayList<Namespace>();
-	private List<Link> links = new ArrayList<Link>();
-	private HashMap<String, Object> properties = new HashMap<String, Object>();
-	private HashMap<String, List<Resource>> resources = new HashMap<String, List<Resource>>();
+	private Map<String, List<Link>> linksByRel = new LinkedHashMap<String, List<Link>>();
+	private List<Link> allLinks = new ArrayList<Link>();
+	private Map<String, Object> properties = new HashMap<String, Object>();
+	private Map<String, List<Resource>> resources = new HashMap<String, List<Resource>>();
+	private Set<String> arrayLinkRels = new HashSet<String>();
+	private Set<String> arrayResourceRels = new HashSet<String>();
 
 	/**
 	 * Initialize the contents of this resource from another. The contents
@@ -103,6 +109,14 @@ implements Resource
 	}
 
 	@Override
+	public Resource addLinks(String rel, String url)
+	{
+		addLink(rel, url);
+		arrayLinkRels.add(rel);
+		return this;
+	}
+
+	@Override
 	public Resource addNamespace(String name, String href)
 	{
 		return addNamespace(new Namespace(name, href));
@@ -111,7 +125,7 @@ implements Resource
 	@Override
     public Resource addNamespace(Namespace namespace)
     {
-		if (namespace == null) throw new ResourceException("Cannot add null namespace to resource");
+		if (namespace == null) throw new ResourceException("Cannot add null namespace");
 
 		if (!namespaces.contains(namespace))
 		{
@@ -161,9 +175,19 @@ implements Resource
 	@Override
 	public Resource addLink(Link link)
 	{
-		if (link == null) throw new ResourceException("Cannot add null link to resource");
+		if (link == null) throw new ResourceException("Cannot add null link");
+		if (link.getRel() == null) throw new ResourceException("Cannot link with null 'rel'");
 
-		this.links.add(link);
+		acquireLinksForRel(link.getRel()).add(link);
+		allLinks.add(link);
+		return this;
+	}
+
+	@Override
+	public Resource addLinks(Link link)
+	{
+		addLink(link);
+		arrayLinkRels.add(link.getRel());
 		return this;
 	}
 
@@ -172,20 +196,39 @@ implements Resource
 	{
 		if (links == null) throw new ResourceException("Cannot add null links collection to resource");
 
-		this.links.addAll(links);
+		for (Link link : links)
+		{
+			addLink(link);
+		}
+
 		return this;
 	}
 
 	@Override
 	public List<Link> getLinks()
 	{
-		return Collections.unmodifiableList(links);
+		return Collections.unmodifiableList(allLinks);
+	}
+
+	public Map<String, List<Link>> getLinksByRel()
+	{
+		return Collections.unmodifiableMap(linksByRel);
 	}
 
 	@Override
 	public boolean hasLinks()
 	{
-		return (!links.isEmpty());
+		return (!linksByRel.isEmpty());
+	}
+
+	public boolean isLinkArray(String rel)
+	{
+		return arrayLinkRels.contains(rel);
+	}
+
+	public boolean isResourceArray(String rel)
+	{
+		return arrayResourceRels.contains(rel);
 	}
 
 	@Override
@@ -200,10 +243,19 @@ implements Resource
 	}
 
 	@Override
+	public Resource addResources(String rel, Resource resource)
+	{
+		addResource(rel, resource);
+		arrayResourceRels.add(rel);
+		return this;
+	}
+
+	@Override
 	public Resource addResources(String rel, Collection<Resource> collection)
 	{
 		List<Resource> forRel = acquireResourcesForRel(rel);
 		forRel.addAll(collection);
+		arrayResourceRels.add(rel);
 		return this;
 	}
 
@@ -247,6 +299,19 @@ implements Resource
 		{
 			forRel = new ArrayList<Resource>();
 			resources.put(rel, forRel);
+		}
+
+	    return forRel;
+    }
+
+	private List<Link> acquireLinksForRel(String rel)
+    {
+	    List<Link> forRel = linksByRel.get(rel);
+
+		if (forRel == null)
+		{
+			forRel = new ArrayList<Link>();
+			linksByRel.put(rel, forRel);
 		}
 
 	    return forRel;
