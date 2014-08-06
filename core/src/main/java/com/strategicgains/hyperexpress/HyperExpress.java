@@ -234,7 +234,7 @@ public class HyperExpress
 	private Resource _createResource(Object object, String contentType)
 	{
 		Resource r = resourceFactory.createResource(object, contentType);
-		assignResourceLinks(r, object, (object == null ? null : object.getClass()));
+		_assignResourceLinks(r, object, (object == null ? null : object.getClass()));
 		return r;
 	}
 
@@ -272,7 +272,12 @@ public class HyperExpress
 	{
 		Resource root = resourceFactory.createResource(null, contentType);
 		Collection<LinkBuilder> templates = relationshipDefinition.getCollectionLinkBuilders(componentType).values();
-		root.addLinks(_resolveUrlTokens(templates, null, _acquireTokenResolver()));
+		
+		for (Link link : _resolveUrlTokens(templates, null, _acquireTokenResolver()))
+		{
+			root.addLink(link, relationshipDefinition.isCollectionArrayRel(componentType, link.getRel()));
+		}
+
 		root.addNamespaces(relationshipDefinition.getNamespaces().values());
 		Resource childResource = null;
 
@@ -290,14 +295,14 @@ public class HyperExpress
 				{
 					isResourceCollection = true;
 					childResource = (Resource) component;
-					assignResourceLinks(childResource, component, componentType);
+					_assignResourceLinks(childResource, component, componentType);
 				}
 				else
 				{
 					childResource = _createResource(component, contentType);
 				}
 
-				root.addResource(componentRel, childResource);
+				root.addResource(componentRel, childResource, true);
 			}
 		}
 
@@ -360,12 +365,16 @@ public class HyperExpress
 		return links;
     }
 
-	private void assignResourceLinks(Resource r, Object object, Class<?> objectType)
+	private void _assignResourceLinks(Resource r, Object object, Class<?> objectType)
     {
 	    if (object != null)
 		{
 			Collection<LinkBuilder> linkBuilders = relationshipDefinition.getLinkBuilders(objectType).values();
-			r.addLinks(_resolveUrlTokens(linkBuilders, object, _acquireTokenResolver()));
+
+			for (Link link : _resolveUrlTokens(linkBuilders, object, _acquireTokenResolver()))
+			{
+				r.addLink(link, relationshipDefinition.isArrayRel(objectType, link.getRel()));
+			}
 		}
 
 		r.addNamespaces(relationshipDefinition.getNamespaces().values());

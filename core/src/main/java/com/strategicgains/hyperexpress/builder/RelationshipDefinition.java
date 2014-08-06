@@ -31,6 +31,7 @@ import com.strategicgains.hyperexpress.exception.RelationshipException;
  */
 public class RelationshipDefinition
 {
+	private static final String COLLECTION_SUFFIX = ".Collection";
 	private static final String TITLE = "title";
 	private static final String TYPE = "type";
 	private static final String HREFLANG = "hreflang";
@@ -52,9 +53,10 @@ public class RelationshipDefinition
 
 	private Map<String, Namespace> namespaces = new LinkedHashMap<>();
 	private Map<String, Map<String, OptionalLinkBuilder>> relsByClass = new LinkedHashMap<>();
+	private Map<String, Set<String>> arrayRelsByClass = new HashMap<String, Set<String>>();
 	private Map<String, OptionalLinkBuilder> linkBuilders;
 	private OptionalLinkBuilder linkBuilder;
-	private Set<String> arrayRels = new HashSet<String>();
+	private Set<String> arrayRels;
 
 	/**
 	 * Adds one or more namespaces to this relationship builder.
@@ -97,7 +99,7 @@ public class RelationshipDefinition
 	{
 		if (forClass == null) return this;
 
-		return forClassName(forClass.getName() + ".Collection");
+		return forClassName(forClass.getName() + COLLECTION_SUFFIX);
 	}
 
 	public RelationshipDefinition forClass(Class<?> forClass)
@@ -117,6 +119,14 @@ public class RelationshipDefinition
 		{
 			linkBuilders = new HashMap<>();
 			relsByClass.put(name, linkBuilders);
+		}
+
+		arrayRels = arrayRelsByClass.get(name);
+
+		if (arrayRels == null)
+		{
+			arrayRels = new HashSet<String>();
+			arrayRelsByClass.put(name, arrayRels);
 		}
 
 		return this;
@@ -348,7 +358,7 @@ public class RelationshipDefinition
 
 		if (forClass.isArray())
 		{
-			return getLinkBuildersForName(forClass.getComponentType().getName() + ".Collection");
+			return getLinkBuildersForName(forClass.getComponentType().getName() + COLLECTION_SUFFIX);
 		}
 
 		return getLinkBuildersForName(forClass.getName());
@@ -358,7 +368,7 @@ public class RelationshipDefinition
 	{
 		if (componentType == null) return Collections.emptyMap();
 
-		return getLinkBuildersForName(componentType.getName() + ".Collection");
+		return getLinkBuildersForName(componentType.getName() + COLLECTION_SUFFIX);
 	}
 
 	public Map<String, Namespace> getNamespaces()
@@ -366,9 +376,20 @@ public class RelationshipDefinition
 		return Collections.unmodifiableMap(namespaces);
 	}
 
-	public boolean isArrayRel(String rel)
+	public boolean isArrayRel(Class<?> objectType, String rel)
 	{
-		return arrayRels.contains(rel);
+		return isArrayRel(objectType.getName(), rel);
+	}
+
+	public boolean isCollectionArrayRel(Class<?> objectType, String rel)
+	{
+		return isArrayRel(objectType.getName() + COLLECTION_SUFFIX, rel);
+	}
+
+	private boolean isArrayRel(String className, String rel)
+	{
+		Set<String> rels = arrayRelsByClass.get(className);
+		return (rels == null ? false : rels.contains(rel));
 	}
 
     @SuppressWarnings("unchecked")

@@ -38,7 +38,7 @@ public class HyperExpressTest
 		)
 
 		.forCollectionOf(Blog.class)
-			.rel(SELF, "/blogs")
+			.rels(SELF, "/blogs")
 				.withQuery("limit={selfLimit}")
 				.withQuery("offset={selfOffset}")
 			.rel(NEXT, "/blogs?limit={nextLimit}&offset={nextOffset}").optional()
@@ -70,6 +70,8 @@ public class HyperExpressTest
 		assertEquals(1, r.getLinks().size());
 		Link link = r.getLinks().iterator().next();
 		assertEquals(SELF, link.getRel());
+		assertTrue(HyperExpress.relationships().isCollectionArrayRel(Blog.class, link.getRel()));
+		assertFalse(HyperExpress.relationships().isArrayRel(Blog.class, link.getRel()));
 		assertEquals("/blogs", link.getHref());
 
 		r = HyperExpress.createResource(new Entry(), "*");
@@ -77,6 +79,8 @@ public class HyperExpressTest
 		assertEquals(1, r.getLinks().size());
 		link = r.getLinks().iterator().next();
 		assertEquals(SELF, link.getRel());
+		assertFalse(HyperExpress.relationships().isArrayRel(Entry.class, link.getRel()));
+		assertFalse(HyperExpress.relationships().isCollectionArrayRel(Entry.class, link.getRel()));
 		assertEquals("/entries/{entryId}", link.getHref());		
 
 		HyperExpress.bind("adminRole", "false");
@@ -85,6 +89,8 @@ public class HyperExpressTest
 		assertEquals(1, r.getLinks().size());
 		link = r.getLinks().iterator().next();
 		assertEquals(SELF, link.getRel());
+		assertFalse(HyperExpress.relationships().isArrayRel(Entry.class, link.getRel()));
+		assertFalse(HyperExpress.relationships().isCollectionArrayRel(Entry.class, link.getRel()));
 		assertEquals("/entries/{entryId}", link.getHref());		
 	}
 
