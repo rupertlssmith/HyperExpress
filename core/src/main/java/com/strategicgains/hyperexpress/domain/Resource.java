@@ -114,10 +114,11 @@ public interface Resource
 	 * Define a link relationship from the resource to a URL.
 	 * 
 	 * @param link an abstraction of a link.
+	 * @param isMultiple denote the rel as a list or array of links on rendering, if applicable.
 	 * @return this Resource instance (for method chaining).
 	 */
 	Resource addLink(Link link);
-	Resource addLinks(Link link);
+	Resource addLink(Link link, boolean isMultiple);
 
 	/**
 	 * Define a link relationship from the resource to an href with the given relationship name.
@@ -140,12 +141,17 @@ public interface Resource
 	 * 
 	 * @param rel the name of the relationship, or 'rel type'
 	 * @param href the URL to the resulting resource.
+	 * @param isMultiple denote the rel as a list or array of links on rendering, if applicable.
 	 * @return this Resource instance (for method chaining).
 	 */
-	Resource addLinks(String rel, String href);
+	Resource addLink(String rel, String href, boolean isMultiple);
 
 	/**
 	 * Define link relationships from the resource to other URLs.
+	 * <p/>
+	 * Note that this method is not able to denote links for a given
+	 * rel type as 'multiple' links.  Output rendering is therefore
+	 * strictly dependent on how many links exist in the rel.
 	 * 
 	 * @param links a collection of link abstractions.
 	 * @return this Resource instance (for method chaining).
@@ -187,9 +193,10 @@ public interface Resource
 	 * 
 	 * @param rel the name of the relationship between this resource and the embedded resource.
 	 * @param resource the resource instance to embed.
+	 * @param isMultiple denote the rel as a list or array of resources on rendering, if applicable.
 	 * @return this Resource instance (for method chaining).
 	 */
-	Resource addResources(String rel, Resource resource);
+	Resource addResource(String rel, Resource resource, boolean isMultiple);
 
 	/**
 	 * Embed an entire collection of resources in this resource.
@@ -230,7 +237,25 @@ public interface Resource
 	 * @param from the Resource instance from which to copy.
 	 * @return this Resource instance (for method chaining).
 	 */
-	Resource initialize(Resource from);
-	boolean isLinkArray(String rel);
-	boolean isResourceArray(String rel);
+	Resource from(Resource from);
+
+	/**
+	 * Answers whether the rel is marked for multiple links when serialized (rendered).
+	 * Put another way, this method answers whether addLink(..., true) was called for
+	 * that rel type.
+	 * 
+	 * @param rel
+	 * @return true if the rel is supposed to be rendered as an array or list of links (instead of a single object).
+	 */
+	boolean isMultipleLinks(String rel);
+
+	/**
+	 * Answers whether the rel is marked for multiple resources when serialized (rendered).
+	 * Put another way, this method answers whether addResource(..., true) was called for
+	 * that rel type.
+	 * 
+	 * @param rel
+	 * @return true if the rel is supposed to be rendered as an array or list of resources (instead of a single object).
+	 */
+	boolean isMultipleResources(String rel);
 }

@@ -62,26 +62,35 @@ extends JsonSerializer<HalResource>
 	private void renderJson(HalResource resource, JsonGenerator jgen, boolean isEmbedded)
 	throws JsonGenerationException, IOException
 	{
-		writeLinks(resource.getLinks(), resource.getNamespaces(), isEmbedded, jgen);
-		writeEmbedded(resource.getResources(), jgen);
+		writeLinks(resource, isEmbedded, jgen);
+		writeEmbedded(resource, jgen);
 		writeProperties(resource.getProperties(), jgen);
 	}
 
-	private void writeLinks(List<Link> links, List<Namespace> namespaces, boolean isEmbedded, JsonGenerator jgen)
+	private void writeLinks(HalResource resource, boolean isEmbedded, JsonGenerator jgen)
 	throws JsonGenerationException, IOException
 	{
+		List<Link> links = resource.getLinks();
+		List<Namespace> namespaces = resource.getNamespaces();
 		if (links.isEmpty() && (isEmbedded || namespaces.isEmpty())) return;
 
 		jgen.writeObjectFieldStart(LINKS);
 		writeCuries(namespaces, isEmbedded, jgen);
 
-		Map<String, List<HalLink>> linksByRel = indexLinksByRel(links);
+		Map<String, List<HalLink>> linksByRel = indexLinksByRel(resource.getLinks());
 
 		for (Entry<String, List<HalLink>> entry : linksByRel.entrySet())
 		{
-			if (entry.getValue().size() == 1) // Write single link
+			if (entry.getValue().size() == 1 && !resource.isMultipleLinks(entry.getKey())) // Write single link
 			{
-				jgen.writeObjectField(entry.getKey(), entry.getValue().iterator().next());
+				HalLink link = entry.getValue().iterator().next();
+
+				if (null == link.getTemplated())
+				{
+					link.setTemplated(link.hasTemplate() ? true : null);
+				}
+
+				jgen.writeObjectField(entry.getKey(), link);
 			}
 			else // Write link array
 			{
@@ -89,7 +98,11 @@ extends JsonSerializer<HalResource>
 
 				for (HalLink link : entry.getValue())
 				{
-					link.setTemplated(link.hasTemplate());
+					if (null == link.getTemplated())
+					{
+						link.setTemplated(link.hasTemplate() ? true : null);
+					}
+
 					jgen.writeObject(link);
 				}
 
@@ -143,16 +156,18 @@ extends JsonSerializer<HalResource>
 		}
 	}
 
-	private void writeEmbedded(Map<String, List<Resource>> embedded, JsonGenerator jgen)
+	private void writeEmbedded(Resource resource, JsonGenerator jgen)
 	throws JsonGenerationException, IOException
 	{
+		Map<String, List<Resource>> embedded = resource.getResources();
+
 		if (embedded.isEmpty()) return;
 
 		jgen.writeObjectFieldStart(EMBEDDED);
 
 		for (Entry<String, List<Resource>> entry : embedded.entrySet())
 		{
-			if (entry.getValue().size() == 1)
+			if (entry.getValue().size() == 1 && !resource.isMultipleResources(entry.getKey()))
 			{
 				jgen.writeObjectFieldStart(entry.getKey());
                 renderJson((HalResource) entry.getValue().iterator().next(), jgen, true);

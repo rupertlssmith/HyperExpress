@@ -215,7 +215,7 @@ public class HalLink
 
 	public boolean hasTemplate()
 	{
-		return TEMPLATE_PATTERN.matcher(getHref()).matches();
+		return TEMPLATE_PATTERN.matcher(getHref()).find();
 	}
 
 	public HalLink setTemplated(Boolean templated)

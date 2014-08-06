@@ -52,7 +52,8 @@ implements Resource
 	 * @param that the resource from which to copy contents.
 	 * @return this Resource instance (for method chaining).
 	 */
-	public Resource initialize(Resource that)
+	@Override
+	public Resource from(Resource that)
 	{
 		addNamespaces(that.getNamespaces());
 		addLinks(that.getLinks());
@@ -105,15 +106,13 @@ implements Resource
 	@Override
 	public Resource addLink(String rel, String url)
 	{
-		return addLink(new LinkDefinition(rel, url));
+		return addLink(rel, url, false);
 	}
 
 	@Override
-	public Resource addLinks(String rel, String url)
+	public Resource addLink(String rel, String url, boolean isMultiple)
 	{
-		addLink(rel, url);
-		arrayLinkRels.add(rel);
-		return this;
+		return addLink(new LinkDefinition(rel, url), isMultiple);
 	}
 
 	@Override
@@ -175,19 +174,23 @@ implements Resource
 	@Override
 	public Resource addLink(Link link)
 	{
+		return addLink(link, false);
+	}
+
+	@Override
+	public Resource addLink(Link link, boolean isMultiple)
+	{
 		if (link == null) throw new ResourceException("Cannot add null link");
 		if (link.getRel() == null) throw new ResourceException("Cannot link with null 'rel'");
 
 		acquireLinksForRel(link.getRel()).add(link);
 		allLinks.add(link);
-		return this;
-	}
 
-	@Override
-	public Resource addLinks(Link link)
-	{
-		addLink(link);
-		arrayLinkRels.add(link.getRel());
+		if (isMultiple)
+		{
+			arrayLinkRels.add(link.getRel());
+		}
+
 		return this;
 	}
 
@@ -221,32 +224,26 @@ implements Resource
 		return (!linksByRel.isEmpty());
 	}
 
-	public boolean isLinkArray(String rel)
+	@Override
+	public Resource addResource(String rel, Resource resource)
 	{
-		return arrayLinkRels.contains(rel);
-	}
-
-	public boolean isResourceArray(String rel)
-	{
-		return arrayResourceRels.contains(rel);
+		return addResource(rel, resource, false);
 	}
 
 	@Override
-	public Resource addResource(String rel, Resource resource)
+	public Resource addResource(String rel, Resource resource, boolean isMultiple)
 	{
 		if (rel == null) throw new ResourceException("Cannot embed resource using null 'rel'");
 		if (resource == null) throw new ResourceException("Cannot embed null resource");
 
 		List<Resource> forRel = acquireResourcesForRel(rel);
 		forRel.add(resource);
-		return this;
-	}
 
-	@Override
-	public Resource addResources(String rel, Resource resource)
-	{
-		addResource(rel, resource);
-		arrayResourceRels.add(rel);
+		if (isMultiple)
+		{
+			arrayResourceRels.add(rel);
+		}
+
 		return this;
 	}
 
@@ -315,5 +312,17 @@ implements Resource
 		}
 
 	    return forRel;
+    }
+
+	@Override
+    public boolean isMultipleLinks(String rel)
+    {
+		return arrayLinkRels.contains(rel);
+    }
+
+	@Override
+    public boolean isMultipleResources(String rel)
+    {
+		return arrayResourceRels.contains(rel);
     }
 }

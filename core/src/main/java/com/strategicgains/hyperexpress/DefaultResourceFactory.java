@@ -49,7 +49,7 @@ implements ResourceFactory
 	public Resource createResource(Object object, String contentType)
 	{
 		ResourceFactoryStrategy strategy = factoryStrategies.get(contentType);
-		
+
 		if (strategy == null)
 		{
 			throw new ResourceException("Cannot create resource for content type: " + contentType);

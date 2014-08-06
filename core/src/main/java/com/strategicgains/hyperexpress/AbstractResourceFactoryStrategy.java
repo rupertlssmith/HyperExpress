@@ -110,7 +110,7 @@ implements ResourceFactoryStrategy
 		if (type == null) return;
 		if (Resource.class.isAssignableFrom(type))
 		{
-			to.initialize((Resource) from);
+			to.from((Resource) from);
 			return;
 		}
 
