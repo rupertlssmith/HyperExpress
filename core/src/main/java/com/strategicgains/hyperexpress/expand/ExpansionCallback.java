@@ -23,5 +23,5 @@ import com.strategicgains.hyperexpress.domain.Resource;
  */
 public interface ExpansionCallback
 {
-	Resource expand(String rel, Resource resource, String mediaType);
+	Resource expand(Expansion expansion, Resource resource);
 }

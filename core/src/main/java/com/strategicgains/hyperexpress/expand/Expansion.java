@@ -15,11 +15,11 @@
 */
 package com.strategicgains.hyperexpress.expand;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import com.strategicgains.hyperexpress.domain.Resource;
 
 /**
  * A set of requested relationship ('rel') expansions.
@@ -28,47 +28,51 @@ import com.strategicgains.hyperexpress.domain.Resource;
  * @since Jun 16, 2014
  */
 public class Expansion
+implements Iterable<String>
 {
-	private Set<String> expansions;
+	private Set<String> rels;
+	private String mediaType;
 
-	public Expansion()
+	public Expansion(String mediaType)
 	{
 		super();
+		this.mediaType = mediaType;
 	}
 
-	public Expansion(List<String> expansions)
+	public Expansion(String mediaType, List<String> rels)
 	{
-		this();
-		this.expansions = new HashSet<String>(expansions);
+		this(mediaType);
+		this.rels = (rels == null ? null : new HashSet<String>(rels));
 	}
 
 	public Expansion addExpansion(String expansion)
 	{
-		expansions.add(expansion);
+		if (rels == null)
+		{
+			rels = new HashSet<String>();
+		}
+
+		rels.add(expansion);
 		return this;
 	}
 
 	public boolean isEmpty()
 	{
-		return (expansions == null || expansions.isEmpty());
+		return (rels == null || rels.isEmpty());
 	}
 
 	public boolean contains(String value)
 	{
-		return expansions.contains(value);
+		return rels.contains(value);
 	}
 
-	public Resource iterate(Resource resource, String contentType, ExpansionCallback callback)
+	public Iterator<String> iterator()
 	{
-		if (callback == null || isEmpty()) return resource;
+		return (isEmpty() ? Collections.<String> emptySet().iterator() : rels.iterator());
+	}
 
-		Resource result = resource;
-
-		for (String expansion : expansions)
-		{
-			result = callback.expand(expansion, result, contentType);
-		}
-
-		return result;
+	public String getMediaType()
+	{
+		return mediaType;
 	}
 }

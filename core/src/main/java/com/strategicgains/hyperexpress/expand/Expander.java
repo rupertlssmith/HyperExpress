@@ -36,9 +36,9 @@ public class Expander
 		// prevents external instantiation.
 	}
 
-	public static Resource expand(Expansion expansion, Class<?> type, Resource resource, String contentType)
+	public static Resource expand(Expansion expansion, Class<?> type, Resource resource)
 	{
-		return INSTANCE._expand(expansion, type, resource, contentType);
+		return INSTANCE._expand(expansion, type, resource);
 	}
 
 	public static Expander registerCallback(Class<?> type, ExpansionCallback callback)
@@ -56,10 +56,11 @@ public class Expander
 		return this;
 	}
 
-	private Resource _expand(Expansion expansion, Class<?> type, Resource resource, String contentType)
+	private Resource _expand(Expansion expansion, Class<?> type, Resource resource)
 	{
 		if (expansion == null || expansion.isEmpty()) return resource;
 
-		return expansion.iterate(resource, contentType, callbacks.get(type.getName()));
+		ExpansionCallback callback = callbacks.get(type.getName());
+		return (callback == null ? resource : callback.expand(expansion, resource));
 	}
 }
