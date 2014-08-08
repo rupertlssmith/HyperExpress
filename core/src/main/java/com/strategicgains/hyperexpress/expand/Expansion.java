@@ -15,20 +15,21 @@
 */
 package com.strategicgains.hyperexpress.expand;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.strategicgains.hyperexpress.domain.Resource;
 
 /**
- * A list of relationships ('rels') to expand.
+ * A set of requested relationship ('rel') expansions.
  * 
  * @author toddf
  * @since Jun 16, 2014
  */
 public class Expansion
 {
-	private List<String> expansions;
+	private Set<String> expansions;
 
 	public Expansion()
 	{
@@ -38,7 +39,7 @@ public class Expansion
 	public Expansion(List<String> expansions)
 	{
 		this();
-		this.expansions = new ArrayList<String>(expansions);
+		this.expansions = new HashSet<String>(expansions);
 	}
 
 	public Expansion addExpansion(String expansion)
