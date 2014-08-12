@@ -58,7 +58,7 @@ public class Expander
 
 	private Resource _expand(Expansion expansion, Class<?> type, Resource resource)
 	{
-		if (expansion == null || expansion.isEmpty()) return resource;
+		if (expansion == null) return resource;
 
 		ExpansionCallback callback = callbacks.get(type.getName());
 		return (callback == null ? resource : callback.expand(expansion, resource));
