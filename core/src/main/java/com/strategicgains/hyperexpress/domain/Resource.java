@@ -96,6 +96,15 @@ public interface Resource
 	Resource setProperty(String name, Object value);
 
 	/**
+	 * Remove a property from this resource, returning its previous value, if
+	 * it existed.
+	 * 
+	 * @param name the name of the property.
+	 * @return the value of the property if it existed on the resource. Otherwise, false.
+	 */
+	Object removeProperty(String name);
+
+	/**
 	 * Get all the properties on this resource as a Map. The returned
 	 * map is unmodifiable.
 	 * 
@@ -118,6 +127,15 @@ public interface Resource
 	 * @return this Resource instance (for method chaining).
 	 */
 	Resource addLink(Link link);
+
+	/**
+	 * Define a link relationship from the resource to a URL, denoting the relationship
+	 * as a collection.
+	 * 
+	 * @param link an abstraction of a link.
+	 * @param isMultiple denote the rel as a list or array of links on rendering, if applicable.
+	 * @return this Resource instance (for method chaining).
+	 */
 	Resource addLink(Link link, boolean isMultiple);
 
 	/**
@@ -230,6 +248,14 @@ public interface Resource
 	 * @return true if the resource has embedded resources. Otherwise, false.
 	 */
 	boolean hasResources();
+	
+	/**
+	 * Answer whether this resource has an embedded resource for the given relationship name.
+	 * 
+	 * @param rel the relationship name for which to check for embedded resources.
+	 * @return true if the resource has embedded resources for the given relationship. Otherwise, false.
+	 */
+	boolean hasResource(String rel);
 
 	/**
 	 * Initialize this resource from the contents of another.

@@ -333,4 +333,16 @@ implements Resource
     {
 		return arrayResourceRels.contains(rel);
     }
+
+	@Override
+	public Object removeProperty(String name)
+	{
+		return properties.remove(name);
+	}
+
+	@Override
+	public boolean hasResource(String rel)
+	{
+		return resources.containsKey(rel);
+	}
 }
