@@ -99,7 +99,15 @@ implements Resource
 	@Override
 	public Resource setProperty(String key, Object value)
 	{
-		properties.put(key, value);
+		if (value != null)
+		{
+			properties.put(key, value);
+		}
+		else
+		{
+			properties.remove(key);
+		}
+
 		return this;
 	}
 
