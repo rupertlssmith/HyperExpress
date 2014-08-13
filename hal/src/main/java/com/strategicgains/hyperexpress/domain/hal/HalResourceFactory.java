@@ -43,4 +43,10 @@ extends AbstractResourceFactoryStrategy
 
 		return r;
 	}
+
+	@Override
+    public Class<? extends Resource> getResourceType()
+    {
+	    return HalResource.class;
+    }
 }

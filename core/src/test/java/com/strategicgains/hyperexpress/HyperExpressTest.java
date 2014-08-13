@@ -257,6 +257,13 @@ public class HyperExpressTest
 		assertEmptyResource(r.getResources("blogs").get(0));
 	}
 
+	@Test
+	public void shouldReturnResourceClass()
+	{
+		Class<?> type = HyperExpress.getResourceType("*");
+		assertEquals(AgnosticResource.class, type);
+	}
+
 	private void assertEmptyResource(Resource r)
 	{
 		assertNotNull(r);

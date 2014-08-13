@@ -25,5 +25,19 @@ import com.strategicgains.hyperexpress.domain.Resource;
  */
 public interface ResourceFactoryStrategy
 {
+	/**
+	 * Create a concrete Resource, copying properties into the resource from the
+	 * provided object.
+	 *  
+	 * @param object
+	 * @return
+	 */
 	Resource createResource(Object object);
+
+	/**
+	 * Answer the concrete Resource implementation type.
+	 * 
+	 * @return the Class of the concrete Resource implementation this ResourceFactoryStrategy produces.
+	 */
+	Class<? extends Resource> getResourceType();
 }

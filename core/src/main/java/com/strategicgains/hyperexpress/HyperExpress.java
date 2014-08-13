@@ -121,6 +121,19 @@ public class HyperExpress
 	}
 
 	/**
+	 * Return the type of the concrete Resource implementation that is created for the
+	 * given contentType.
+	 * 
+	 * @param contentType
+	 * @return the Class of the concrete implementation
+	 */
+	public static Class<? extends Resource> getResourceType(String contentType)
+	{
+		return INSTANCE._getResourceType(contentType);
+	}
+
+
+	/**
 	 * Creates a collection resource, embedding the components in a rel name derived from the component type
 	 * simple class name. The class name is lower-cased and pluralized in order to create the rel name.
 	 * 
@@ -237,6 +250,11 @@ public class HyperExpress
 		_assignResourceLinks(r, object, (object == null ? null : object.getClass()));
 		return r;
 	}
+
+	private Class<? extends Resource> _getResourceType(String contentType)
+	{
+		return resourceFactory.getResourceType(contentType);
+    }
 
 	/**
 	 * Creates a collection resource, embedding the components in a rel name derived from the component type

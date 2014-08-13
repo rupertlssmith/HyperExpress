@@ -1,5 +1,6 @@
 package com.strategicgains.hyperexpress.domain.hal;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -52,5 +53,12 @@ public class HyperExpressHalTest
 		assertFalse(r.hasProperties());
 		assertTrue(r.hasResources());
 		assertTrue(r.getResources("blogs").isEmpty());
+	}
+
+	@Test
+	public void shouldReturnHalResourceClass()
+	{
+		Class<?> type = HyperExpress.getResourceType("*");
+		assertEquals(HalResource.class, type);
 	}
 }

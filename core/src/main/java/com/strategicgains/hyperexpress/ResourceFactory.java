@@ -32,4 +32,6 @@ public interface ResourceFactory
 	 * @return a Resource instance.
 	 */
 	Resource createResource(Object object, String contentType);
+
+	Class<? extends Resource> getResourceType(String contentType);
 }

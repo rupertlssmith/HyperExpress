@@ -36,4 +36,10 @@ extends AbstractResourceFactoryStrategy
 
 		return to;
 	}
+
+	@Override
+    public Class<? extends Resource> getResourceType()
+    {
+		return AgnosticResource.class;
+    }
 }

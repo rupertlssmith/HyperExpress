@@ -68,4 +68,12 @@ public class HalResourceFactoryTest
 		assertFalse(r.hasProperties());
 		assertFalse(r.hasResources());
 	}
+
+	@Test
+	public void shouldReturnHalResourceClass()
+	{
+		HalResourceFactory factory = new HalResourceFactory();
+		Class<?> type = factory.getResourceType();
+		assertEquals(HalResource.class, type);
+	}
 }

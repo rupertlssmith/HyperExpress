@@ -44,6 +44,8 @@ implements ResourceFactory
 	 * 
 	 * @param object the object to use as a source of properties (data).
 	 * @param contentType the content type to use when creating the new resource.
+	 * @return a concrete implementation of Resource with properties copied from object.
+	 * @throws ResourceException if no factory exists for the contentType
 	 */
 	@Override
 	public Resource createResource(Object object, String contentType)
@@ -76,4 +78,27 @@ implements ResourceFactory
 		factoryStrategies.put(contentType, strategy);
 		return this;
 	}
+
+	/**
+	 * Answer the concrete Resource implementation type.
+	 * 
+	 * Create a Resource using data from the given object for the requested content type.
+	 * 
+	 * @param object the object to use as a source of properties (data).
+	 * @param contentType the content type to use when creating the new resource.
+	 * @return the Class of the concrete Resource implementation.
+	 * @throws ResourceException if no factory exists for the contentType
+	 */
+	@Override
+    public Class<? extends Resource> getResourceType(String contentType)
+    {
+		ResourceFactoryStrategy strategy = factoryStrategies.get(contentType);
+
+		if (strategy == null)
+		{
+			throw new ResourceException("No resource factory for content type: " + contentType);
+		}
+
+		return strategy.getResourceType();
+    }
 }
