@@ -15,10 +15,12 @@
  */
 package com.strategicgains.hyperexpress.builder;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,9 +54,9 @@ public class RelationshipDefinition
 	private static final String LENGTH = "length";
 
 	private Map<String, Namespace> namespaces = new LinkedHashMap<>();
-	private Map<String, Map<String, OptionalLinkBuilder>> relsByClass = new LinkedHashMap<>();
 	private Map<String, Set<String>> arrayRelsByClass = new HashMap<String, Set<String>>();
-	private Map<String, OptionalLinkBuilder> linkBuilders;
+	private Map<String, List<OptionalLinkBuilder>> linkBuildersByClass = new LinkedHashMap<>();
+	private List<OptionalLinkBuilder> linkBuildersForClass;
 	private OptionalLinkBuilder linkBuilder;
 	private Set<String> arrayRels;
 
@@ -113,12 +115,12 @@ public class RelationshipDefinition
 	{
 		if (name == null) return this;
 
-		linkBuilders = relsByClass.get(name);
+		linkBuildersForClass = linkBuildersByClass.get(name);
 
-		if (linkBuilders == null)
+		if (linkBuildersForClass == null)
 		{
-			linkBuilders = new HashMap<>();
-			relsByClass.put(name, linkBuilders);
+			linkBuildersForClass = new ArrayList<>();
+			linkBuildersByClass.put(name, linkBuildersForClass);
 		}
 
 		arrayRels = arrayRelsByClass.get(name);
@@ -135,27 +137,33 @@ public class RelationshipDefinition
 	/**
 	 * Define a relationship for the given rel name to a URL.
 	 * 
-	 * @param name the relationship name (rel name).
+	 * @param rel the relationship name (rel name).
 	 * @param href the URL, possibly templated.
 	 * @return this RelationshipDefinition
 	 */
-	public RelationshipDefinition rel(String name, String href)
+	public RelationshipDefinition rel(String rel, String href)
 	{
-		return rel(name, new OptionalLinkBuilder(href));
+		return rel(rel, new OptionalLinkBuilder(href));
 	}
 
 	/**
 	 * Define a relationship for the give rel name to a LinkBuilder.
 	 * 
-	 * @param name the relationship name (rel name).
+	 * @param rel the relationship name (rel name).
 	 * @param builder an OptionalLinkBuilder instance.
 	 * @return this RelationshipDefinition
 	 */
-	public RelationshipDefinition rel(String name, OptionalLinkBuilder builder)
+	public RelationshipDefinition rel(String rel, OptionalLinkBuilder builder)
 	{
-		builder.rel(name);
+		builder.rel(rel);
 		this.linkBuilder = builder;
-		linkBuilders.put(name, linkBuilder);
+
+		if (linkBuildersForClass == null)
+		{
+			throw new RelationshipException("Attempt to call rel() before forClass() or forCollectionOf()");
+		}
+
+		linkBuildersForClass.add(builder);
 		return this;
 	}
 
@@ -352,9 +360,9 @@ public class RelationshipDefinition
 		return this;
 	}
 
-	public Map<String, LinkBuilder> getLinkBuilders(Class<?> forClass)
+	public List<LinkBuilder> getLinkBuilders(Class<?> forClass)
 	{
-		if (forClass == null) return Collections.emptyMap();
+		if (forClass == null) return Collections.emptyList();
 
 		if (forClass.isArray())
 		{
@@ -364,9 +372,9 @@ public class RelationshipDefinition
 		return getLinkBuildersForName(forClass.getName());
 	}
 
-	public Map<String, LinkBuilder> getCollectionLinkBuilders(Class<?> componentType)
+	public List<LinkBuilder> getCollectionLinkBuilders(Class<?> componentType)
 	{
-		if (componentType == null) return Collections.emptyMap();
+		if (componentType == null) return Collections.emptyList();
 
 		return getLinkBuildersForName(componentType.getName() + COLLECTION_SUFFIX);
 	}
@@ -392,11 +400,15 @@ public class RelationshipDefinition
 		return (rels == null ? false : rels.contains(rel));
 	}
 
-    @SuppressWarnings("unchecked")
-    private Map<String, LinkBuilder> getLinkBuildersForName(String className)
+    private List<LinkBuilder> getLinkBuildersForName(String className)
 	{
-		Map<String, OptionalLinkBuilder> builders = relsByClass.get(className);
-		
-		return (builders != null ? Collections.unmodifiableMap(builders) : Collections.EMPTY_MAP);
+		List<OptionalLinkBuilder> builders = linkBuildersByClass.get(className);
+
+		return (builders != null 
+			? Collections.<LinkBuilder> unmodifiableList(builders)
+			: Collections.<LinkBuilder> emptyList());
+//		if (builders != null) return Collections.<LinkBuilder> unmodifiableList(builders);
+//
+//		return Collections.<LinkBuilder> emptyList();
 	}
 }

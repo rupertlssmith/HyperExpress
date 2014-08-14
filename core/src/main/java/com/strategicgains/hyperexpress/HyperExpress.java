@@ -289,7 +289,7 @@ public class HyperExpress
 	private Resource _createCollectionResource(Collection<?> components, Class<?> componentType, String componentRel, String contentType)
 	{
 		Resource root = resourceFactory.createResource(null, contentType);
-		Collection<LinkBuilder> templates = relationshipDefinition.getCollectionLinkBuilders(componentType).values();
+		Collection<LinkBuilder> templates = relationshipDefinition.getCollectionLinkBuilders(componentType);
 		
 		for (Link link : _resolveUrlTokens(templates, null, _acquireTokenResolver()))
 		{
@@ -387,7 +387,7 @@ public class HyperExpress
     {
 	    if (object != null)
 		{
-			Collection<LinkBuilder> linkBuilders = relationshipDefinition.getLinkBuilders(objectType).values();
+			Collection<LinkBuilder> linkBuilders = relationshipDefinition.getLinkBuilders(objectType);
 
 			for (Link link : _resolveUrlTokens(linkBuilders, object, _acquireTokenResolver()))
 			{

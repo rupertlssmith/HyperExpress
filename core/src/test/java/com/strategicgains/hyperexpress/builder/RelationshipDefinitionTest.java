@@ -61,22 +61,22 @@ public class RelationshipDefinitionTest
 
 		verifyNamespacesExist(rdef.getNamespaces().values());
 
-		Collection<LinkBuilder> links = rdef.getLinkBuilders(Blog.class).values();
+		Collection<LinkBuilder> links = rdef.getLinkBuilders(Blog.class);
 		assertNotNull(links);
 		assertEquals(3, links.size());
 
-		links = rdef.getCollectionLinkBuilders(Blog.class).values();
+		links = rdef.getCollectionLinkBuilders(Blog.class);
 		assertNotNull(links);
 		assertEquals(1, links.size());
 		LinkBuilder link = links.iterator().next();
 		assertEquals(SELF, link.rel());
 		assertEquals("/blogs", link.urlPattern());
 
-		links = rdef.getLinkBuilders(Entry.class).values();
+		links = rdef.getLinkBuilders(Entry.class);
 		assertNotNull(links);
 		assertEquals(4, links.size());
 
-		links = rdef.getLinkBuilders(Comment.class).values();
+		links = rdef.getLinkBuilders(Comment.class);
 		assertNotNull(links);
 		assertEquals(3, links.size());
 	}
@@ -143,15 +143,15 @@ public class RelationshipDefinitionTest
 					.title("The parent blog entry")
 				.rel("ea:author", "/pi/users/{userId}");
 
-		Collection<LinkBuilder> links = rdef.getLinkBuilders(Blog.class).values();
+		Collection<LinkBuilder> links = rdef.getLinkBuilders(Blog.class);
 		assertNotNull(links);
 		assertEquals(3, links.size());
 
-		links = rdef.getLinkBuilders(Entry.class).values();
+		links = rdef.getLinkBuilders(Entry.class);
 		assertNotNull(links);
 		assertEquals(3, links.size());
 
-		links = rdef.getLinkBuilders(Comment.class).values();
+		links = rdef.getLinkBuilders(Comment.class);
 		assertNotNull(links);
 		assertEquals(3, links.size());
 	}
