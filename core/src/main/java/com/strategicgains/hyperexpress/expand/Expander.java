@@ -18,10 +18,16 @@ package com.strategicgains.hyperexpress.expand;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.strategicgains.hyperexpress.HyperExpress;
 import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.exception.ExpansionException;
 
 /**
+ * A Singleton object used to register {@link ExpansionCallback}s and call them.
+ * <p/>
+ * Registering callbacks is achieved by calling registerCallback(). However, actually
+ * calling those callbacks is done by {@link HyperExpress}.createResource() and createCollectionResource().
+ * 
  * @author toddf
  * @since Aug 8, 2014
  */
@@ -36,6 +42,15 @@ public class Expander
 		// prevents external instantiation.
 	}
 
+	/**
+	 * Call the registered {@link ExpansionCallback}s for the given {@link Expansion} and
+	 * {@link Resource).
+	 * 
+	 * @param expansion
+	 * @param type
+	 * @param resource
+	 * @return
+	 */
 	public static Resource expand(Expansion expansion, Class<?> type, Resource resource)
 	{
 		return INSTANCE._expand(expansion, type, resource);

@@ -18,6 +18,18 @@ package com.strategicgains.hyperexpress.expand;
 import com.strategicgains.hyperexpress.domain.Resource;
 
 /**
+ * Defines the interface that Expander uses for its callbacks to implement
+ * link expansion or {@link Resource} enrichment/augmentation.
+ * <p/>
+ * These callbacks are registered with the Expander using
+ * {@code Expander.registerCallback(Class<?>, ExpansionCallback)} and
+ * are called from HyperExpress.createResource() and .createCollectionResource()
+ * methods after the Resource is created and links (if appropriate) are
+ * added. The callbacks are called whether or not the Expansion instance
+ * contains any relation names or not. This gives you the opportunity to
+ * augment the Resource instance in any way, such as adding/removing properties,
+ * looking other resources up in the database and embedding them, etc.
+ * 
  * @author toddf
  * @since Aug 8, 2014
  */
