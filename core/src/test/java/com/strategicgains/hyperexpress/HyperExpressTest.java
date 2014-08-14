@@ -1,6 +1,7 @@
 package com.strategicgains.hyperexpress;
 
-import static com.strategicgains.hyperexpress.RelTypes.*;
+import static com.strategicgains.hyperexpress.RelTypes.ALTERNATE;
+import static com.strategicgains.hyperexpress.RelTypes.NEXT;
 import static com.strategicgains.hyperexpress.RelTypes.PREV;
 import static com.strategicgains.hyperexpress.RelTypes.SELF;
 import static org.junit.Assert.assertEquals;
@@ -20,6 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.strategicgains.hyperexpress.domain.Blog;
+import com.strategicgains.hyperexpress.domain.Comment;
 import com.strategicgains.hyperexpress.domain.Entry;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Namespace;
@@ -49,7 +51,11 @@ public class HyperExpressTest
 			.rel("edit", "/entries/{entryId}/edit")
 				.attribute("method", "PUT")
 				.optional("{adminRole}")
-			.rels(ALTERNATE, "/blogs/{blogId}/entries").optional();
+			.rels(ALTERNATE, "/blogs/{blogId}/entries/{entryId}").optional()
+
+		.forCollectionOf(Comment.class)
+			.rel(SELF, "/blogs/{blogId}/entries/{entryId}/comments")
+			.rel(SELF, "/comments/{commentId}");
 	}
 
 	@AfterClass
@@ -186,7 +192,8 @@ public class HyperExpressTest
 	public void shouldContainOptionallyBoundLinksWithString()
 	{
 		HyperExpress.bind("adminRole", "admin")
-			.bind("blogId", "42");
+			.bind("blogId", "42")
+			.bind("entryId", "33");
 		Resource r = HyperExpress.createResource(new Entry(), "*");
 		assertNotNull(r.getLinks());
 		assertEquals(3, r.getLinks().size());
@@ -199,19 +206,19 @@ public class HyperExpressTest
 			switch (link.getRel())
             {
 				case SELF:
-					assertEquals("/entries/{entryId}", link.getHref());
+					assertEquals("/entries/33", link.getHref());
 					assertFalse(r.isMultipleLinks(link.getRel()));
 					assertFalse(r.isMultipleResources(link.getRel()));
 					break;
 
 				case "edit":
-					assertEquals("/entries/{entryId}/edit", link.getHref());
+					assertEquals("/entries/33/edit", link.getHref());
 					assertFalse(r.isMultipleLinks(link.getRel()));
 					assertFalse(r.isMultipleResources(link.getRel()));
 					break;
 
 				case ALTERNATE:
-					assertEquals("/blogs/42/entries", link.getHref());
+					assertEquals("/blogs/42/entries/33", link.getHref());
 					assertTrue(r.isMultipleLinks(ALTERNATE));
 					assertFalse(r.isMultipleResources(ALTERNATE));
 					break;
@@ -264,6 +271,16 @@ public class HyperExpressTest
 		assertEquals(AgnosticResource.class, type);
 	}
 
+	@Test
+	public void shouldSupportMultipleLinksPerRel()
+	{
+		Resource r = HyperExpress.createCollectionResource(new ArrayList<Comment>(), Comment.class, "comments", "*");
+		assertNotNull(r);
+		assertTrue(r.hasNamespaces());
+		assertEquals(2, r.getNamespaces().size());
+		assertTrue(r.hasLinks());
+		assertEquals(2, r.getLinks().size());
+	}
 	private void assertEmptyResource(Resource r)
 	{
 		assertNotNull(r);

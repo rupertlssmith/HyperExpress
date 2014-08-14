@@ -27,11 +27,9 @@ public class RelationshipDefinitionTest
 			)
 
 			.forCollectionOf(Blog.class)
-//				.rel(SELF, new LinkBuilder("/blogs")
-//					.withQuery("limit={selfLimit}")
-//					.withQuery("offset={selfOffset}"))
-//						.optional()
 				.rel(SELF, "/blogs")
+					.withQuery("limit={limit}")
+					.withQuery("offset={selfOffset}")
 
 			.forClass(Blog.class)
 				.rel("ea:author", "/pi/users/{userId}")
@@ -44,6 +42,7 @@ public class RelationshipDefinitionTest
 
 			.forClass(Entry.class)
 				.rel(SELF, "/blogs/{blogId}/entries/{entryId}")
+				.rel(SELF, "/entries/{entryId}")
 				.rel("blog:comments", "/blog/{blogId}/entries/{entryId}/comments")
 				.rel(UP, "/blogs/{blogId}/entries")
 
@@ -75,7 +74,7 @@ public class RelationshipDefinitionTest
 
 		links = rdef.getLinkBuilders(Entry.class).values();
 		assertNotNull(links);
-		assertEquals(3, links.size());
+		assertEquals(4, links.size());
 
 		links = rdef.getLinkBuilders(Comment.class).values();
 		assertNotNull(links);
