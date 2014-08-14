@@ -341,8 +341,14 @@ implements Resource
 	}
 
 	@Override
-	public boolean hasResource(String rel)
+	public boolean hasResources(String rel)
 	{
 		return resources.containsKey(rel);
 	}
+
+	@Override
+    public boolean hasProperty(String name)
+    {
+	    return properties.containsKey(name);
+    }
 }

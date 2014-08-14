@@ -85,6 +85,14 @@ public interface Resource
 	Object getProperty(String name);
 
 	/**
+	 * Answer whether the property name is present on this resource.
+	 * 
+	 * @param name the name of the property.
+	 * @return true if the property exists on the resource. Otherwise, false.
+	 */
+	boolean hasProperty(String name);
+
+	/**
 	 * Set a property value on this resource. If the property already exists on
 	 * the resource, it is overwritten.
 	 * 
@@ -255,7 +263,7 @@ public interface Resource
 	 * @param rel the relationship name for which to check for embedded resources.
 	 * @return true if the resource has embedded resources for the given relationship. Otherwise, false.
 	 */
-	boolean hasResource(String rel);
+	boolean hasResources(String rel);
 
 	/**
 	 * Initialize this resource from the contents of another.

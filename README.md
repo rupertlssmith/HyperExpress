@@ -7,7 +7,10 @@
 HyperExpress
 ============
 
-Offers a simple way to add hypermedia links to your domain models or DTOs before serializing them to clients. 
+Offers a simple way to add hypermedia links to your domain models or DTOs before serializing them to clients. It also
+contains classes to help support "link expansion" in your services by using callbacks to enrich the newly created
+'Resource' instances before they get serialized.
+ 
 HyperExpress supports several ways to generate links in responses.  If you want to create Link instances
 or URLs (using token substitution in URLs patterns) by hand using the Builder pattern (Location header anyone?):
 
@@ -60,7 +63,7 @@ Maven resources:
 <dependency>
     <groupId>com.strategicgains</groupId>
     <artifactId>HyperExpress-HAL</artifactId>
-    <version>2.0-rc3</version>
+    <version>2.0</version>
 </dependency>
 ```
 
@@ -124,9 +127,11 @@ HyperExpress.relationships()
 		.withQuery("limit={limit}")
 		.withQuery("offset={offset}")
 	.rel(NEXT, "/blogs?offset={nextOffset}")
-		.withQuery("limit={limit}").optional()
+		.withQuery("limit={limit}")
+		.optional()
 	.rel(PREVIOUS, "/blogs?offset={prevOffset}")
-		.withQuery("limit={limit}").optional()
+		.withQuery("limit={limit}")
+		.optional()
 
 // Blog relationships
 .forClass(Blog.class)
@@ -143,9 +148,11 @@ HyperExpress.relationships()
 		.withQuery("offset={offset}")
 	.rel(UP, "/blogs/{blogId}")
 	.rel(NEXT, "/blogs/{blogId}/entries?offset={nextOffset}")
-		.withQuery("limit={limit}").optional()
+		.withQuery("limit={limit}")
+		.optional()
 	.rel(PREVIOUS, "/blogs/{blogId}/entries?offset={prevOffset}")
-		.withQuery("limit={limit}").optional()
+		.withQuery("limit={limit}")
+		.optional()
 
 // BlogEntry relationships
 .forClass(BlogEntry.class)
@@ -163,9 +170,11 @@ HyperExpress.relationships()
 	.rel(UP, "/blogs/{blogId}/entries/{entryId}")
 		.title("The parent blog blog entry")
 	.rel(NEXT, "/blogs/{blogId}/entries/{entryId}/comments?offset={nextOffset}")
-		.withQuery("limit={limit}").optional()
+		.withQuery("limit={limit}")
+		.optional()
 	.rel(PREVIOUS, "/blogs/{blogId}/entries/{entryId}/comments"?offset={prevOffset}")
-		.withQuery("limit={limit}").optional()
+		.withQuery("limit={limit}")
+		.optional()
 
 // Comment relationships
 .forClass(Comment.class)
@@ -179,14 +188,14 @@ HyperExpress.relationships()
 
 Note that the namespaces apply to all resources and are oriented toward CURIE format (see: http://www.w3.org/TR/curie/).
 
-Once we have the static relationships defined, it's time to map domain properties to those template URL ID tokens.
+Once we have the static relationships defined, it's time to map domain properties to those template URL tokens.
 
 Resolving URL Tokens
 --------------------
 
 There are two ways to resolve data properties in a model to template URL tokens. The first
-is simply using HyperExpress.bind(String token, String value), which simply maps the URL
-token to the given value.
+is simply using HyperExpress.bind(String token, String value), which simply maps URL
+to the given value.
 
 **HyperExpress.bind(String, String)** - Bind a URL token to a string value. During resource creation, any URL tokens matching the given token string are replace with the provided value. The TokenResolver bindings are specific to the current thread.
 
@@ -203,6 +212,7 @@ The second method is to use a TokenBinder that is effectively a callback and wor
 item in the collection might have links also.
 
 **HyperExpress.tokenBinder(TokenBinder)** - Uses the TokenBinder as a callback during HyperExpress.createCollectionResource(), binding each object in a collection to the links for that instance.
+
 It binds a TokenBinder to the elements in a collection resource. When a collection resource is created via createCollectionResource(),
 the TokenBinder is called for each element in the collection to bind URL tokens to individual properties within the element, if necessary. The TokenBinder is specific to the current thread.
 
@@ -233,7 +243,7 @@ In the former, HyperExpress will create a root resource and inject links from th
 using the forCollectionOf(Class) group of templates as links.  It will then embed each element of the collection
 in that root resource, adding links for each instance using the forClass(Class) group of templates.
 
-HyperExpress.createResource(Object, String) creates a resource instance from the object for the given content type.
+**HyperExpress.createResource(Object, String)** creates a resource instance from the object for the given content type.
 Properties from the object are copied into the resulting Resource. Also, links are injected for appropriate
 relationships defined via HyperExpress.relationships(), using any HyperExpress.bind() or HyperExpress.tokenBinder()
 settings to populate the tokens in the URLs.
@@ -247,7 +257,7 @@ Resource resource = HyperExpress.createResource(blog, responseMediaType);
 The 'resource' object now contains all the non-null properties of 'blog' with links injected. Given the RelationshipDefinition above forClass(Blog.class), 
 it has four links with relation types, "blog:author", "blog:entries", "self", "up".  It can now be serialized.
 
-HyperExpress.createCollectionResource(Collection, Class, String, String) creates a collection resource, embedding the individual components of the collection.
+**HyperExpress.createCollectionResource(Collection, Class, String, String)** creates a collection resource, embedding the individual components of the collection.
 
 ```java
 String responseMediaType = ... // however we determine the outbound media type.
@@ -262,7 +272,7 @@ is embedded in the root resource, with each of those embedded resources having t
 Cleaning Up
 -----------
 
-HyperExpress maintains a ThreadLocal for all of the token bindings.  This means makes things thread safe.
+HyperExpress maintains a ThreadLocal for all of the token bindings.  This means HyperExpress bindings are thread safe.
 However, it also means that HyperExpresss is holding references to all those bindings, which will cause
 VM bloat over time.
 
