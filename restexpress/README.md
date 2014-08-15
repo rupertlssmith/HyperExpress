@@ -1,11 +1,12 @@
-HyperExpress Plugin
-===================
+HyperExpress Plugin for RestExpress
+===================================
 
-The HyperExpress plugin gathers metadata about the routes in your RestExpress service suite
-to render live documentation, so it's never out of date.
+The HyperExpress plugin provides a postprocess that automatically converts the models returned
+from your controllers into Resource instances, stitching in links, then rendering them as
+the requested media type, depending on the Accept header.
 
-Adds routes within your service suite to facilitate Swagger documentation and usage.
-By default, it add a route, /api-docs, but is configurable when instantiating the plugin.
+It also provides a way to 'expand' links or otherwise augment the outbound Resource before
+it gets serialized, via a callback interface.
 
 It is possible to set flags and parameters on the plugin, so that preprocessors and postprocessors
 handle them correctly.  For example, making the /api-docs route public so that it doesn't
@@ -16,17 +17,17 @@ Maven Usage
 Stable:
 ```xml
 		<dependency>
-			<groupId>com.strategicgains.plugin-express</groupId>
+			<groupId>com.strategicgains</groupId>
 			<artifactId>HyperExpressPlugin</artifactId>
-			<version>0.2.4</version>
+			<version>2.1-SNAPSHOT</version>
 		</dependency>
 ```
 Development:
 ```xml
 		<dependency>
-			<groupId>com.strategicgains.plugin-express</groupId>
+			<groupId>com.strategicgains</groupId>
 			<artifactId>HyperExpressPlugin</artifactId>
-			<version>0.2.3-SNAPSHOT</version>
+			<version>2.1-SNAPSHOT</version>
 		</dependency>
 ```
 Or download the jar directly from: 
@@ -53,7 +54,6 @@ Note that to use the SNAPSHOT version, you must enable snapshots and a repositor
 Usage
 =====
 
-
 Simply instantiate the plugin and register it with the RestExpress server, setting options
 as necessary, using method chaining if desired.
 
@@ -61,7 +61,42 @@ For example:
 ```java
 RestExpress server = new RestExpress()...
 
-new SwaggerPlugin("/api-docs")				// URL path is optional. Defaults to '/api-docs'
-	.flag("public-route")					// optional. Set a flag on the request for this route.
+// Creation of a ResourceFactoryStrategy is optional, but allows
+// you to customize the functionality of the factory by informing it
+// about model annotations that indicate which properties to include
+// and/or exclude.
+ResourceFactoryStrategy halFactory = new HalResourceFactory()
+	.includeAnnotations(JsonProperty.class)						// optional. properties annotated with this are included in outbound resources.
+	.excludeAnnotations(JsonIgnore.class)						// optional. properties annotated with this are not included in outbound resources.
+
+new HyperExpressPlugin(Linkable.class)							// optional to pass in the marker interface that denotes the models to process. Linkable is default.
+	.addResourceFactory(halFactory, "application/hal+json")		// optional. Use this to configure your own Resource factories.
+	.register(server);
+```
+
+Link Expansion and/or Resource Augmentation
+===========================================
+
+HyperExpress supports the ExpansionCallback interface, which allows us to "get in the game" after HyperExpress has created a Resource
+instance, copied all the properties and inserted links.  In our ExpansionCallback implementation we can not perform link expansion
+(embed related resources from one of the links) or simply add or remove properties from the Resource (maybe depending on role or visibility).
+
+There are several ways to register a callback, all equivalent.  All of the following register an Expansion callback, MyExpansionCallback()
+for a model class, MyModel.class. Now during the request/response life-cycle, the HyperExpressPlugin will invoke the callback anytime
+a MyModel instance gets converted to a Resource instance.  This provides the opportunity to augment the Resource object before it gets
+serialized.
+
+```java
+ExpansionCallback callback = new MyExpansionCallback();
+
+// Option 1 - register with Expander
+Expander.registerCallback(MyModel.class, callback);
+
+// Option 2 - register with HyperExpress
+HyperExpress.registerCallback(MyModel.class, callback);
+
+// Option 3 - register with the HyperExpressPlugin
+new HyperExpressPlugin(Linkable.class)
+	.registerCallback(MyModel.class, callback);
 	.register(server);
 ```
