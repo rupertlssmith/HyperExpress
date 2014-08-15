@@ -15,6 +15,7 @@
  */
 package com.strategicgains.hyperexpress.builder;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -217,7 +218,15 @@ public class TokenResolver
 
 		for (TokenBinder tokenBinder : binders)
 		{
-			tokenBinder.bind(object, this);
+			Class<?> binderClass = (Class<?>) ((ParameterizedType) tokenBinder
+				.getClass()
+				.getGenericInterfaces()[0])
+				.getActualTypeArguments()[0];
+
+			if (binderClass.isAssignableFrom(object.getClass()))
+			{
+				tokenBinder.bind(object, this);
+			}
 		}
 	}
 
