@@ -100,3 +100,8 @@ new HyperExpressPlugin(Linkable.class)
 	.registerCallback(MyModel.class, callback);
 	.register(server);
 ```
+
+**Note:** ExpansionCallback.expand(Expansion, Resource) method--the method to implement the callback--does not send in the RestExpress 
+request. However, often we want to use data from the request to augment the response.  RestExpress offers the RequestContext object for
+this purpose. Request Context is a thread-safe instrument for passing augmentation data from different sources to lower levels in
+the framework. For more information, see: https://github.com/RestExpress/RestExpress/blob/master/core/src/java/org/restexpress/util/RequestContext.java
