@@ -281,3 +281,111 @@ Once the resources have been created, clean up the token bindings for that threa
 ```java
 HyperExpress.clearTokenBindings();
 ```
+
+Link Expansion and/or Resource Augmentation
+===========================================
+
+HyperExpress supports the ExpansionCallback interface, which allows us to "get in the game" after HyperExpress has created a Resource
+instance, copied all the properties and inserted links.  In our ExpansionCallback implementation we can not perform link expansion
+(embed related resources from one of the links) or simply add or remove properties from the Resource (maybe depending on role or visibility).
+
+There are several ways to register a callback, all equivalent.  All of the following register an Expansion callback, MyExpansionCallback()
+for a model class, MyModel.class. Now during during calls to HyperExpress.createResource() and HyperExpress.createCollectionResource(),
+HyperExpress will invoke the callback anytime a MyModel instance gets converted to a Resource instance.  This provides the opportunity
+to augment the Resource object before it gets serialized.
+
+```java
+ExpansionCallback callback = new MyExpansionCallback();
+
+// Option 1 - register with Expander
+Expander.registerCallback(MyModel.class, callback);
+
+// Option 2 - register with HyperExpress
+HyperExpress.registerCallback(MyModel.class, callback);
+
+// Option 3 - register with the HyperExpressPlugin
+new HyperExpressPlugin(Linkable.class)
+	.registerCallback(MyModel.class, callback);
+	.register(server);
+```
+
+Implementing ExpansionCallback
+------------------------------
+
+Sure, there's no magic to implementing an interface. And the ExpansionCallback interface is
+no different.  However, the Expansion object that gets sent as a parameter might be a little
+weird. Ideally, it will be parsed from the incoming request, presumably from query-string
+parameters. For example, parsed from something like this:
+
+```
+http://www.example.com/resource/123?expand=up,related
+```
+
+Where 'up' and 'related' are two valid 'rel' types available as links in the resource
+payload and we want to support link expansion--including those related resources in the
+response instead of just links. For our purposes, let's assume that the 'related' link points
+to a collection of related resources and 'up' points to a single resource.
+
+The Expansion instance also contains the desired media type requested via the Accept header.
+
+```java
+public class ExampleLinkExpander
+implements ExpansionCallback
+{
+	private ExampleLookupService examples;
+
+	public ExampleLinkExpander(ExampleLookupService exampleService)
+    {
+		super();
+		this.examples = exampleService;
+    }
+
+	@Override
+	public Resource expand(Expansion expansion, Resource resource)
+	{
+		// for each of the desired 'rel' expansions selected...
+		for(String rel : expansion)
+		{
+			if ("related".equalsIgnoreCase(rel))
+			{
+				List<Example> relateds = examples.readRelatedCollection();
+
+				if (relateds.isEmpty())
+				{
+					resource.addResources(rel, Collections.<Resource> emptyList());
+				}
+				else
+				{
+					// Convert each related Example into a Resource and embed it.
+					for (Example related : relateds)
+					{
+						HyperExpress.bind(EXAMPLE_ID, related.getId())
+							.bind(EXAMPLE_NAME, urlEncode(crit.name()));
+
+						resource.addResource(rel, HyperExpress.createResource(related, expansion.getMediaType()), true);
+					}
+				}
+			}
+			else if ("up".equalsIgnoreCase(rel))
+			{
+				Example up = examples.readUp();
+
+				if (up == null)
+				{
+			    	resource.addResource(rel, HyperExpress.createResource(null, mediaType));
+				}
+				else
+				{
+					HyperExpress.bind(EXAMPLE_ID, up.getId())
+						.bind(EXAMPLE_NAME, urlEncode(up.name()));
+
+					// Convert the up Example into a Resource and embed it.
+					resource.addResource(rel, HyperExpress.createResource(up, expansion.getMediaType()));
+				}
+			}
+		}
+
+		return resource;
+	}
+}
+```
