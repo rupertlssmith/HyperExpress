@@ -16,6 +16,7 @@
 package com.strategicgains.hyperexpress.expand;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.strategicgains.hyperexpress.HyperExpress;
@@ -56,6 +57,11 @@ public class Expander
 		return INSTANCE._expand(expansion, type, resource);
 	}
 
+	public static List<Resource> expand(Expansion expansion, Class<?> type, List<Resource> resources)
+    {
+		return INSTANCE._expand(expansion, type, resources);
+    }
+
 	public static Expander registerCallback(Class<?> type, ExpansionCallback callback)
 	{
 		return INSTANCE._registerCallback(type, callback);
@@ -77,5 +83,21 @@ public class Expander
 
 		ExpansionCallback callback = callbacks.get(type.getName());
 		return (callback == null ? resource : callback.expand(expansion, resource));
+	}
+
+	private List<Resource> _expand(Expansion expansion, Class<?> type, List<Resource> resources)
+	{
+		if (expansion == null) return resources;
+
+		ExpansionCallback callback = callbacks.get(type.getName());
+
+		if (callback == null) return resources;
+
+		for (Resource resource : resources)
+		{
+			callback.expand(expansion, resource);
+		}
+
+		return resources;
 	}
 }

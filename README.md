@@ -286,28 +286,33 @@ Link Expansion and/or Resource Augmentation
 ===========================================
 
 HyperExpress supports the ExpansionCallback interface, which allows us to "get in the game" after HyperExpress has created a Resource
-instance, copied all the properties and inserted links.  In our ExpansionCallback implementation we can not perform link expansion
+instance, copied all the properties and inserted links.  In our ExpansionCallback implementation we can now perform link expansion
 (embed related resources from one of the links) or simply add or remove properties from the Resource (maybe depending on role or visibility).
 
-There are several ways to register a callback, all equivalent.  All of the following register an Expansion callback, MyExpansionCallback()
-for a model class, MyModel.class. Now during during calls to HyperExpress.createResource() and HyperExpress.createCollectionResource(),
-HyperExpress will invoke the callback anytime a MyModel instance gets converted to a Resource instance.  This provides the opportunity
-to augment the Resource object before it gets serialized.
+The following registers an Expansion callback, MyExpansionCallback() for a model class, MyModel.class.
 
 ```java
 ExpansionCallback callback = new MyExpansionCallback();
 
-// Option 1 - register with Expander
+// Register with Expander
 Expander.registerCallback(MyModel.class, callback);
-
-// Option 2 - register with HyperExpress
-HyperExpress.registerCallback(MyModel.class, callback);
-
-// Option 3 - register with the HyperExpressPlugin
-new HyperExpressPlugin(Linkable.class)
-	.registerCallback(MyModel.class, callback);
-	.register(server);
 ```
+
+Now after calls to HyperExpress.createResource() or HyperExpress.createCollectionResource(),
+We can invoke the callback for the Resource instance.  This provides the opportunity
+to augment the Resource object before it gets serialized.
+
+```java
+MyClass myClass = new MyClass();
+Resource resource = HyperExpress.createResource(MyClass, "application/hal+json");
+Expansion expansion = ... // parse the Expansion data from query-string or wherever.
+
+// This will invoke the MyExpansionCallback.expand() method...
+resource = Expander.expand(expansion, MyClass.class, resource);
+```
+
+BTW, if you're using RestExpress, the HyperExpressPlugin for RestExpress does Resource
+creation, Expansion parsing and Expansion callback calling for you. See: https://github.com/RestExpress/HyperExpress/tree/master/restexpress
 
 Implementing ExpansionCallback
 ------------------------------

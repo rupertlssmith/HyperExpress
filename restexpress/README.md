@@ -81,7 +81,7 @@ HyperExpress supports the ExpansionCallback interface, which allows us to "get i
 instance, copied all the properties and inserted links.  In our ExpansionCallback implementation we can not perform link expansion
 (embed related resources from one of the links) or simply add or remove properties from the Resource (maybe depending on role or visibility).
 
-There are several ways to register a callback, all equivalent.  All of the following register an Expansion callback, MyExpansionCallback()
+There are two ways to register a callback, both equivalent.  The following register an Expansion callback, MyExpansionCallback()
 for a model class, MyModel.class. Now during the request/response life-cycle, the HyperExpressPlugin will invoke the callback anytime
 a MyModel instance gets converted to a Resource instance.  This provides the opportunity to augment the Resource object before it gets
 serialized.
@@ -92,10 +92,7 @@ ExpansionCallback callback = new MyExpansionCallback();
 // Option 1 - register with Expander
 Expander.registerCallback(MyModel.class, callback);
 
-// Option 2 - register with HyperExpress
-HyperExpress.registerCallback(MyModel.class, callback);
-
-// Option 3 - register with the HyperExpressPlugin
+// Option 2 - register with the HyperExpressPlugin
 new HyperExpressPlugin(Linkable.class)
 	.registerCallback(MyModel.class, callback);
 	.register(server);

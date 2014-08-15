@@ -29,6 +29,8 @@ import com.strategicgains.hyperexpress.HyperExpress;
 import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.exception.ResourceException;
 import com.strategicgains.hyperexpress.expand.Expander;
+import com.strategicgains.hyperexpress.expand.Expansion;
+import com.strategicgains.hyperexpress.util.Strings;
 
 /**
  * If the Response contains an instance of the given domainMarkerClass, or a Collection (or Array)
@@ -63,12 +65,14 @@ implements Postprocessor
 
 		Resource resource = null;
 		Class<?> bodyClass = body.getClass();
+		Expansion expansion = ExpansionParser.parseFrom(request, response);
 
 		try
 		{
 			if (isMarkerClass(bodyClass))
 			{
-				resource = HyperExpress.createResource(body, response.getSerializationSettings().getMediaType());
+				resource = HyperExpress.createResource(body, expansion.getMediaType());
+				Expander.expand(expansion, bodyClass, resource);
 			}
 			else if (isCollection(bodyClass))
 			{
@@ -81,9 +85,9 @@ implements Postprocessor
 					if (resourceMarker.isAssignableFrom((Class<?>) t))
 					{
 						// TODO: do sensible defaults, but allow caller to set 'rel'.
-						// maybe this method simply returns the elements and they get embedded here.
-						resource = HyperExpress.createCollectionResource((Collection<?>) body, (Class<?>) t,
-								response.getSerializationSettings().getMediaType());
+						String componentRel = Strings.pluralize(((Class<?>) t).getSimpleName().toLowerCase());
+						resource = HyperExpress.createCollectionResource((Collection<?>) body, (Class<?>) t, componentRel, expansion.getMediaType());
+				    	Expander.expand(expansion, (Class<?>) t, resource.getResources(componentRel));
 					}
 				}
 			}
@@ -92,9 +96,10 @@ implements Postprocessor
 				if (isMarkerClass(bodyClass.getComponentType()))
 				{
 					// TODO: do sensible defaults, but allow caller to set 'rel'.
-					// maybe this method simply returns the elements and they get embedded here.
-					resource = HyperExpress.createCollectionResource(Arrays.asList((Object[]) body), bodyClass.getComponentType(),
-						response.getSerializationSettings().getMediaType());
+					String componentRel = Strings.pluralize(bodyClass.getComponentType().getSimpleName().toLowerCase());
+					resource = HyperExpress.createCollectionResource(Arrays.asList((Object[]) body),
+						bodyClass.getComponentType(), componentRel, expansion.getMediaType());
+			    	Expander.expand(expansion, bodyClass.getComponentType(), resource.getResources(componentRel));
 				}
 			}
 		}
@@ -105,17 +110,11 @@ implements Postprocessor
 
 		if (resource != null)
 		{
-			populateResponse(request, response, resource);
+			response.setBody(resource);
 		}
 
 		HyperExpress.clearTokenBindings();
 	}
-
-	private void populateResponse(Request request, Response response, Resource resource)
-    {
-    	Expander.expand(ExpansionParser.parseFrom(request, response), response.getBody().getClass(), resource);
-	    response.setBody(resource);
-    }
 
 	private boolean isMarkerClass(Class<?> aClass)
 	{
