@@ -18,6 +18,7 @@
 	<modules>
 		<module>core</module>
 		<module>hal</module>
+		<module>restexpress</module>
 	</modules>
 
 	<dependencies>
