@@ -22,7 +22,10 @@ import org.restexpress.plugin.AbstractPlugin;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.strategicgains.hyperexpress.HyperExpress;
 import com.strategicgains.hyperexpress.ResourceFactoryStrategy;
+import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.domain.hal.HalResourceFactory;
+import com.strategicgains.hyperexpress.expand.Expander;
+import com.strategicgains.hyperexpress.expand.ExpansionCallback;
 
 /**
  * This plugin will convert any domain models returned from controller methods into a Resource implementation
@@ -114,6 +117,19 @@ extends AbstractPlugin
 	{
 		HyperExpress.registerResourceFactoryStrategy(factoryStrategy, contentType);
 		usesCustomFactory = true;
+		return this;
+	}
+
+	/**
+	 * Convenience method to register an {@link ExpansionCallback} implementation with HyperExpress.
+	 * This method actually simply registers with Expander.
+	 * 
+	 * @param type the model type that, once converted to a {@link Resource} should be sent to the callback.
+	 * @param callback an {@link ExpansionCallback} instance.
+	 */
+	public HyperExpressPlugin registerCallback(Class<?> type, ExpansionCallback callback)
+	{
+		Expander.registerCallback(type, callback);
 		return this;
 	}
 }

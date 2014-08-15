@@ -26,6 +26,8 @@ import com.strategicgains.hyperexpress.builder.TokenBinder;
 import com.strategicgains.hyperexpress.builder.TokenResolver;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Resource;
+import com.strategicgains.hyperexpress.expand.Expander;
+import com.strategicgains.hyperexpress.expand.ExpansionCallback;
 import com.strategicgains.hyperexpress.util.Strings;
 
 /**
@@ -225,6 +227,18 @@ public class HyperExpress
 	public static void clearTokenBindings()
 	{
 		INSTANCE._clearTokenBindings();
+	}
+
+	/**
+	 * Convenience method to register an {@link ExpansionCallback} implementation with HyperExpress.
+	 * This method actually simply registers with Expander.
+	 * 
+	 * @param type the model type that, once converted to a {@link Resource} should be sent to the callback.
+	 * @param callback an {@link ExpansionCallback} instance.
+	 */
+	public static void registerCallback(Class<?> type, ExpansionCallback callback)
+	{
+		Expander.registerCallback(type, callback);
 	}
 
 
