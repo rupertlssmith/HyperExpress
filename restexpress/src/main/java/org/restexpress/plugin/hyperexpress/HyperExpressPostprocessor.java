@@ -30,7 +30,6 @@ import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.exception.ResourceException;
 import com.strategicgains.hyperexpress.expand.Expander;
 import com.strategicgains.hyperexpress.expand.Expansion;
-import com.strategicgains.hyperexpress.util.Strings;
 
 /**
  * If the Response contains an instance of the given domainMarkerClass, or a Collection (or Array)
@@ -84,8 +83,7 @@ implements Postprocessor
 	
 					if (resourceMarker.isAssignableFrom((Class<?>) t))
 					{
-						// TODO: do sensible defaults, but allow caller to set 'rel'.
-						String componentRel = Strings.pluralize(((Class<?>) t).getSimpleName().toLowerCase());
+						String componentRel = HyperExpress.relationships().getCollectionRelFor((Class<?>) t);
 						resource = HyperExpress.createCollectionResource((Collection<?>) body, (Class<?>) t, componentRel, expansion.getMediaType());
 				    	Expander.expand(expansion, (Class<?>) t, resource.getResources(componentRel));
 					}
@@ -95,8 +93,7 @@ implements Postprocessor
 			{
 				if (isMarkerClass(bodyClass.getComponentType()))
 				{
-					// TODO: do sensible defaults, but allow caller to set 'rel'.
-					String componentRel = Strings.pluralize(bodyClass.getComponentType().getSimpleName().toLowerCase());
+					String componentRel = HyperExpress.relationships().getCollectionRelFor(bodyClass.getComponentType());
 					resource = HyperExpress.createCollectionResource(Arrays.asList((Object[]) body),
 						bodyClass.getComponentType(), componentRel, expansion.getMediaType());
 			    	Expander.expand(expansion, bodyClass.getComponentType(), resource.getResources(componentRel));

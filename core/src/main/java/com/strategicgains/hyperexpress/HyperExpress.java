@@ -26,7 +26,6 @@ import com.strategicgains.hyperexpress.builder.TokenBinder;
 import com.strategicgains.hyperexpress.builder.TokenResolver;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Resource;
-import com.strategicgains.hyperexpress.util.Strings;
 
 /**
  * A Singleton object to manage creation of Link and Resource instances.
@@ -267,7 +266,7 @@ public class HyperExpress
 	 */
 	private Resource _createCollectionResource(Collection<?> components, Class<?> componentType, String contentType)
 	{
-		String componentRel = Strings.pluralize(componentType.getSimpleName().toLowerCase());
+		String componentRel = relationshipDefinition.getCollectionRelFor(componentType);
 		return _createCollectionResource(components, componentType, componentRel, contentType);
 	}
 

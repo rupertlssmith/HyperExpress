@@ -26,6 +26,7 @@ import java.util.Set;
 
 import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.exception.RelationshipException;
+import com.strategicgains.hyperexpress.util.Strings;
 
 /**
  * @author toddf
@@ -59,6 +60,8 @@ public class RelationshipDefinition
 	private List<OptionalLinkBuilder> linkBuildersForClass;
 	private OptionalLinkBuilder linkBuilder;
 	private Set<String> arrayRels;
+	private String lastClassName;
+	private Map<String, String> relNamesByClass = new HashMap<String, String>();
 
 	/**
 	 * Adds one or more namespaces to this relationship builder.
@@ -104,6 +107,37 @@ public class RelationshipDefinition
 		return forClassName(forClass.getName() + COLLECTION_SUFFIX);
 	}
 
+	public RelationshipDefinition asRel(String name)
+	{
+		if (lastClassName == null)
+		{
+			throw new RelationshipException("Attempt to call asRel() before forCollectionOf()");
+		}
+
+		relNamesByClass.put(lastClassName, name);
+		return this;
+	}
+
+	/**
+	 * Returns a 'rel' name for a collection of the given class. If set via asRel(),
+	 * that name is returned. Otherwise, a pluralized form of the given class name
+	 * is used. In the later case, the simple name is pluralized, set to lower-case.
+	 * 
+	 * @param forClass
+	 * @return
+	 */
+	public String getCollectionRelFor(Class<?> forClass)
+	{
+		String rel = relNamesByClass.get(forClass.getName() + COLLECTION_SUFFIX);
+
+		if (rel == null)
+		{
+			rel = Strings.pluralize(((Class<?>) forClass).getSimpleName().toLowerCase());
+		}
+
+		return rel;
+	}
+
 	public RelationshipDefinition forClass(Class<?> forClass)
 	{
 		if (forClass == null) return this;
@@ -115,6 +149,7 @@ public class RelationshipDefinition
 	{
 		if (name == null) return this;
 
+		lastClassName = name;
 		linkBuildersForClass = linkBuildersByClass.get(name);
 
 		if (linkBuildersForClass == null)

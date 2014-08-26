@@ -41,6 +41,7 @@ public class HyperExpressTest
 
 		.forCollectionOf(Blog.class)
 			.rels(SELF, "/blogs")
+				.asRel("blogerrific")
 				.withQuery("limit={selfLimit}")
 				.withQuery("offset={selfOffset}")
 			.rel(NEXT, "/blogs?limit={nextLimit}&offset={nextOffset}").optional()
@@ -82,6 +83,7 @@ public class HyperExpressTest
 		assertTrue(r.isMultipleLinks(link.getRel()));
 		assertFalse(r.isMultipleResources(link.getRel()));
 		assertEquals("/blogs", link.getHref());
+		assertTrue(r.hasResources("blogerrific"));
 
 		r = HyperExpress.createResource(new Entry(), "*");
 		assertNotNull(r.getLinks());
