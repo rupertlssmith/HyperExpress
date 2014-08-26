@@ -51,12 +51,16 @@ public class HyperExpressTest
 			.rel(SELF, "/entries/{entryId}")
 			.rel("edit", "/entries/{entryId}/edit")
 				.attribute("method", "PUT")
-				.optional("{adminRole}")
+				.ifBound("{adminRole}")
 			.rels(ALTERNATE, "/blogs/{blogId}/entries/{entryId}").optional()
 
 		.forCollectionOf(Comment.class)
 			.rel(SELF, "/blogs/{blogId}/entries/{entryId}/comments")
-			.rel(SELF, "/comments/{commentId}");
+			.rel(SELF, "/comments/{commentId}")
+
+		.forClass(Comment.class)
+			.rel(SELF, "/admin-role").ifBound("adminRole")
+			.rel(SELF, "/guest-role").ifNotBound("adminRole");
 	}
 
 	@AfterClass
@@ -107,6 +111,17 @@ public class HyperExpressTest
 		assertFalse(r.isMultipleLinks(link.getRel()));
 		assertFalse(r.isMultipleResources(link.getRel()));
 		assertEquals("/entries/{entryId}", link.getHref());		
+
+		r = HyperExpress.createResource(new Comment(), "*");
+		assertNotNull(r.getLinks());
+		assertEquals(1, r.getLinks().size());
+		link = r.getLinks().iterator().next();
+		assertEquals(SELF, link.getRel());
+		assertFalse(HyperExpress.relationships().isArrayRel(Comment.class, link.getRel()));
+		assertFalse(HyperExpress.relationships().isCollectionArrayRel(Comment.class, link.getRel()));
+		assertFalse(r.isMultipleLinks(link.getRel()));
+		assertFalse(r.isMultipleResources(link.getRel()));
+		assertEquals("/guest-role", link.getHref());		
 	}
 
 	@Test
@@ -188,6 +203,17 @@ public class HyperExpressTest
 					break;
 			}
 		}
+
+		r = HyperExpress.createResource(new Comment(), "*");
+		assertNotNull(r.getLinks());
+		assertEquals(1, r.getLinks().size());
+		Link link = r.getLinks().iterator().next();
+		assertEquals(SELF, link.getRel());
+		assertFalse(HyperExpress.relationships().isArrayRel(Comment.class, link.getRel()));
+		assertFalse(HyperExpress.relationships().isCollectionArrayRel(Comment.class, link.getRel()));
+		assertFalse(r.isMultipleLinks(link.getRel()));
+		assertFalse(r.isMultipleResources(link.getRel()));
+		assertEquals("/admin-role", link.getHref());		
 	}
 
 	@Test
@@ -230,6 +256,17 @@ public class HyperExpressTest
 					break;
 			}
 		}
+
+		r = HyperExpress.createResource(new Comment(), "*");
+		assertNotNull(r.getLinks());
+		assertEquals(1, r.getLinks().size());
+		Link link = r.getLinks().iterator().next();
+		assertEquals(SELF, link.getRel());
+		assertFalse(HyperExpress.relationships().isArrayRel(Comment.class, link.getRel()));
+		assertFalse(HyperExpress.relationships().isCollectionArrayRel(Comment.class, link.getRel()));
+		assertFalse(r.isMultipleLinks(link.getRel()));
+		assertFalse(r.isMultipleResources(link.getRel()));
+		assertEquals("/admin-role", link.getHref());		
 	}
 
 	@Test

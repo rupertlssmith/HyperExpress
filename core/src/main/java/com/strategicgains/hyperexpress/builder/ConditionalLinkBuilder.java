@@ -18,7 +18,7 @@ package com.strategicgains.hyperexpress.builder;
 import com.strategicgains.hyperexpress.domain.Link;
 
 /**
- * Extends LinkBuilder, adding an 'optional' flag, where the value can either be "true" or
+ * Extends LinkBuilder, adding a 'conditional' flag, where the value can either be "true" or
  * a token (e.g. "{role}").  If the flag is set to true and the resulting Link that is built
  * contains a token (a URL token is not bound), then build() returns null.
  * <p/>
@@ -28,17 +28,17 @@ import com.strategicgains.hyperexpress.domain.Link;
  * @author toddf
  * @since Jul 9, 2014
  */
-public class OptionalLinkBuilder
+public class ConditionalLinkBuilder
 extends LinkBuilder
 {
-	private String optional;
+	private String conditional;
 
-	public OptionalLinkBuilder()
+	public ConditionalLinkBuilder()
     {
 	    super();
     }
 
-	public OptionalLinkBuilder(String urlPattern)
+	public ConditionalLinkBuilder(String urlPattern)
     {
 	    super(urlPattern);
     }
@@ -48,7 +48,7 @@ extends LinkBuilder
 	 * 
 	 * @param builder a LinkBuilder instance. Never null;
 	 */
-	public OptionalLinkBuilder(LinkBuilder builder)
+	public ConditionalLinkBuilder(LinkBuilder builder)
 	{
 		super(builder);
 	}
@@ -58,38 +58,56 @@ extends LinkBuilder
 	 * 
 	 * @param builder an OptionalLinkBuilder instance. Never null.
 	 */
-	public OptionalLinkBuilder(OptionalLinkBuilder builder)
+	public ConditionalLinkBuilder(ConditionalLinkBuilder builder)
 	{
 		super(builder);
-		this.optional = builder.optional;
+		this.conditional = builder.conditional;
 	}
 
 	void optional()
 	{
-		optional = Boolean.TRUE.toString();
+		conditional = Boolean.TRUE.toString();
 	}
 
-	void optional(String token)
+	void ifBound(String token)
 	{
 		if (token == null)
 		{
-			optional = null;
+			conditional = null;
 			return;
 		}
 
 		if (token.startsWith("{") && token.endsWith("}"))
 		{
-			optional = token;
+			conditional = token;
 		}
 		else
 		{
-			optional = "{" + token + "}";
+			conditional = "{" + token + "}";
 		}
 	}
 
-	public String getOptional()
+	void ifNotBound(String token)
 	{
-		return optional;
+		if (token == null)
+		{
+			conditional = null;
+			return;
+		}
+
+		if (token.startsWith("{") && token.endsWith("}"))
+		{
+			conditional = "!" + token;
+		}
+		else
+		{
+			conditional = "!{" + token + "}";
+		}
+	}
+
+	public String getConditional()
+	{
+		return conditional;
 	}
 
 	@Override
@@ -97,19 +115,29 @@ extends LinkBuilder
     {
 		Link link = super.build(object, tokenResolver);
 
-		if (optional != null)
+		if (conditional != null)
 		{
-			if (optional.trim().equalsIgnoreCase(Boolean.TRUE.toString()) && link.hasToken())
+			if (conditional.trim().equalsIgnoreCase(Boolean.TRUE.toString()) && link.hasToken())
 			{
 				return null;
 			}
 			else
 			{
-				String value = tokenResolver.resolve(optional, object);
+				String value = tokenResolver.resolve(conditional, object);
 
+				// not bound or bound to 'false'
 				if (value.startsWith("{") || value.trim().equalsIgnoreCase(Boolean.FALSE.toString()))
 				{
 					return null;
+				}
+				// desire not bound
+				else if (value.startsWith("!"))
+				{
+					if (!(value.startsWith("!{") && value.endsWith("}"))
+						&& !value.substring(1).trim().equalsIgnoreCase(Boolean.FALSE.toString()))
+					{
+						return null;
+					}
 				}
 			}
 		}
@@ -122,9 +150,9 @@ extends LinkBuilder
 	{
 		Link link = super.build();
 
-		if (optional != null)
+		if (conditional != null)
 		{
-			if (optional.trim().equalsIgnoreCase(Boolean.TRUE.toString()) && link.hasToken())
+			if (conditional.trim().equalsIgnoreCase(Boolean.TRUE.toString()) && link.hasToken())
 			{
 				return null;
 			}
@@ -138,9 +166,9 @@ extends LinkBuilder
 	{
 		Link link = super.build(tokenResolver);
 
-		if (optional != null)
+		if (conditional != null)
 		{
-			if (optional.trim().equalsIgnoreCase(Boolean.TRUE.toString()) && link.hasToken())
+			if (conditional.trim().equalsIgnoreCase(Boolean.TRUE.toString()) && link.hasToken())
 			{
 				return null;
 			}

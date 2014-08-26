@@ -56,9 +56,9 @@ public class RelationshipDefinition
 
 	private Map<String, Namespace> namespaces = new LinkedHashMap<>();
 	private Map<String, Set<String>> arrayRelsByClass = new HashMap<String, Set<String>>();
-	private Map<String, List<OptionalLinkBuilder>> linkBuildersByClass = new LinkedHashMap<>();
-	private List<OptionalLinkBuilder> linkBuildersForClass;
-	private OptionalLinkBuilder linkBuilder;
+	private Map<String, List<ConditionalLinkBuilder>> linkBuildersByClass = new LinkedHashMap<>();
+	private List<ConditionalLinkBuilder> linkBuildersForClass;
+	private ConditionalLinkBuilder linkBuilder;
 	private Set<String> arrayRels;
 	private String lastClassName;
 	private Map<String, String> relNamesByClass = new HashMap<String, String>();
@@ -178,7 +178,7 @@ public class RelationshipDefinition
 	 */
 	public RelationshipDefinition rel(String rel, String href)
 	{
-		return rel(rel, new OptionalLinkBuilder(href));
+		return rel(rel, new ConditionalLinkBuilder(href));
 	}
 
 	/**
@@ -188,7 +188,7 @@ public class RelationshipDefinition
 	 * @param builder an OptionalLinkBuilder instance.
 	 * @return this RelationshipDefinition
 	 */
-	public RelationshipDefinition rel(String rel, OptionalLinkBuilder builder)
+	public RelationshipDefinition rel(String rel, ConditionalLinkBuilder builder)
 	{
 		builder.rel(rel);
 		this.linkBuilder = builder;
@@ -213,7 +213,7 @@ public class RelationshipDefinition
 	 */
 	public RelationshipDefinition rels(String name, String href)
 	{
-		return rels(name, new OptionalLinkBuilder(href));
+		return rels(name, new ConditionalLinkBuilder(href));
 	}
 
 	/**
@@ -225,7 +225,7 @@ public class RelationshipDefinition
 	 * @param builder an OptionalLinkBuilder instance.
 	 * @return this RelationshipDefinition
 	 */
-	public RelationshipDefinition rels(String name, OptionalLinkBuilder builder)
+	public RelationshipDefinition rels(String name, ConditionalLinkBuilder builder)
 	{
 		arrayRels.add(name);
 		return rel(name, builder);
@@ -353,11 +353,19 @@ public class RelationshipDefinition
 	 * @param token a URL token name, with or without beginning and ending curly-braces.
 	 * @return
 	 */
-	public RelationshipDefinition optional(String token)
+	public RelationshipDefinition ifBound(String token)
 	{
-		if (linkBuilder == null) throw new RelationshipException("Attempt to set optional on null link: " + token + ". Call 'rel()' first.");
+		if (linkBuilder == null) throw new RelationshipException("Attempt to set ifBound() on null link: " + token + ". Call 'rel()' first.");
 
-		linkBuilder.optional(token);
+		linkBuilder.ifBound(token);
+		return this;
+	}
+
+	public RelationshipDefinition ifNotBound(String token)
+	{
+		if (linkBuilder == null) throw new RelationshipException("Attempt to set ifNotBound() on null link: " + token + ". Call 'rel()' first.");
+
+		linkBuilder.ifNotBound(token);
 		return this;
 	}
 
@@ -437,7 +445,7 @@ public class RelationshipDefinition
 
     private List<LinkBuilder> getLinkBuildersForName(String className)
 	{
-		List<OptionalLinkBuilder> builders = linkBuildersByClass.get(className);
+		List<ConditionalLinkBuilder> builders = linkBuildersByClass.get(className);
 
 		return (builders != null 
 			? Collections.<LinkBuilder> unmodifiableList(builders)
