@@ -23,12 +23,15 @@ import com.strategicgains.hyperexpress.domain.Resource;
  * <p/>
  * These callbacks are registered with the Expander using
  * {@code Expander.registerCallback(Class<?>, ExpansionCallback)} and
- * are called from HyperExpress.createResource() and .createCollectionResource()
+ * are called via {@code Expander.expand(Expansion, Class<?>, Resource)}
+ * or {@code Expander.expand(Expansion, Class<?>, List<Resource>)}
  * methods after the Resource is created and links (if appropriate) are
- * added. The callbacks are called whether or not the Expansion instance
- * contains any relation names or not. This gives you the opportunity to
+ * added.
+ * <p/>
+ * The callbacks are called whether or not the Expansion instance
+ * contains any relation names or not. This provides the opportunity to
  * augment the Resource instance in any way, such as adding/removing properties,
- * looking other resources up in the database and embedding them, etc.
+ * looking up other resources in a database and embedding them, etc.
  * 
  * @author toddf
  * @since Aug 8, 2014

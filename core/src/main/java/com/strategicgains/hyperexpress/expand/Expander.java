@@ -19,15 +19,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.strategicgains.hyperexpress.HyperExpress;
 import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.exception.ExpansionException;
 
 /**
  * A Singleton object used to register {@link ExpansionCallback}s and call them.
  * <p/>
- * Registering callbacks is achieved by calling registerCallback(). However, actually
- * calling those callbacks is done by {@link HyperExpress}.createResource() and createCollectionResource().
+ * Registering callbacks is achieved by calling registerCallback(). Calling those
+ * callbacks is accomplished by calling the expand() methods, which can be called
+ * after {@code HyperExpress.createResource()} or {@code HyperExpress.createCollectionResource()}
+ * methods.
  * 
  * @author toddf
  * @since Aug 8, 2014

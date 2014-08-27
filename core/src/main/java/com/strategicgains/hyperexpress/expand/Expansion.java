@@ -25,6 +25,7 @@ import com.strategicgains.hyperexpress.domain.Resource;
 
 /**
  * A set of requested relationship ('rel') expansions.
+ * <p/>
  * This class encompasses both the relation names to expand (presumably parsed from 
  * a request query-string) and the desired output media type (useful for calls
  * to HyperExpress.createResource() that might be made in the callbacks).
