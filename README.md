@@ -59,14 +59,45 @@ Configuring HyperExpress
 
 Maven resources:
 
+Stable:
+
 ```xml
 <dependency>
     <groupId>com.strategicgains</groupId>
     <artifactId>HyperExpress-HAL</artifactId>
-    <version>2.0</version>
+    <version>2.1</version>
 </dependency>
 ```
 
+Development snapshot:
+
+```xml
+<dependency>
+    <groupId>com.strategicgains</groupId>
+    <artifactId>HyperExpress-HAL</artifactId>
+    <version>2.2-SNAPSHOT</version>
+</dependency>
+```
+Or you can download the jar file directly from http://search.maven.org/#search%7Cga%7C1%7Chyperexpress
+
+Note that if you want to use the SNAPSHOT version, the snapshot repository must be configured in your settings.xml file as follows:
+
+```xml
+  <profiles>
+    <profile>
+       <id>allow-snapshots</id>
+          <activation><activeByDefault>true</activeByDefault></activation>
+       <repositories>
+         <repository>
+           <id>snapshots-repo</id>
+           <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+           <releases><enabled>false</enabled></releases>
+           <snapshots><enabled>true</enabled></snapshots>
+         </repository>
+       </repositories>
+     </profile>
+  </profiles>
+```
 Next, add resource factories to HyperExpress so HyperExpress knows which factory to use depending on the MediaType of the request.
 In order for createResource() and createCollectionResource() to know what type of resource to create based on content-type,
 ResourceFactoryStrategy instances must be registered for each media type support.
