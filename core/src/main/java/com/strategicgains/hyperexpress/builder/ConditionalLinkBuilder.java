@@ -15,6 +15,9 @@
 */
 package com.strategicgains.hyperexpress.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.strategicgains.hyperexpress.domain.Link;
 
 /**
@@ -31,7 +34,8 @@ import com.strategicgains.hyperexpress.domain.Link;
 public class ConditionalLinkBuilder
 extends LinkBuilder
 {
-	private String conditional;
+	private boolean optional = false;
+	private List<String> conditionals = new ArrayList<String>();
 
 	public ConditionalLinkBuilder()
     {
@@ -61,29 +65,28 @@ extends LinkBuilder
 	public ConditionalLinkBuilder(ConditionalLinkBuilder builder)
 	{
 		super(builder);
-		this.conditional = builder.conditional;
+		this.conditionals = new ArrayList<String>(builder.conditionals);
 	}
 
 	void optional()
 	{
-		conditional = Boolean.TRUE.toString();
+		optional = true;
 	}
 
 	void ifBound(String token)
 	{
 		if (token == null)
 		{
-			conditional = null;
 			return;
 		}
 
 		if (token.startsWith("{") && token.endsWith("}"))
 		{
-			conditional = token;
+			conditionals.add(token);
 		}
 		else
 		{
-			conditional = "{" + token + "}";
+			conditionals.add("{" + token + "}");
 		}
 	}
 
@@ -91,23 +94,32 @@ extends LinkBuilder
 	{
 		if (token == null)
 		{
-			conditional = null;
 			return;
 		}
 
 		if (token.startsWith("{") && token.endsWith("}"))
 		{
-			conditional = "!" + token;
+			conditionals.add("!" + token);
 		}
 		else
 		{
-			conditional = "!{" + token + "}";
+			conditionals.add("!{" + token + "}");
 		}
 	}
 
-	public String getConditional()
+	public boolean isOptional()
 	{
-		return conditional;
+		return optional;
+	}
+
+	public boolean hasConditionals()
+	{
+		return (conditionals != null && !conditionals.isEmpty());
+	}
+
+	public List<String> getConditionals()
+	{
+		return conditionals;
 	}
 
 	@Override
@@ -115,18 +127,16 @@ extends LinkBuilder
     {
 		Link link = super.build(object, tokenResolver);
 
-		if (conditional != null)
+
+		if (hasConditionals())
 		{
-			if (conditional.trim().equalsIgnoreCase(Boolean.TRUE.toString()) && link.hasToken())
-			{
-				return null;
-			}
-			else
+			for (String conditional : conditionals)
 			{
 				String value = tokenResolver.resolve(conditional, object);
 
-				// not bound or bound to 'false'
-				if (value.startsWith("{") || value.trim().equalsIgnoreCase(Boolean.FALSE.toString()))
+				// not bound
+				if ((value.startsWith("{") && value.endsWith("}"))
+					|| value.trim().equalsIgnoreCase(Boolean.FALSE.toString()))
 				{
 					return null;
 				}
@@ -141,6 +151,10 @@ extends LinkBuilder
 				}
 			}
 		}
+		else if (isOptional() && link.hasToken())
+		{
+			return null;
+		}
 
 		return link;
     }
@@ -150,12 +164,9 @@ extends LinkBuilder
 	{
 		Link link = super.build();
 
-		if (conditional != null)
+		if (isOptional() && link.hasToken())
 		{
-			if (conditional.trim().equalsIgnoreCase(Boolean.TRUE.toString()) && link.hasToken())
-			{
-				return null;
-			}
+			return null;
 		}
 
 		return link;
@@ -166,12 +177,9 @@ extends LinkBuilder
 	{
 		Link link = super.build(tokenResolver);
 
-		if (conditional != null)
+		if (isOptional() && link.hasToken())
 		{
-			if (conditional.trim().equalsIgnoreCase(Boolean.TRUE.toString()) && link.hasToken())
-			{
-				return null;
-			}
+			return null;
 		}
 
 		return link;

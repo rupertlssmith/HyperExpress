@@ -59,8 +59,14 @@ public class HyperExpressTest
 			.rel(SELF, "/comments/{commentId}")
 
 		.forClass(Comment.class)
-			.rel(SELF, "/admin-role").ifBound("adminRole")
-			.rel(SELF, "/guest-role").ifNotBound("adminRole");
+			.rel(SELF, "/admin-role")
+				.ifBound("adminRole")
+				.ifNotBound("superUser")
+			.rel(SELF, "/guest-role")
+				.ifNotBound("adminRole")
+			.rel(SELF, "/superuser-role")
+				.ifBound("adminRole")
+				.ifBound("superUser");
 	}
 
 	@AfterClass
@@ -267,6 +273,24 @@ public class HyperExpressTest
 		assertFalse(r.isMultipleLinks(link.getRel()));
 		assertFalse(r.isMultipleResources(link.getRel()));
 		assertEquals("/admin-role", link.getHref());		
+	}
+
+	@Test
+	public void shouldContainOptionalLinksWithMultipleBindings()
+	{
+		HyperExpress.bind("adminRole", "admin")
+			.bind("superUser", "true");
+
+		Resource r = HyperExpress.createResource(new Comment(), "*");
+		assertNotNull(r.getLinks());
+		assertEquals(1, r.getLinks().size());
+		Link link = r.getLinks().iterator().next();
+		assertEquals(SELF, link.getRel());
+		assertFalse(HyperExpress.relationships().isArrayRel(Comment.class, link.getRel()));
+		assertFalse(HyperExpress.relationships().isCollectionArrayRel(Comment.class, link.getRel()));
+		assertFalse(r.isMultipleLinks(link.getRel()));
+		assertFalse(r.isMultipleResources(link.getRel()));
+		assertEquals("/superuser-role", link.getHref());		
 	}
 
 	@Test
