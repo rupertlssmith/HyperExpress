@@ -19,6 +19,7 @@
 		<module>core</module>
 		<module>hal</module>
 		<module>restexpress</module>
+		<module>siren</module>
 	</modules>
 
 	<dependencies>
