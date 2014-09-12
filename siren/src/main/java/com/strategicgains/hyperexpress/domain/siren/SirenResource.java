@@ -16,9 +16,11 @@
 package com.strategicgains.hyperexpress.domain.siren;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import com.strategicgains.hyperexpress.domain.AbstractResource;
 import com.strategicgains.hyperexpress.domain.Resource;
@@ -34,6 +36,39 @@ extends AbstractResource
 implements Resource
 {
 	private String title;
-	private List<String> classes = new ArrayList<String>(1);
-	private Map<String, SirenAction> actions = new HashMap<String, SirenAction>();
+	private Set<String> classes = new HashSet<String>(1);
+	private List<SirenAction> actions = new ArrayList<SirenAction>();
+
+	public String getTitle()
+	{
+		return title;
+	}
+
+	public SirenResource setTitle(String title)
+	{
+		this.title = title;
+		return this;
+	}
+
+	public SirenResource addClass(String className)
+	{
+		classes.add(className);
+		return this;
+	}
+
+	public Collection<String> getClasses()
+	{
+		return Collections.unmodifiableSet(classes);
+	}
+
+	public SirenResource addAction(SirenAction action)
+	{
+		actions.add(action);
+		return this;
+	}
+
+	public Collection<SirenAction> getActions()
+	{
+		return Collections.unmodifiableCollection(actions);
+	}
 }
