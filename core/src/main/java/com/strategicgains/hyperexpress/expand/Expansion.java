@@ -105,7 +105,7 @@ implements Iterable<String>
 	 */
 	public boolean contains(String rel)
 	{
-		return rels.contains(rel);
+		return (isEmpty() ? false : rels.contains(rel));
 	}
 
 	/**
