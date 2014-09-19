@@ -26,7 +26,10 @@ import java.util.Set;
 
 import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.exception.RelationshipException;
+import com.strategicgains.hyperexpress.expression.RelationshipExpressionBuilder;
+import com.strategicgains.hyperexpress.expression.TokenExpression;
 import com.strategicgains.hyperexpress.util.Strings;
+import com.strategicgains.jbel.expression.Expression;
 
 /**
  * @author toddf
@@ -62,6 +65,18 @@ public class RelationshipDefinition
 	private Set<String> arrayRels;
 	private String lastClassName;
 	private Map<String, String> relNamesByClass = new HashMap<String, String>();
+	private RelationshipExpressionBuilder expressionBuilder = null;
+
+	public RelationshipExpressionBuilder when(Expression expression)
+	{
+		this.expressionBuilder = new RelationshipExpressionBuilder(expression);
+		return expressionBuilder;
+	}
+
+	public RelationshipExpressionBuilder when(String token)
+	{
+		return when(new TokenExpression(token));
+	}
 
 	/**
 	 * Adds one or more namespaces to this relationship builder.

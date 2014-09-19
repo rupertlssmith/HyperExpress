@@ -10,4 +10,11 @@
 	<artifactId>HyperExpress-Core</artifactId>
 	<packaging>jar</packaging>
 
+	<dependencies>
+		<dependency>
+			<groupId>com.strategicgains</groupId>
+			<artifactId>JBEL</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 </project>
