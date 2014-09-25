@@ -40,11 +40,17 @@ import com.strategicgains.hyperexpress.domain.siren.SirenResource;
 public class SirenResourceDeserializer
 extends JsonDeserializer<SirenResource>
 {
-	private static final String LINKS = "_links";
-	private static final String CURIES = "curies";
-	private static final String EMBEDDED = "_embedded";
-	private static final Set<String> RESERVED_PROPERTIES = new HashSet<>(
-	    Arrays.asList(LINKS, EMBEDDED));
+	private static final String CLASS = "class";
+	private static final String TITLE = "title";
+	private static final String PROPERTIES = "properties";
+	private static final String ENTITIES = "entities";
+	private static final String LINKS = "links";
+	private static final String ACTIONS = "actions";
+//	private static final String NAME = "name";
+//	private static final String METHOD = "method";
+//	private static final String HREF = "href";
+//	private static final String TYPE = "type";
+	private static final String FIELDS = "fields";
 
 	@Override
 	public SirenResource deserialize(JsonParser jp, DeserializationContext context)
@@ -58,10 +64,21 @@ extends JsonDeserializer<SirenResource>
 	throws JsonProcessingException, IOException
     {
 		SirenResource resource = new SirenResource();
+		processClass(root.get(CLASS), resource, oc);
+		processTitle(root.get(TITLE), resource, oc);
 		processLinks(root.get(LINKS), resource, oc);
-		processEmbedded(root.get(EMBEDDED), resource, oc);
-		processProperties(root, resource);
+		processEntities(root.get(ENTITIES), resource, oc);
+		processProperties(root.get(PROPERTIES), resource);
+		processActions(root.get(ACTIONS), resource, oc);
 		return resource;
+    }
+
+	private void processClass(JsonNode jsonNode, SirenResource resource, ObjectCodec oc)
+    {
+    }
+
+	private void processTitle(JsonNode jsonNode, SirenResource resource, ObjectCodec oc)
+    {
     }
 
 	/**
@@ -76,14 +93,11 @@ extends JsonDeserializer<SirenResource>
 	{
 		if (links == null) return;
 
-		processCuries(links.get(CURIES), resource, oc);
 		Iterator<Entry<String, JsonNode>> fields = links.fields();
 
 		while (fields.hasNext())
 		{
 			Entry<String, JsonNode> field = fields.next();
-
-			if (CURIES.equals(field.getKey())) continue;
 
 			if (field.getValue().isArray())
 			{
@@ -93,28 +107,6 @@ extends JsonDeserializer<SirenResource>
 			{
 				addLink(resource, field);
 			}
-		}
-	}
-
-	/**
-	 * @param curies
-	 * @param resource
-	 * @param oc 
-	 * @throws IOException
-	 * @throws JsonProcessingException
-	 */
-	private void processCuries(JsonNode curies, SirenResource resource, ObjectCodec oc)
-	throws JsonProcessingException, IOException
-	{
-		if (curies == null) return;
-
-		if (curies.isArray())
-		{
-			resource.addNamespaces(Arrays.asList(curies.traverse(oc).readValueAs(Namespace[].class)));
-		}
-		else
-		{
-			resource.addNamespace(curies.traverse(oc).readValueAs(Namespace.class));
 		}
 	}
 
@@ -172,7 +164,7 @@ extends JsonDeserializer<SirenResource>
 
 	}
 
-	private void processEmbedded(JsonNode embedded, SirenResource resource, ObjectCodec oc)
+	private void processEntities(JsonNode embedded, SirenResource resource, ObjectCodec oc)
 	throws JsonProcessingException, IOException
     {
 		if (embedded == null) return;
@@ -207,11 +199,13 @@ extends JsonDeserializer<SirenResource>
 		while (fields.hasNext())
 		{
 			Entry<String, JsonNode> fieldEntry = fields.next();
-
-			if (!RESERVED_PROPERTIES.contains(fieldEntry.getKey()))
-			{
-				resource.setProperty(fieldEntry.getKey(), fieldEntry.getValue().asText());
-			}
+			resource.setProperty(fieldEntry.getKey(), fieldEntry.getValue().asText());
 		}
+    }
+
+	private void processActions(JsonNode jsonNode, SirenResource resource, ObjectCodec oc)
+    {
+	    // TODO Auto-generated method stub
+	    
     }
 }

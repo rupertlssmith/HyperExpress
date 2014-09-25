@@ -56,7 +56,7 @@ public class HalResourceSerializerTest
 			.setVisibility(PropertyAccessor.GETTER, Visibility.NONE)
 			.setVisibility(PropertyAccessor.SETTER, Visibility.NONE)
 			.setVisibility(PropertyAccessor.IS_GETTER, Visibility.NONE)
-			.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+			.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"));
 	}
 
 	@Test

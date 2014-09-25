@@ -32,12 +32,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.Resource;
+import com.strategicgains.hyperexpress.domain.siren.SirenAction;
+import com.strategicgains.hyperexpress.domain.siren.SirenField;
 import com.strategicgains.hyperexpress.domain.siren.SirenResource;
-import com.strategicgains.hyperexpress.serialization.siren.jackson.SirenResourceSerializer;
 
 /**
  * @author toddf
- * @since Aug 6, 2014
+ * @since Sep 25, 2014
  */
 public class SirenResourceSerializerTest
 {
@@ -57,28 +58,28 @@ public class SirenResourceSerializerTest
 			.setVisibility(PropertyAccessor.GETTER, Visibility.NONE)
 			.setVisibility(PropertyAccessor.SETTER, Visibility.NONE)
 			.setVisibility(PropertyAccessor.IS_GETTER, Visibility.NONE)
-			.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+			.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"));
 	}
 
 	@Test
-	public void shouldSerializeSingleNamespace()
+	public void shouldNotSerializeSingleNamespace()
 	throws JsonProcessingException
 	{
 		Resource r = new SirenResource();
 		r.addNamespace("ns:1", "/namespaces/1");
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"curies\":{\"name\":\"ns:1\",\"href\":\"/namespaces/1\"}}}", json);
+		assertEquals("{}", json);
 	}
 
 	@Test
-	public void shouldSerializeNamespaceArray()
+	public void shouldNotSerializeNamespaceArray()
 	throws JsonProcessingException
 	{
 		Resource r = new SirenResource();
 		r.addNamespace("ns:1", "/namespaces/1");
 		r.addNamespace("ns:2", "/namespaces/2");
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"curies\":[{\"name\":\"ns:1\",\"href\":\"/namespaces/1\"},{\"name\":\"ns:2\",\"href\":\"/namespaces/2\"}]}}", json);
+		assertEquals("{}", json);
 	}
 
 	@Test
@@ -89,7 +90,7 @@ public class SirenResourceSerializerTest
 		LinkBuilder l = new LinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something").build());
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"self\":{\"href\":\"/something\"}}}", json);
+		assertEquals("{\"links\":[{\"rel\":[\"self\"],\"href\":\"/something\"}]}", json);
 	}
 
 	@Test
@@ -100,7 +101,7 @@ public class SirenResourceSerializerTest
 		LinkBuilder l = new LinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something/{templated}").build());
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"self\":{\"href\":\"/something/{templated}\",\"templated\":true}}}", json);
+		assertEquals("{\"links\":[{\"rel\":[\"self\"],\"href\":\"/something/{templated}\"}]}", json);
 	}
 
 	@Test
@@ -109,10 +110,10 @@ public class SirenResourceSerializerTest
 	{
 		Resource r = new SirenResource();
 		LinkBuilder l = new LinkBuilder();
-		r.addLink(l.rel("self").urlPattern("/something/{templated}").build());
 		r.addLink(l.rel("self").urlPattern("/something/not_templated").build());
+		r.addLink(l.rel("self").urlPattern("/something/{templated}").build());
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"self\":[{\"href\":\"/something/{templated}\",\"templated\":true},{\"href\":\"/something/not_templated\"}]}}", json);
+		assertEquals("{\"links\":[{\"rel\":[\"self\"],\"href\":\"/something/not_templated\"},{\"rel\":[\"self\"],\"href\":\"/something/{templated}\"}]}", json);
 	}
 
 	@Test
@@ -124,18 +125,19 @@ public class SirenResourceSerializerTest
 		r.addLink(l.rel("self").urlPattern("/something").build());
 		r.addLink(l.rel("self").urlPattern("/something/else").build());
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"self\":[{\"href\":\"/something\"},{\"href\":\"/something/else\"}]}}", json);
+		assertEquals("{\"links\":[{\"rel\":[\"self\"],\"href\":\"/something\"},{\"rel\":[\"self\"],\"href\":\"/something/else\"}]}", json);
 	}
 
 	@Test
-	public void shouldSerializeAsLinkArray()
+	public void shouldCollapseMatchingUrls()
 	throws JsonProcessingException
 	{
 		Resource r = new SirenResource();
 		LinkBuilder l = new LinkBuilder();
-		r.addLink(l.rel("self").urlPattern("/something").build(), true);
+		r.addLink(l.rel("self").urlPattern("/something/self").build());
+		r.addLink(l.rel("alternate").urlPattern("/something/self").build());
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"self\":[{\"href\":\"/something\"}]}}", json);
+		assertEquals("{\"links\":[{\"rel\":[\"self\",\"alternate\"],\"href\":\"/something/self\"}]}", json);
 	}
 
 	@Test
@@ -143,30 +145,30 @@ public class SirenResourceSerializerTest
 	throws JsonProcessingException
 	{
 		Resource r = new SirenResource();
-		r.addProperty("name", "A HAL resource");
+		r.addProperty("name", "A Siren resource");
 		r.addProperty("value", new Integer(42));
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"name\":\"A HAL resource\",\"value\":42}", json);
+		assertEquals("{\"properties\":{\"name\":\"A Siren resource\",\"value\":42}}", json);
 	}
 
 	@Test
-	public void shouldSerializeSingleEmbed()
+	public void shouldSerializeSingleEntity()
 	throws JsonProcessingException
 	{
-		Resource r = new SirenResource().addProperty("name", "root");
+		Resource r = new SirenResource();
 		r.addResource("children", new SirenResource().addProperty("name", "child"));
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_embedded\":{\"children\":{\"name\":\"child\"}},\"name\":\"root\"}", json);
+		assertEquals("{\"entities\":[{\"rel\":[\"children\"],\"properties\":{\"name\":\"child\"}}]}", json);
 	}
 
 	@Test
-	public void shouldSerializeEmbedAsArray()
+	public void shouldSerializeSingleEntityAgain()
 	throws JsonProcessingException
 	{
 		Resource r = new SirenResource().addProperty("name", "root");
 		r.addResource("children", new SirenResource().addProperty("name", "child"), true);
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_embedded\":{\"children\":[{\"name\":\"child\"}]},\"name\":\"root\"}", json);
+		assertEquals("{\"entities\":[{\"rel\":[\"children\"],\"properties\":{\"name\":\"child\"}}],\"properties\":{\"name\":\"root\"}}", json);
 	}
 
 	@Test
@@ -177,7 +179,7 @@ public class SirenResourceSerializerTest
 		r.addResource("children", new SirenResource().addProperty("name", "child 1"));
 		r.addResource("children", new SirenResource().addProperty("name", "child 2"));
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_embedded\":{\"children\":[{\"name\":\"child 1\"},{\"name\":\"child 2\"}]},\"name\":\"root\"}", json);
+		assertEquals("{\"entities\":[{\"rel\":[\"children\"],\"properties\":{\"name\":\"child 1\"}},{\"rel\":[\"children\"],\"properties\":{\"name\":\"child 2\"}}],\"properties\":{\"name\":\"root\"}}", json);
 	}
 
 	@Test
@@ -190,20 +192,7 @@ public class SirenResourceSerializerTest
 		r.addLink(l.rel("self").urlPattern("/something").build());
 		r.addResource("children", new SirenResource().addProperty("name", "child"));
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"curies\":{\"name\":\"ns:1\",\"href\":\"/namespaces/1\"},\"self\":{\"href\":\"/something\"}},\"_embedded\":{\"children\":{\"name\":\"child\"}},\"name\":\"root\"}", json);
-	}
-
-	@Test
-	public void shouldSerializeResourceAsArrays()
-	throws JsonProcessingException
-	{
-		Resource r = new SirenResource().addProperty("name", "root");
-		r.addNamespace("ns:1", "/namespaces/1");
-		LinkBuilder l = new LinkBuilder();
-		r.addLink(l.rel("self").urlPattern("/something").build(), true);
-		r.addResource("children", new SirenResource().addProperty("name", "child"), true);
-		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"curies\":{\"name\":\"ns:1\",\"href\":\"/namespaces/1\"},\"self\":[{\"href\":\"/something\"}]},\"_embedded\":{\"children\":[{\"name\":\"child\"}]},\"name\":\"root\"}", json);
+		assertEquals("{\"links\":[{\"rel\":[\"self\"],\"href\":\"/something\"}],\"entities\":[{\"rel\":[\"children\"],\"properties\":{\"name\":\"child\"}}],\"properties\":{\"name\":\"root\"}}", json);
 	}
 
 	@Test
@@ -219,6 +208,41 @@ public class SirenResourceSerializerTest
 		r.addResource("children", new SirenResource().addProperty("name", "child 1"));
 		r.addResource("children", new SirenResource().addProperty("name", "child 2"));
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"curies\":[{\"name\":\"ns:1\",\"href\":\"/namespaces/1\"},{\"name\":\"ns:2\",\"href\":\"/namespaces/2\"}],\"self\":[{\"href\":\"/something\"},{\"href\":\"/something/{templated}\",\"templated\":true}]},\"_embedded\":{\"children\":[{\"name\":\"child 1\"},{\"name\":\"child 2\"}]},\"name\":\"root\"}", json);
+		assertEquals("{\"links\":[{\"rel\":[\"self\"],\"href\":\"/something\"},{\"rel\":[\"self\"],\"href\":\"/something/{templated}\"}],\"entities\":[{\"rel\":[\"children\"],\"properties\":{\"name\":\"child 1\"}},{\"rel\":[\"children\"],\"properties\":{\"name\":\"child 2\"}}],\"properties\":{\"name\":\"root\"}}", json);
+	}
+
+	@Test
+	public void shouldSerializeActions()
+	throws JsonProcessingException
+	{
+		SirenResource r = new SirenResource();
+		SirenAction action = new SirenAction()
+			.setName("add-item")
+			.setTitle("Add an Item")
+			.setMethod("POST")
+			.setType("application/x-www-form-urlencoded")
+			.setHref("http://api.x.io/orders/42/items");
+		action.addField(new SirenField()
+			.setName("orderNumber")
+			.setType("hidden")
+			.setValue("42"));
+		action.addField(new SirenField()
+			.setName("productCode")
+			.setType("text"));
+		action.addField(new SirenField()
+			.setName("quantity")
+			.setType("number"));
+		r.addAction(action);
+		String json = mapper.writeValueAsString(r);
+		assertEquals("{\"actions\":[{"
+			+ "\"name\":\"add-item\","
+			+ "\"title\":\"Add an Item\","
+			+ "\"method\":\"POST\","
+			+ "\"href\":\"http://api.x.io/orders/42/items\","
+			+ "\"type\":\"application/x-www-form-urlencoded\","
+			+ "\"fields\":["
+			+ "{\"name\":\"orderNumber\",\"type\":\"hidden\",\"value\":\"42\"},"
+			+ "{\"name\":\"productCode\",\"type\":\"text\"},"
+			+ "{\"name\":\"quantity\",\"type\":\"number\"}]}]}", json);
 	}
 }

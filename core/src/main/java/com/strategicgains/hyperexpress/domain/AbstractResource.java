@@ -40,7 +40,7 @@ implements Resource
 	private Map<String, List<Link>> linksByRel = new LinkedHashMap<String, List<Link>>();
 	private List<Link> allLinks = new ArrayList<Link>();
 	private Map<String, Object> properties = new HashMap<String, Object>();
-	private Map<String, List<Resource>> resources = new HashMap<String, List<Resource>>();
+	private Map<String, List<Resource>> resources;
 	private Set<String> arrayLinkRels = new HashSet<String>();
 	private Set<String> arrayResourceRels = new HashSet<String>();
 	private Map<String, Action> actionsByRel;
@@ -136,6 +136,11 @@ implements Resource
     {
 		if (namespace == null) throw new ResourceException("Cannot add null namespace");
 
+		if (namespaces == null)
+		{
+			namespaces = new ArrayList<Namespace>();
+		}
+
 		if (!namespaces.contains(namespace))
 		{
 			namespaces.add(namespace);
@@ -160,13 +165,13 @@ implements Resource
 	@Override
 	public List<Namespace> getNamespaces()
 	{
-		return Collections.unmodifiableList(namespaces);
+		return (namespaces == null ? Collections.<Namespace> emptyList() : Collections.unmodifiableList(namespaces));
 	}
 
 	@Override
 	public boolean hasNamespaces()
 	{
-		return !namespaces.isEmpty();
+		return (namespaces != null && !namespaces.isEmpty());
 	}
 
 	@Override
@@ -269,7 +274,7 @@ implements Resource
 	@Override
 	public Map<String, List<Resource>> getResources()
 	{
-		return Collections.unmodifiableMap(resources);
+		return (resources == null ? Collections.<String, List<Resource>> emptyMap() : Collections.unmodifiableMap(resources));
 	}
 
 	/**
@@ -295,11 +300,16 @@ implements Resource
 	@Override
 	public boolean hasResources()
 	{
-		return (!resources.isEmpty());
+		return (resources != null && !resources.isEmpty());
 	}
 
 	private List<Resource> acquireResourcesForRel(String rel)
     {
+		if (resources == null)
+		{
+			resources = new HashMap<String, List<Resource>>();
+		}
+
 	    List<Resource> forRel = resources.get(rel);
 
 		if (forRel == null)

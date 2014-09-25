@@ -17,13 +17,18 @@
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>RestExpress</artifactId>
-			<version>0.10.4</version>
+			<version>0.10.5-SNAPSHOT</version>
 			<scope>compile</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>HyperExpress-HAL</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.strategicgains</groupId>
+			<artifactId>HyperExpress-Siren</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

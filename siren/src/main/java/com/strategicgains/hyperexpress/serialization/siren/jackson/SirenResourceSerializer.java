@@ -16,7 +16,7 @@
 package com.strategicgains.hyperexpress.serialization.siren.jackson;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +28,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.strategicgains.hyperexpress.domain.Link;
-import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.domain.Resource;
+import com.strategicgains.hyperexpress.domain.siren.SirenAction;
+import com.strategicgains.hyperexpress.domain.siren.SirenField;
 import com.strategicgains.hyperexpress.domain.siren.SirenLink;
 import com.strategicgains.hyperexpress.domain.siren.SirenResource;
 
@@ -46,6 +47,11 @@ extends JsonSerializer<SirenResource>
 	private static final String ENTITIES = "entities";
 	private static final String LINKS = "links";
 	private static final String ACTIONS = "actions";
+	private static final String NAME = "name";
+	private static final String METHOD = "method";
+	private static final String HREF = "href";
+	private static final String TYPE = "type";
+	private static final String FIELDS = "fields";
 
 	public SirenResourceSerializer()
 	{
@@ -57,116 +63,181 @@ extends JsonSerializer<SirenResource>
 	throws IOException, JsonProcessingException
 	{
 		jgen.writeStartObject();
-		renderJson(resource, jgen, false);
+		renderJson(resource, jgen);
 		jgen.writeEndObject();
 	}
 
-	private void renderJson(SirenResource resource, JsonGenerator jgen, boolean isEmbedded)
+	private void renderJson(SirenResource resource, JsonGenerator jgen)
 	throws JsonGenerationException, IOException
 	{
-		writeLinks(resource, isEmbedded, jgen);
-		writeEmbedded(resource, jgen);
+		writeClass(resource.getClasses(), jgen);
+		writeTitle(resource.getTitle(), jgen);
+		writeLinks(resource, jgen);
+		writeEntities(resource, jgen);
 		writeProperties(resource.getProperties(), jgen);
+		writeActions(resource.getActions(), jgen);
 	}
 
-	private void writeLinks(SirenResource resource, boolean isEmbedded, JsonGenerator jgen)
+	private void writeClass(Collection<String> classes, JsonGenerator jgen)
+	throws IOException
+    {
+		if (classes != null && !classes.isEmpty())
+		{
+			jgen.writeArrayFieldStart(CLASS);
+			jgen.writeObject(classes);
+			jgen.writeEndArray();
+		}
+    }
+
+	private void writeTitle(String title, JsonGenerator jgen)
+	throws IOException
+    {
+		if (title != null && !title.isEmpty())
+		{
+			jgen.writeObjectFieldStart(TITLE);
+			jgen.writeObject(title);
+			jgen.writeEndObject();
+		}
+    }
+
+	private void writeLinks(SirenResource resource, JsonGenerator jgen)
 	throws JsonGenerationException, IOException
 	{
 		List<Link> links = resource.getLinks();
-		List<Namespace> namespaces = resource.getNamespaces();
-		if (links.isEmpty() && (isEmbedded || namespaces.isEmpty())) return;
 
-		jgen.writeObjectFieldStart(LINKS);
+		if (links.isEmpty()) return;
 
-		Map<String, List<SirenLink>> linksByRel = indexLinksByRel(resource.getLinks());
+		jgen.writeArrayFieldStart(LINKS);
+		Map<String, SirenLink> linksByRel = indexLinksByHref(resource.getLinks());
 
-		for (Entry<String, List<SirenLink>> entry : linksByRel.entrySet())
+		for (SirenLink link : linksByRel.values())
 		{
-			if (entry.getValue().size() == 1 && !resource.isMultipleLinks(entry.getKey())) // Write single link
-			{
-				SirenLink link = entry.getValue().iterator().next();
-				jgen.writeObjectField(entry.getKey(), link);
-			}
-			else // Write link array
-			{
-				jgen.writeArrayFieldStart(entry.getKey());
-
-				for (SirenLink link : entry.getValue())
-				{
-					jgen.writeObject(link);
-				}
-
-				jgen.writeEndArray();
-			}
-
+			jgen.writeObject(link);
 		}
 
-		jgen.writeEndObject();
+		jgen.writeEndArray();
 	}
 
-	private Map<String, List<SirenLink>> indexLinksByRel(List<Link> links)
+	/**
+	 * Index the links by href, adding rels to the links with matching hrefs.
+	 * 
+	 * @param links
+	 * @return
+	 */
+	private Map<String, SirenLink> indexLinksByHref(List<Link> links)
 	{
-		Map<String, List<SirenLink>> linksByRel = new HashMap<String, List<SirenLink>>();
+		Map<String, SirenLink> linksByHref = new HashMap<String, SirenLink>();
 
 		for (Link link : links)
 		{
-			List<SirenLink> linksForRel = linksByRel.get(link.getRel());
+			SirenLink linkForHref = linksByHref.get(link.getHref());
 
-			if (linksForRel == null)
+			if (linkForHref == null)
 			{
-				linksForRel = new ArrayList<SirenLink>();
-				linksByRel.put(link.getRel(), linksForRel);
-			}
-
-			linksForRel.add(new SirenLink(link));
-		}
-
-		return linksByRel;
-	}
-
-	private void writeEmbedded(Resource resource, JsonGenerator jgen)
-	throws JsonGenerationException, IOException
-	{
-		Map<String, List<Resource>> embedded = resource.getResources();
-
-		if (embedded.isEmpty()) return;
-
-		jgen.writeObjectFieldStart(ENTITIES);
-
-		for (Entry<String, List<Resource>> entry : embedded.entrySet())
-		{
-			if (entry.getValue().size() == 1 && !resource.isMultipleResources(entry.getKey()))
-			{
-				jgen.writeObjectFieldStart(entry.getKey());
-                renderJson((SirenResource) entry.getValue().iterator().next(), jgen, true);
-                jgen.writeEndObject();
+				linkForHref = new SirenLink(link);
+				linksByHref.put(link.getHref(), linkForHref);
 			}
 			else
 			{
-				jgen.writeArrayFieldStart(entry.getKey());
-
-				for (Resource r : entry.getValue())
-				{
-					jgen.writeStartObject();
-					renderJson((SirenResource) r, jgen, true);
-					jgen.writeEndObject();
-				}
-
-                jgen.writeEndArray();
+				linkForHref.addRel(link.getRel());
 			}
 		}
 
-		jgen.writeEndObject();
+		return linksByHref;
+	}
+
+	private void writeEntities(Resource resource, JsonGenerator jgen)
+	throws JsonGenerationException, IOException
+	{
+		Map<String, List<Resource>> entities = resource.getResources();
+
+		if (entities == null || entities.isEmpty()) return;
+
+		jgen.writeArrayFieldStart(ENTITIES);
+
+		for (Entry<String, List<Resource>> entry : entities.entrySet())
+		{
+			for (Resource r : entry.getValue())
+			{
+				jgen.writeStartObject();
+				jgen.writeArrayFieldStart("rel");
+				jgen.writeString(entry.getKey());
+				jgen.writeEndArray();
+				renderJson((SirenResource) r, jgen);
+				jgen.writeEndObject();
+			}
+		}
+
+		jgen.writeEndArray();
 	}
 
 	private void writeProperties(Map<String, Object> properties, JsonGenerator jgen)
 	throws JsonProcessingException, IOException
 	{
-		if (properties.isEmpty()) return;
+		if (properties == null || properties.isEmpty()) return;
+
+		jgen.writeObjectFieldStart(PROPERTIES);
 
 		for (Entry<String, Object> entry : properties.entrySet())
 		{
 			jgen.writeObjectField(entry.getKey(), entry.getValue());
+		}
+
+		jgen.writeEndObject();
+	}
+
+	private void writeActions(Collection<SirenAction> actions, JsonGenerator jgen)
+	throws IOException
+    {
+		if (actions == null || actions.isEmpty()) return;
+		
+		jgen.writeArrayFieldStart(ACTIONS);
+
+		for (SirenAction action : actions)
+		{
+			writeAction(action, jgen);
+		}
+
+		jgen.writeEndArray();
+    }
+
+	private void writeAction(SirenAction action, JsonGenerator jgen)
+	throws IOException
+    {
+		if (action == null) return;
+
+		jgen.writeStartObject();
+		writeClass(action.getClasses(), jgen);
+		jgen.writeStringField(NAME, action.getName());
+		writeOptionalField("title", action.getTitle(), jgen);
+		writeOptionalField(METHOD, action.getMethod(), jgen);
+		jgen.writeStringField(HREF, action.getHref());
+		writeOptionalField(TYPE, action.getType(), jgen);
+		writeFields(action.getFields(), jgen);
+		jgen.writeEndObject();
+    }
+
+	private void writeFields(List<SirenField> fields, JsonGenerator jgen)
+	throws IOException
+    {
+		if (fields == null) return;
+
+		jgen.writeArrayFieldStart(FIELDS);
+
+		for (SirenField field : fields)
+		{
+			jgen.writeObject(field);
+		}
+
+		jgen.writeEndArray();
+    }
+
+	private void writeOptionalField(String name, String value, JsonGenerator jgen)
+	throws IOException
+	{
+		if (value != null)
+		{
+			jgen.writeStringField(name, value);
 		}
 	}
 }
