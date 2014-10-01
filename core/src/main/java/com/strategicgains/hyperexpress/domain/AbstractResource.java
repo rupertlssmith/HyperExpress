@@ -274,7 +274,12 @@ implements Resource
 	@Override
 	public Map<String, List<Resource>> getResources()
 	{
-		return (resources == null ? Collections.<String, List<Resource>> emptyMap() : Collections.unmodifiableMap(resources));
+		return Collections.unmodifiableMap(_getResources());
+	}
+
+	private Map<String, List<Resource>> _getResources()
+	{
+		return (resources == null ? Collections.<String, List<Resource>> emptyMap() : resources);
 	}
 
 	/**
@@ -288,7 +293,7 @@ implements Resource
     @SuppressWarnings("unchecked")
 	public List<Resource> getResources(String rel)
 	{
-		List<Resource> result = resources.get(rel);
+		List<Resource> result = _getResources().get(rel);
 		return (result == null ? Collections.EMPTY_LIST : Collections.unmodifiableList(result));
 	}
 
@@ -355,7 +360,7 @@ implements Resource
 	@Override
 	public boolean hasResources(String rel)
 	{
-		return resources.containsKey(rel);
+		return _getResources().containsKey(rel);
 	}
 
 	@Override
