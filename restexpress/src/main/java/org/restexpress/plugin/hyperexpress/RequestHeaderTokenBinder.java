@@ -40,6 +40,13 @@ implements Preprocessor
 	@Override
 	public void process(Request request)
 	{
+		String host = request.getHost();
+
+		if (host != null)
+		{
+			HyperExpress.bind("baseUrl", request.getBaseUrl());
+		}
+
 		for (String token : request.getHeaderNames())
 		{
 			HyperExpress.bind(token, request.getHeader(token));
