@@ -2,7 +2,9 @@ build/
 bin/
 dist/
 target/
+.idea/
 .DS_Store
 .project
 .classpath
 .settings
+*.iml
