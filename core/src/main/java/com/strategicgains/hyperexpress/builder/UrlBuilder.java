@@ -253,7 +253,9 @@ implements Cloneable
 	private String buildFullUrlPattern()
 	{
 		if (urlPattern == null)
-		    throw new IllegalStateException("Null URL pattern");
+		{
+			throw new IllegalStateException("Null URL pattern");
+		}
 
 		return (baseUrl == null ? urlPattern : baseUrl + urlPattern);
 	}

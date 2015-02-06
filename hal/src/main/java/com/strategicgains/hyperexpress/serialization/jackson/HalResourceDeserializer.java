@@ -43,8 +43,7 @@ extends JsonDeserializer<HalResource>
 	private static final String LINKS = "_links";
 	private static final String CURIES = "curies";
 	private static final String EMBEDDED = "_embedded";
-	private static final Set<String> RESERVED_PROPERTIES = new HashSet<>(
-	    Arrays.asList(LINKS, EMBEDDED));
+	private static final Set<String> RESERVED_PROPERTIES = new HashSet<>(Arrays.asList(LINKS, EMBEDDED));
 
 	@Override
 	public HalResource deserialize(JsonParser jp, DeserializationContext context)
@@ -125,20 +124,13 @@ extends JsonDeserializer<HalResource>
 	private void addAllLinks(HalResource resource, Entry<String, JsonNode> field)
 	{
 		LinkBuilder lb = new LinkBuilder();
-		lb.rel(field.getKey());
 		Iterator<JsonNode> values = field.getValue().elements();
 
 		while (values.hasNext())
 		{
+			lb.rel(field.getKey());
 			JsonNode value = values.next();
-			Iterator<JsonNode> elements = value.elements();
-
-			while (elements.hasNext())
-			{
-				JsonNode element = elements.next();
-				lb.set(element.asText(), element.textValue());
-			}
-
+			processLinkProperties(lb, value);
 			resource.addLink(lb.build());
 			lb.clearAttributes();
 		}
@@ -152,7 +144,12 @@ extends JsonDeserializer<HalResource>
 	{
 		LinkBuilder lb = new LinkBuilder();
 		lb.rel(field.getKey());
-		Iterator<Entry<String, JsonNode>> elements = field.getValue().fields();
+		processLinkProperties(lb, field.getValue());
+		resource.addLink(lb.build());
+	}
+
+	private void processLinkProperties(LinkBuilder lb, JsonNode value) {
+		Iterator<Entry<String, JsonNode>> elements = value.fields();
 
 		while (elements.hasNext())
 		{
@@ -167,9 +164,6 @@ extends JsonDeserializer<HalResource>
 				lb.set(element.getKey(), element.getValue().asText());
 			}
 		}
-
-		resource.addLink(lb.build());
-
 	}
 
 	private void processEmbedded(JsonNode embedded, HalResource resource, ObjectCodec oc)
