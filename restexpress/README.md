@@ -19,7 +19,7 @@ Stable:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>HyperExpressPlugin</artifactId>
-			<version>2.1-SNAPSHOT</version>
+            <version>2.2</version>
 		</dependency>
 ```
 Development:
@@ -27,7 +27,7 @@ Development:
 		<dependency>
 			<groupId>com.strategicgains</groupId>
 			<artifactId>HyperExpressPlugin</artifactId>
-			<version>2.1-SNAPSHOT</version>
+            <version>3.0-SNAPSHOT</version>
 		</dependency>
 ```
 Or download the jar directly from: 
