@@ -1,0 +1,28 @@
+{
+  "_links": {
+    "curies": [
+      {
+        "name": "ns:1",
+        "href": "/namespaces/1"
+      },
+      {
+        "name": "ns:2",
+        "href": "/namespaces/2"
+      }
+    ],
+    "self": [
+      {"href": "/something"},
+      {
+        "href": "/something/{templated}",
+        "templated": true
+      }
+    ]
+  },
+  "_embedded": {
+    "children": [
+      {"name": "child 1"},
+      {"name": "child 2"}
+    ]
+  },
+  "name": "root"
+}

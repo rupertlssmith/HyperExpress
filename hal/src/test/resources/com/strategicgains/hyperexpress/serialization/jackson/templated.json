@@ -1,0 +1,8 @@
+{
+  "_links": {
+    "self": {
+      "href": "/something/{templated}",
+      "templated": true
+    }
+  }
+}

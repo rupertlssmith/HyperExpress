@@ -23,5 +23,22 @@
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<version>1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>uk.co.datumedge</groupId>
+			<artifactId>hamcrest-json</artifactId>
+			<version>0.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>18.0</version>
+		</dependency>
 	</dependencies>
 </project>

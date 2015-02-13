@@ -15,14 +15,6 @@
  */
 package com.strategicgains.hyperexpress.serialization.jackson;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.ObjectCodec;
@@ -32,6 +24,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.domain.hal.HalResource;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * @author toddf
@@ -125,18 +121,27 @@ extends JsonDeserializer<HalResource>
 	private void addAllLinks(HalResource resource, Entry<String, JsonNode> field)
 	{
 		LinkBuilder lb = new LinkBuilder();
-		lb.rel(field.getKey());
+
 		Iterator<JsonNode> values = field.getValue().elements();
 
 		while (values.hasNext())
 		{
+			lb.rel(field.getKey());
 			JsonNode value = values.next();
-			Iterator<JsonNode> elements = value.elements();
+			Iterator<String> fieldNames = value.fieldNames();
 
-			while (elements.hasNext())
+			while (fieldNames.hasNext())
 			{
-				JsonNode element = elements.next();
-				lb.set(element.asText(), element.textValue());
+				String fieldName = fieldNames.next();
+
+				JsonNode element = value.findValue(fieldName);
+				if ("href".equals(fieldName)) {
+					lb.urlPattern(element.asText());
+				}
+				else
+				{
+					lb.set(fieldName, element.asText());
+				}
 			}
 
 			resource.addLink(lb.build());
