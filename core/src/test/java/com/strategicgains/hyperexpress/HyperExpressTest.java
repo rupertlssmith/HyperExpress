@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -325,6 +326,23 @@ public class HyperExpressTest
 		assertTrue(r.hasResources());
 		assertEquals(1, r.getResources("blogs").size());
 		assertEmptyResource(r.getResources("blogs").get(0));
+	}
+
+	@Test
+	public void shouldCreateGenericCollection()
+	{
+		List<?> entities = getEntities();
+		Resource resource = HyperExpress.createCollectionResource(entities, getType(), "*");
+	}
+
+	private List<?> getEntities()
+	{
+		return new ArrayList<Blog>();
+	}
+
+	private Class<?> getType()
+	{
+		return Blog.class;
 	}
 
 	@Test

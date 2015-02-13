@@ -39,12 +39,12 @@ implements Resource
 	private List<Namespace> namespaces;
 	private Map<String, List<Link>> linksByRel = new LinkedHashMap<String, List<Link>>();
 	private List<Link> allLinks = new ArrayList<Link>();
-	private Map<String, Object> properties = new HashMap<String, Object>();
+	private Map<String, Object> properties = new LinkedHashMap<String, Object>();
 	private Map<String, List<Resource>> resources;
 	private Set<String> arrayLinkRels = new HashSet<String>();
 	private Set<String> arrayResourceRels = new HashSet<String>();
-	private Map<String, Action> actionsByRel;
-	private Map<String, Form> formsByRel;
+//	private Map<String, Action> actionsByRel;
+//	private Map<String, Form> formsByRel;
 
 	/**
 	 * Initialize the contents of this resource from another. The contents

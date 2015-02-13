@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
     Copyright 2014, Strategic Gains, Inc.
+=======
+    Copyright 2015, Strategic Gains, Inc.
+>>>>>>> upstream/master
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -15,6 +19,20 @@
  */
 package com.strategicgains.hyperexpress.serialization.jackson;
 
+<<<<<<< HEAD
+=======
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+>>>>>>> upstream/master
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -22,6 +40,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+<<<<<<< HEAD
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Namespace;
@@ -41,6 +60,14 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @author azytsev
  * @since Feb 2, 2015
+=======
+import com.strategicgains.hyperexpress.domain.Link;
+import com.strategicgains.hyperexpress.domain.hal.HalResource;
+
+/**
+ * @author toddf
+ * @since Feb 6, 2015
+>>>>>>> upstream/master
  */
 public class HalResourceDeserializerTest
 {
@@ -63,116 +90,25 @@ public class HalResourceDeserializerTest
 			.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"));
 	}
 
-//	@Test
-//	public void shouldSerializeSingleNamespace()
-//	throws JsonProcessingException
-//	{
-//		Resource r = new HalResource();
-//		r.addNamespace("ns:1", "/namespaces/1");
-//		String json = mapper.writeValueAsString(r);
-//		assertEquals("{\"_links\":{\"curies\":{\"name\":\"ns:1\",\"href\":\"/namespaces/1\"}}}", json);
-//	}
-//
-//	@Test
-//	public void shouldSerializeNamespaceArray()
-//	throws JsonProcessingException
-//	{
-//		Resource r = new HalResource();
-//		r.addNamespace("ns:1", "/namespaces/1");
-//		r.addNamespace("ns:2", "/namespaces/2");
-//		String json = mapper.writeValueAsString(r);
-//		assertEquals("{\"_links\":{\"curies\":[{\"name\":\"ns:1\",\"href\":\"/namespaces/1\"},{\"name\":\"ns:2\",\"href\":\"/namespaces/2\"}]}}", json);
-//	}
-//
-//	@Test
-//	public void shouldSerializeSingleLink()
-//	throws JsonProcessingException
-//	{
-//		Resource r = new HalResource();
-//		LinkBuilder l = new LinkBuilder();
-//		r.addLink(l.rel("self").urlPattern("/something").build());
-//		String json = mapper.writeValueAsString(r);
-//		assertEquals("{\"_links\":{\"self\":{\"href\":\"/something\"}}}", json);
-//	}
-//
-//	@Test
-//	public void shouldSerializeTemplated()
-//	throws JsonProcessingException
-//	{
-//		Resource r = new HalResource();
-//		LinkBuilder l = new LinkBuilder();
-//		r.addLink(l.rel("self").urlPattern("/something/{templated}").build());
-//		String json = mapper.writeValueAsString(r);
-//		assertEquals("{\"_links\":{\"self\":{\"href\":\"/something/{templated}\",\"templated\":true}}}", json);
-//	}
-//
-//	@Test
-//	public void shouldSerializeTemplatedArray()
-//	throws JsonProcessingException
-//	{
-//		Resource r = new HalResource();
-//		LinkBuilder l = new LinkBuilder();
-//		r.addLink(l.rel("self").urlPattern("/something/{templated}").build());
-//		r.addLink(l.rel("self").urlPattern("/something/not_templated").build());
-//		String json = mapper.writeValueAsString(r);
-//		assertEquals("{\"_links\":{\"self\":[{\"href\":\"/something/{templated}\",\"templated\":true},{\"href\":\"/something/not_templated\"}]}}", json);
-//	}
-//
-//	@Test
-//	public void shouldSerializeLinkArray()
-//	throws JsonProcessingException
-//	{
-//		Resource r = new HalResource();
-//		LinkBuilder l = new LinkBuilder();
-//		r.addLink(l.rel("self").urlPattern("/something").build());
-//		r.addLink(l.rel("self").urlPattern("/something/else").build());
-//		String json = mapper.writeValueAsString(r);
-//		assertEquals("{\"_links\":{\"self\":[{\"href\":\"/something\"},{\"href\":\"/something/else\"}]}}", json);
-//	}
-//
-//	@Test
-//	public void shouldSerializeAsLinkArray()
-//	throws JsonProcessingException
-//	{
-//		Resource r = new HalResource();
-//		LinkBuilder l = new LinkBuilder();
-//		r.addLink(l.rel("self").urlPattern("/something").build(), true);
-//		String json = mapper.writeValueAsString(r);
-//		assertEquals("{\"_links\":{\"self\":[{\"href\":\"/something\"}]}}", json);
-//	}
-//
-//	@Test
-//	public void shouldSerializeProperties()
-//	throws JsonProcessingException
-//	{
-//		Resource r = new HalResource();
-//		r.addProperty("name", "A HAL resource");
-//		r.addProperty("value", new Integer(42));
-//		String json = mapper.writeValueAsString(r);
-//		assertEquals("{\"name\":\"A HAL resource\",\"value\":42}", json);
-//	}
-//
-//	@Test
-//	public void shouldSerializeSingleEmbed()
-//	throws JsonProcessingException
-//	{
-//		Resource r = new HalResource().addProperty("name", "root");
-//		r.addResource("children", new HalResource().addProperty("name", "child"));
-//		String json = mapper.writeValueAsString(r);
-//		assertEquals("{\"_embedded\":{\"children\":{\"name\":\"child\"}},\"name\":\"root\"}", json);
-//	}
-//
-//	@Test
-//	public void shouldSerializeEmbedAsArray()
-//	throws JsonProcessingException
-//	{
-//		Resource r = new HalResource().addProperty("name", "root");
-//		r.addResource("children", new HalResource().addProperty("name", "child"), true);
-//		String json = mapper.writeValueAsString(r);
-//		assertEquals("{\"_embedded\":{\"children\":[{\"name\":\"child\"}]},\"name\":\"root\"}", json);
-//	}
-
 	@Test
+	public void shouldDeserializeLinkArray()
+	throws IOException
+	{
+		String json = "{\"SessionId\":\"9d1b29fc-4240-4993-82c5-a42d00900324\",\"_links\":{\"self\":{\"href\":\"/api/orders/9d1b29fc-4240-4993-82c5-a42d00900324/scandata\"},"
+		+ "\"orderstate\":[  {\"href\":\"/api/orders/9d1b29fc-4240-4993-82c5-a42d00900324/orderstate?orderState=Accepted\",\"title\":\"Accept\"},"
+		+ "{\"href\":\"/api/orders/9d1b29fc-4240-4993-82c5-a42d00900324/orderstate?orderState=Declined\",\"title\":\"Decline\"} ]}}";
+		HalResource hal = mapper.readValue(json, HalResource.class);
+		assertTrue(hal.hasLinks());
+		assertTrue(hal.hasProperties());
+		assertEquals("9d1b29fc-4240-4993-82c5-a42d00900324", hal.getProperty("SessionId"));
+		assertTrue(hal.getLinksByRel().containsKey("self"));
+		assertTrue(hal.getLinksByRel().containsKey("orderstate"));
+		List<Link> links = hal.getLinksByRel().get("orderstate");
+		assertNotNull(links);
+		assertEquals(2, links.size());
+		assertEquals("/api/orders/9d1b29fc-4240-4993-82c5-a42d00900324/orderstate?orderState=Accepted", links.get(0).getHref());
+		assertEquals("/api/orders/9d1b29fc-4240-4993-82c5-a42d00900324/orderstate?orderState=Declined", links.get(1).getHref());
+	}
 	public void shouldDeserializeEmbeddedArray() throws IOException {
 		HalResource resource = whenReadingFromFile("embedded-array.json");
 

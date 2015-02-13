@@ -15,6 +15,14 @@
  */
 package com.strategicgains.hyperexpress.serialization.jackson;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.ObjectCodec;
@@ -24,10 +32,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.domain.hal.HalResource;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.Map.Entry;
 
 /**
  * @author toddf
@@ -39,8 +43,7 @@ extends JsonDeserializer<HalResource>
 	private static final String LINKS = "_links";
 	private static final String CURIES = "curies";
 	private static final String EMBEDDED = "_embedded";
-	private static final Set<String> RESERVED_PROPERTIES = new HashSet<>(
-	    Arrays.asList(LINKS, EMBEDDED));
+	private static final Set<String> RESERVED_PROPERTIES = new HashSet<>(Arrays.asList(LINKS, EMBEDDED));
 
 	@Override
 	public HalResource deserialize(JsonParser jp, DeserializationContext context)
@@ -121,29 +124,13 @@ extends JsonDeserializer<HalResource>
 	private void addAllLinks(HalResource resource, Entry<String, JsonNode> field)
 	{
 		LinkBuilder lb = new LinkBuilder();
-
 		Iterator<JsonNode> values = field.getValue().elements();
 
 		while (values.hasNext())
 		{
 			lb.rel(field.getKey());
 			JsonNode value = values.next();
-			Iterator<String> fieldNames = value.fieldNames();
-
-			while (fieldNames.hasNext())
-			{
-				String fieldName = fieldNames.next();
-
-				JsonNode element = value.findValue(fieldName);
-				if ("href".equals(fieldName)) {
-					lb.urlPattern(element.asText());
-				}
-				else
-				{
-					lb.set(fieldName, element.asText());
-				}
-			}
-
+			processLinkProperties(lb, value);
 			resource.addLink(lb.build());
 			lb.clearAttributes();
 		}
@@ -157,7 +144,12 @@ extends JsonDeserializer<HalResource>
 	{
 		LinkBuilder lb = new LinkBuilder();
 		lb.rel(field.getKey());
-		Iterator<Entry<String, JsonNode>> elements = field.getValue().fields();
+		processLinkProperties(lb, field.getValue());
+		resource.addLink(lb.build());
+	}
+
+	private void processLinkProperties(LinkBuilder lb, JsonNode value) {
+		Iterator<Entry<String, JsonNode>> elements = value.fields();
 
 		while (elements.hasNext())
 		{
@@ -172,9 +164,6 @@ extends JsonDeserializer<HalResource>
 				lb.set(element.getKey(), element.getValue().asText());
 			}
 		}
-
-		resource.addLink(lb.build());
-
 	}
 
 	private void processEmbedded(JsonNode embedded, HalResource resource, ObjectCodec oc)

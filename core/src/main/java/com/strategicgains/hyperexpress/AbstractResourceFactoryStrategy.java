@@ -127,7 +127,7 @@ implements ResourceFactoryStrategy
 					
 					if (value != null)
 					{
-						to.addProperty(f.getName(), value);
+						addProperty(to, f, value);
 					}
 				}
 			}
@@ -138,6 +138,20 @@ implements ResourceFactoryStrategy
 		}
 
 		copyProperties0(type.getSuperclass(), from, to);
+	}
+
+	/**
+	 * Template method. Sub-classes can override to possibly handle annotations
+	 * on the field, etc. By default, this method simply adds the property to
+	 * the resource using the value and the given name of the field.
+	 * 
+	 * @param to the destination resource.
+	 * @param f the field to copy.
+	 * @param value the value of the field.
+	 */
+	protected void addProperty(Resource to, Field f, Object value)
+	{
+		to.addProperty(f.getName(), value);
 	}
 
 	/**
