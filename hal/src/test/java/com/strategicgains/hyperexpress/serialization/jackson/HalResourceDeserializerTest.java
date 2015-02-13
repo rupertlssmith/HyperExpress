@@ -19,20 +19,6 @@
  */
 package com.strategicgains.hyperexpress.serialization.jackson;
 
-<<<<<<< HEAD
-=======
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.List;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-
->>>>>>> upstream/master
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -40,7 +26,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-<<<<<<< HEAD
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Namespace;
@@ -54,20 +39,11 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
- * @author azytsev
- * @since Feb 2, 2015
-=======
-import com.strategicgains.hyperexpress.domain.Link;
-import com.strategicgains.hyperexpress.domain.hal.HalResource;
-
-/**
- * @author toddf
+ * @author toddf,azaytsev
  * @since Feb 6, 2015
->>>>>>> upstream/master
  */
 public class HalResourceDeserializerTest
 {
@@ -109,50 +85,13 @@ public class HalResourceDeserializerTest
 		assertEquals("/api/orders/9d1b29fc-4240-4993-82c5-a42d00900324/orderstate?orderState=Accepted", links.get(0).getHref());
 		assertEquals("/api/orders/9d1b29fc-4240-4993-82c5-a42d00900324/orderstate?orderState=Declined", links.get(1).getHref());
 	}
-	public void shouldDeserializeEmbeddedArray() throws IOException {
-		HalResource resource = whenReadingFromFile("embedded-array.json");
 
-		assertNotNull(resource);
-		assertEquals(resource.getProperty("name"),"root");
-
-		List<Resource> childrenList = resource.getResources("children");
-		assertNotNull(childrenList);
-		assertEquals(childrenList.size(),2);
-		assertEquals(childrenList.get(0).getProperty("name"),"child 1");
-		assertEquals(childrenList.get(1).getProperty("name"),"child 2");
-	}
 
 	private HalResource whenReadingFromFile(String filename) throws IOException {
 		try(InputStream inputStream = this.getClass().getResourceAsStream(filename)) {
 			return mapper.readValue(inputStream,HalResource.class);
 		}
 	}
-
-//	@Test
-//	public void shouldSerializeResource()
-//	throws JsonProcessingException
-//	{
-//		Resource r = new HalResource().addProperty("name", "root");
-//		r.addNamespace("ns:1", "/namespaces/1");
-//		LinkBuilder l = new LinkBuilder();
-//		r.addLink(l.rel("self").urlPattern("/something").build());
-//		r.addResource("children", new HalResource().addProperty("name", "child"));
-//		String json = mapper.writeValueAsString(r);
-//		thenJsonShouldBeEqualTo(json,"resource.json");
-//	}
-//
-//	@Test
-//	public void shouldSerializeResourceAsArrays()
-//	throws JsonProcessingException
-//	{
-//		Resource r = new HalResource().addProperty("name", "root");
-//		r.addNamespace("ns:1", "/namespaces/1");
-//		LinkBuilder l = new LinkBuilder();
-//		r.addLink(l.rel("self").urlPattern("/something").build(), true);
-//		r.addResource("children", new HalResource().addProperty("name", "child"), true);
-//		String json = mapper.writeValueAsString(r);
-//		thenJsonShouldBeEqualTo(json,"resource-as-arrays.json");
-//	}
 
 	@Test
 	public void shouldDeserializeResourceWithArrays() throws IOException {
