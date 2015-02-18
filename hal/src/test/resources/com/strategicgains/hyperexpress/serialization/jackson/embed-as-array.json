@@ -1,0 +1,4 @@
+{
+  "_embedded": {"children": [{"name": "child"}]},
+  "name": "root"
+}

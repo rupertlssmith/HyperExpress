@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
@@ -127,7 +126,7 @@ public class HalResourceSerializerTest
 		r.addLink(l.rel("self").urlPattern("/something").build());
 		r.addLink(l.rel("self").urlPattern("/something/else").build());
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"self\":[{\"href\":\"/something\"},{\"href\":\"/something/else\"}]}}", json);
+        thenJsonShouldBeEqualTo(json, "link-array2.json");
 	}
 
 	@Test
@@ -138,7 +137,7 @@ public class HalResourceSerializerTest
 		LinkBuilder l = new LinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something").build(), true);
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"self\":[{\"href\":\"/something\"}]}}", json);
+        thenJsonShouldBeEqualTo(json, "link-array.json");
 	}
 
 	@Test
@@ -149,7 +148,7 @@ public class HalResourceSerializerTest
 		r.addProperty("name", "A HAL resource");
 		r.addProperty("value", new Integer(42));
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"name\":\"A HAL resource\",\"value\":42}", json);
+        thenJsonShouldBeEqualTo(json, "properties.json");
 	}
 
 	@Test
@@ -159,7 +158,7 @@ public class HalResourceSerializerTest
 		Resource r = new HalResource().addProperty("name", "root");
 		r.addResource("children", new HalResource().addProperty("name", "child"));
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_embedded\":{\"children\":{\"name\":\"child\"}},\"name\":\"root\"}", json);
+        thenJsonShouldBeEqualTo(json, "single-embed.json");
 	}
 
 	@Test
@@ -169,7 +168,7 @@ public class HalResourceSerializerTest
 		Resource r = new HalResource().addProperty("name", "root");
 		r.addResource("children", new HalResource().addProperty("name", "child"), true);
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_embedded\":{\"children\":[{\"name\":\"child\"}]},\"name\":\"root\"}", json);
+        thenJsonShouldBeEqualTo(json, "embed-as-array.json");
 	}
 
 	@Test
