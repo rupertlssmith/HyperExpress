@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
+    Copyright 2014, Strategic Gains, Inc.
+=======
     Copyright 2015, Strategic Gains, Inc.
+>>>>>>> upstream/master
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -15,17 +19,6 @@
  */
 package com.strategicgains.hyperexpress.serialization.jackson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.List;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -33,11 +26,23 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.Link;
+import com.strategicgains.hyperexpress.domain.Namespace;
+import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.domain.hal.HalResource;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
- * @author toddf
+ * @author toddf,azaytsev
  * @since Feb 6, 2015
  */
 public class HalResourceDeserializerTest
@@ -80,4 +85,42 @@ public class HalResourceDeserializerTest
 		assertEquals("/api/orders/9d1b29fc-4240-4993-82c5-a42d00900324/orderstate?orderState=Accepted", links.get(0).getHref());
 		assertEquals("/api/orders/9d1b29fc-4240-4993-82c5-a42d00900324/orderstate?orderState=Declined", links.get(1).getHref());
 	}
+
+
+	private HalResource whenReadingFromFile(String filename) throws IOException {
+		try(InputStream inputStream = this.getClass().getResourceAsStream(filename)) {
+			return mapper.readValue(inputStream,HalResource.class);
+		}
+	}
+
+	@Test
+	public void shouldDeserializeResourceWithArrays() throws IOException {
+
+		HalResource halResource = whenReadingFromFile("resource-with-arrays.json");
+
+		assertNotNull(halResource);
+		assertEquals(halResource.getProperty("name"),"root");
+
+		List<Namespace> namespaces = halResource.getNamespaces();
+		assertNotNull(namespaces);
+		assertEquals(namespaces.size(), 2);
+		assertEquals(namespaces.get(0),new Namespace("ns:1", "/namespaces/1"));
+		assertEquals(namespaces.get(1),new Namespace("ns:2", "/namespaces/2"));
+
+		List<Link> links = halResource.getLinks();
+		assertNotNull(links);
+		assertEquals(links.size(),2);
+		LinkBuilder l = new LinkBuilder();
+
+		assertEquals(links.get(0),l.rel("self").urlPattern("/something").build());
+		assertEquals(links.get(1), l.rel("self").urlPattern("/something/{templated}").set("templated", "true").build());
+
+		List<Resource> childrenList = halResource.getResources("children");
+		assertNotNull(childrenList);
+		assertEquals(childrenList.size(),2);
+		assertEquals(childrenList.get(0).getProperty("name"),"child 1");
+		assertEquals(childrenList.get(1).getProperty("name"),"child 2");
+	}
+
+
 }

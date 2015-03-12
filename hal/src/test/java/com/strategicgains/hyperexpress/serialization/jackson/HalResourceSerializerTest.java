@@ -15,13 +15,6 @@
  */
 package com.strategicgains.hyperexpress.serialization.jackson;
 
-import static org.junit.Assert.assertEquals;
-
-import java.text.SimpleDateFormat;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -30,9 +23,19 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.common.io.CharStreams;
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.domain.hal.HalResource;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+
+import static org.junit.Assert.assertThat;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 /**
  * @author toddf
@@ -66,7 +69,7 @@ public class HalResourceSerializerTest
 		Resource r = new HalResource();
 		r.addNamespace("ns:1", "/namespaces/1");
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"curies\":{\"name\":\"ns:1\",\"href\":\"/namespaces/1\"}}}", json);
+		thenJsonShouldBeEqualTo(json, "single-namespace.json");
 	}
 
 	@Test
@@ -77,7 +80,7 @@ public class HalResourceSerializerTest
 		r.addNamespace("ns:1", "/namespaces/1");
 		r.addNamespace("ns:2", "/namespaces/2");
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"curies\":[{\"name\":\"ns:1\",\"href\":\"/namespaces/1\"},{\"name\":\"ns:2\",\"href\":\"/namespaces/2\"}]}}", json);
+		thenJsonShouldBeEqualTo(json, "namespace-array.json");
 	}
 
 	@Test
@@ -88,7 +91,7 @@ public class HalResourceSerializerTest
 		LinkBuilder l = new LinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something").build());
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"self\":{\"href\":\"/something\"}}}", json);
+		thenJsonShouldBeEqualTo(json, "single-link.json");
 	}
 
 	@Test
@@ -99,7 +102,7 @@ public class HalResourceSerializerTest
 		LinkBuilder l = new LinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something/{templated}").build());
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"self\":{\"href\":\"/something/{templated}\",\"templated\":true}}}", json);
+		thenJsonShouldBeEqualTo(json, "templated.json");
 	}
 
 	@Test
@@ -111,7 +114,7 @@ public class HalResourceSerializerTest
 		r.addLink(l.rel("self").urlPattern("/something/{templated}").build());
 		r.addLink(l.rel("self").urlPattern("/something/not_templated").build());
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"self\":[{\"href\":\"/something/{templated}\",\"templated\":true},{\"href\":\"/something/not_templated\"}]}}", json);
+		thenJsonShouldBeEqualTo(json, "templated-array.json");
 	}
 
 	@Test
@@ -123,7 +126,7 @@ public class HalResourceSerializerTest
 		r.addLink(l.rel("self").urlPattern("/something").build());
 		r.addLink(l.rel("self").urlPattern("/something/else").build());
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"self\":[{\"href\":\"/something\"},{\"href\":\"/something/else\"}]}}", json);
+        thenJsonShouldBeEqualTo(json, "link-array2.json");
 	}
 
 	@Test
@@ -134,7 +137,7 @@ public class HalResourceSerializerTest
 		LinkBuilder l = new LinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something").build(), true);
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"self\":[{\"href\":\"/something\"}]}}", json);
+        thenJsonShouldBeEqualTo(json, "link-array.json");
 	}
 
 	@Test
@@ -145,7 +148,7 @@ public class HalResourceSerializerTest
 		r.addProperty("name", "A HAL resource");
 		r.addProperty("value", new Integer(42));
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"name\":\"A HAL resource\",\"value\":42}", json);
+        thenJsonShouldBeEqualTo(json, "properties.json");
 	}
 
 	@Test
@@ -155,7 +158,7 @@ public class HalResourceSerializerTest
 		Resource r = new HalResource().addProperty("name", "root");
 		r.addResource("children", new HalResource().addProperty("name", "child"));
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_embedded\":{\"children\":{\"name\":\"child\"}},\"name\":\"root\"}", json);
+        thenJsonShouldBeEqualTo(json, "single-embed.json");
 	}
 
 	@Test
@@ -165,7 +168,7 @@ public class HalResourceSerializerTest
 		Resource r = new HalResource().addProperty("name", "root");
 		r.addResource("children", new HalResource().addProperty("name", "child"), true);
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_embedded\":{\"children\":[{\"name\":\"child\"}]},\"name\":\"root\"}", json);
+        thenJsonShouldBeEqualTo(json, "embed-as-array.json");
 	}
 
 	@Test
@@ -176,7 +179,7 @@ public class HalResourceSerializerTest
 		r.addResource("children", new HalResource().addProperty("name", "child 1"));
 		r.addResource("children", new HalResource().addProperty("name", "child 2"));
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_embedded\":{\"children\":[{\"name\":\"child 1\"},{\"name\":\"child 2\"}]},\"name\":\"root\"}", json);
+		thenJsonShouldBeEqualTo(json, "embedded-array.json");
 	}
 
 	@Test
@@ -189,7 +192,7 @@ public class HalResourceSerializerTest
 		r.addLink(l.rel("self").urlPattern("/something").build());
 		r.addResource("children", new HalResource().addProperty("name", "child"));
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"curies\":{\"name\":\"ns:1\",\"href\":\"/namespaces/1\"},\"self\":{\"href\":\"/something\"}},\"_embedded\":{\"children\":{\"name\":\"child\"}},\"name\":\"root\"}", json);
+		thenJsonShouldBeEqualTo(json,"resource.json");
 	}
 
 	@Test
@@ -202,7 +205,7 @@ public class HalResourceSerializerTest
 		r.addLink(l.rel("self").urlPattern("/something").build(), true);
 		r.addResource("children", new HalResource().addProperty("name", "child"), true);
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"curies\":{\"name\":\"ns:1\",\"href\":\"/namespaces/1\"},\"self\":[{\"href\":\"/something\"}]},\"_embedded\":{\"children\":[{\"name\":\"child\"}]},\"name\":\"root\"}", json);
+		thenJsonShouldBeEqualTo(json,"resource-as-arrays.json");
 	}
 
 	@Test
@@ -218,6 +221,20 @@ public class HalResourceSerializerTest
 		r.addResource("children", new HalResource().addProperty("name", "child 1"));
 		r.addResource("children", new HalResource().addProperty("name", "child 2"));
 		String json = mapper.writeValueAsString(r);
-		assertEquals("{\"_links\":{\"curies\":[{\"name\":\"ns:1\",\"href\":\"/namespaces/1\"},{\"name\":\"ns:2\",\"href\":\"/namespaces/2\"}],\"self\":[{\"href\":\"/something\"},{\"href\":\"/something/{templated}\",\"templated\":true}]},\"_embedded\":{\"children\":[{\"name\":\"child 1\"},{\"name\":\"child 2\"}]},\"name\":\"root\"}", json);
+		thenJsonShouldBeEqualTo(json,"resource-with-arrays.json");
+	}
+
+	protected void thenJsonShouldBeEqualTo(String checked,String filePath) {
+		try {
+			assertThat(checked,sameJSONAs(fileContent(filePath)).allowingExtraUnexpectedFields());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public String fileContent(String filename) throws IOException {
+		try(InputStreamReader reader = new InputStreamReader(this.getClass().getResourceAsStream(filename))) {
+			return CharStreams.toString(reader);
+		}
 	}
 }
