@@ -17,6 +17,9 @@ package com.strategicgains.hyperexpress.builder;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Test;
 
 import com.strategicgains.hyperexpress.RelTypes;
@@ -125,6 +128,32 @@ public class LinkBuilderTest
 		
 		assertEquals(BASE_URL + "/first/second/42", link.getHref());
 		assertEquals(RelTypes.DESCRIBED_BY, link.getRel());
+	}
+
+	@Test
+	public void shouldBuildComplexQueryString()
+	{
+		String expectedUrl = "http://someserver/myapp/report/1234?accountId=400&accountId=401&accountId=402";
+		
+		  //--- the list of IDs would be variable...
+		List<String> accountIds = Arrays.asList("400", "401", "402");
+		int i = 0;
+
+		LinkBuilder lb = new LinkBuilder("/myapp/report/{reportId}")
+			.baseUrl("http://someserver");
+		TokenResolver r = new TokenResolver()
+			.bind("reportId", "1234");
+
+		for (String accountId : accountIds)
+		{
+			lb.withQuery("accountId={accountId" + i + "}");
+			r.bind("accountId" + i, accountId);
+			++i;
+		}
+	
+		
+		Link link = lb.build(r);
+		assertEquals(expectedUrl, link.getHref());
 	}
 
 	@Test
