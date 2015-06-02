@@ -244,7 +244,10 @@ implements Cloneable
 	 */
 	public String build(String urlPattern, Object object, TokenResolver tokenResolver)
 	{
-		if (tokenResolver == null) return urlPattern;
+		if (tokenResolver == null)
+		{
+			return appendQueryString(urlPattern, null);
+		}
 
 		String url = tokenResolver.resolve(urlPattern, object);
 		return appendQueryString(url, tokenResolver);
@@ -269,19 +272,20 @@ implements Cloneable
 
 		for (String query : queries)
 		{
-			String boundQuery = tokenResolver.resolve(query);
+			String boundQuery = null;
 
-			if (!Strings.hasToken(boundQuery))
+			if (Strings.hasToken(query))
 			{
-				if (hasQuery)
-				{
-					sb.append("&");
-				}
-				else
-				{
-					sb.append("?");
-				}
+				boundQuery = attemptResolution(query, tokenResolver);
+			}
+			else
+			{
+				boundQuery = query;
+			}
 
+			if (boundQuery != null)
+			{
+				sb.append(queryDelimiter(hasQuery));
 				sb.append(boundQuery);
 				hasQuery = true;
 			}
@@ -289,6 +293,22 @@ implements Cloneable
 
 		return (hasQuery ? sb.toString() : url);
 	}
+
+	private String attemptResolution(String query, TokenResolver tokenResolver)
+    {
+		if (tokenResolver != null)
+		{
+			String resolved = tokenResolver.resolve(query);
+			return (Strings.hasToken(resolved) ? null : resolved);
+		}
+
+		return null;
+    }
+
+	private String queryDelimiter(boolean hasQuery)
+    {
+		return (hasQuery ? "&" : "?");
+    }
 
 	private void printQueryStrings(StringBuilder s)
     {

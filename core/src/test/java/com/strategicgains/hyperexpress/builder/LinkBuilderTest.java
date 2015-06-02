@@ -157,6 +157,19 @@ public class LinkBuilderTest
 	}
 
 	@Test
+	public void shouldBuildQueryStringWithNoResolver()
+	{
+		String expectedUrl = "http://someserver/myapp/report/1234?param1=val1";
+
+		Link link = new LinkBuilder("/myapp/report/1234")
+		    .baseUrl("http://someserver")
+		    .withQuery("param1=val1")
+		    .build();
+
+		assertEquals(expectedUrl, link.getHref());
+	}
+
+	@Test
 	public void shouldAllowMissingRel()
 	{
 		new LinkBuilder(URL_PATTERN).build(new TokenResolver());

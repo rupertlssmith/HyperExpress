@@ -17,7 +17,7 @@ package com.strategicgains.hyperexpress.serialization.siren.jackson;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -126,7 +126,7 @@ extends JsonSerializer<SirenResource>
 	 */
 	private Map<String, SirenLink> indexLinksByHref(List<Link> links)
 	{
-		Map<String, SirenLink> linksByHref = new HashMap<String, SirenLink>();
+		Map<String, SirenLink> linksByHref = new LinkedHashMap<String, SirenLink>();
 
 		for (Link link : links)
 		{
