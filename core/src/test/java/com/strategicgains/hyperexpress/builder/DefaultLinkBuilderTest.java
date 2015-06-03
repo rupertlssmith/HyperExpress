@@ -104,7 +104,7 @@ public class DefaultLinkBuilderTest
 		Link link = new DefaultLinkBuilder(URL_PATTERN)
 			.baseUrl(BASE_URL)
 			.rel(RelTypes.SELF)
-			.build(new TokenResolver()
+			.build(new DefaultTokenResolver()
 				.bind("id", "42")
 			);
 		
@@ -115,7 +115,7 @@ public class DefaultLinkBuilderTest
 	@Test
 	public void shouldBuildComplexSingleIdTemplate()
 	{
-		TokenResolver r = new TokenResolver()
+		TokenResolver r = new DefaultTokenResolver()
 			.bind("rootId", "first")
 			.bind("secondaryId", "second")
 			.bind("id", "42")
@@ -141,7 +141,7 @@ public class DefaultLinkBuilderTest
 
 		LinkBuilder lb = new DefaultLinkBuilder("/myapp/report/{reportId}")
 			.baseUrl("http://someserver");
-		TokenResolver r = new TokenResolver()
+		TokenResolver r = new DefaultTokenResolver()
 			.bind("reportId", "1234");
 
 		for (String accountId : accountIds)
@@ -172,6 +172,6 @@ public class DefaultLinkBuilderTest
 	@Test
 	public void shouldAllowMissingRel()
 	{
-		new DefaultLinkBuilder(URL_PATTERN).build(new TokenResolver());
+		new DefaultLinkBuilder(URL_PATTERN).build(new DefaultTokenResolver());
 	}
 }

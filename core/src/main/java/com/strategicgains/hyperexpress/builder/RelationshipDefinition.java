@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.strategicgains.hyperexpress.BuilderFactory;
 import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.exception.RelationshipException;
 import com.strategicgains.hyperexpress.util.Strings;
@@ -186,7 +187,7 @@ public class RelationshipDefinition
 	 */
 	public RelationshipDefinition rel(String rel, String href)
 	{
-		return rel(rel, factory.newConditionalLinkBuilder(href));
+		return rel(rel, factory.newLinkBuilder(href));
 	}
 
 	/**
@@ -221,7 +222,7 @@ public class RelationshipDefinition
 	 */
 	public RelationshipDefinition rels(String name, String href)
 	{
-		return rels(name, factory.newConditionalLinkBuilder(href));
+		return rels(name, factory.newLinkBuilder(href));
 	}
 
 	/**

@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import org.junit.Test;
 
-public class TokenResolverTest
+public class DefaultTokenResolverTest
 {
 	private static final String[] URLS = {
 		"/a/{a}/b/{b}",
@@ -14,7 +14,7 @@ public class TokenResolverTest
 		"{f}"
 	};
 
-	private TokenResolver resolver = new TokenResolver()
+	private TokenResolver resolver = new DefaultTokenResolver()
 		.bind("a", "a")
 		.bind("b", "b")
 		.bind("c", "c")

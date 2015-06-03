@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import com.strategicgains.hyperexpress.builder.DefaultBuilderFactory;
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.builder.RelationshipDefinition;
 import com.strategicgains.hyperexpress.builder.TokenBinder;
@@ -61,6 +62,7 @@ public class HyperExpress
 	private DefaultResourceFactory resourceFactory;
 	private RelationshipDefinition relationshipDefinition;
 	private ThreadLocal<TokenResolver> tokenResolver;
+	private BuilderFactory builderFactory;
 
 	/*
 	 * Private to prevent external instantiation.
@@ -70,10 +72,22 @@ public class HyperExpress
 		resourceFactory = new DefaultResourceFactory();
 		relationshipDefinition = new RelationshipDefinition();
 		tokenResolver = new ThreadLocal<TokenResolver>();
+		builderFactory = new DefaultBuilderFactory();
 	}
 
 
 	// SECTION: STATIC - PUBLIC METHODS
+
+	/**
+	 * Globally set the BuilderFactory to use when creating internal LinkBuilder, TokenResolver, and
+	 * UrlBuilder instances. By default, HyperExpress uses DefaultBuilderFactory.
+	 * 
+	 * @param factory a new BuilderFactory to use when creating internal builders.
+	 */
+	public static void builderFactory(BuilderFactory factory)
+	{
+		INSTANCE.builderFactory = factory;
+	}
 
 	/**
 	 * Register a ResourceFactoryStrategy for a content-type. In order for createResource() and
@@ -353,7 +367,7 @@ public class HyperExpress
 
 		if (tr == null)
 		{
-			tr = new TokenResolver();
+			tr = builderFactory.newTokenResolver();
 			tokenResolver.set(tr);
 		}
 

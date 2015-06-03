@@ -13,7 +13,11 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-package com.strategicgains.hyperexpress.builder;
+package com.strategicgains.hyperexpress;
+
+import com.strategicgains.hyperexpress.builder.ConditionalLinkBuilder;
+import com.strategicgains.hyperexpress.builder.TokenResolver;
+import com.strategicgains.hyperexpress.builder.UrlBuilder;
 
 /**
  * @author toddf
@@ -21,7 +25,8 @@ package com.strategicgains.hyperexpress.builder;
  */
 public interface BuilderFactory
 {
-	public ConditionalLinkBuilder newConditionalLinkBuilder();
-	public ConditionalLinkBuilder newConditionalLinkBuilder(String urlPattern);
+	public ConditionalLinkBuilder newLinkBuilder();
+	public ConditionalLinkBuilder newLinkBuilder(String urlPattern);
 	public UrlBuilder newUrlBuilder();
+	public TokenResolver newTokenResolver();
 }

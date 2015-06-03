@@ -15,6 +15,8 @@
 */
 package com.strategicgains.hyperexpress.builder;
 
+import com.strategicgains.hyperexpress.BuilderFactory;
+
 
 /**
  * @author toddf
@@ -24,12 +26,12 @@ public class DefaultBuilderFactory
 implements BuilderFactory
 {
 	@Override
-	public ConditionalLinkBuilder newConditionalLinkBuilder()
+	public ConditionalLinkBuilder newLinkBuilder()
 	{
 		return new DefaultConditionalLinkBuilder();
 	}
 	@Override
-	public ConditionalLinkBuilder newConditionalLinkBuilder(String urlPattern)
+	public ConditionalLinkBuilder newLinkBuilder(String urlPattern)
 	{
 		return new DefaultConditionalLinkBuilder(urlPattern);
 	}
@@ -39,4 +41,10 @@ implements BuilderFactory
 	{
 		return new DefaultUrlBuilder();
 	}
+
+	@Override
+    public TokenResolver newTokenResolver()
+    {
+	    return new DefaultTokenResolver();
+    }
 }

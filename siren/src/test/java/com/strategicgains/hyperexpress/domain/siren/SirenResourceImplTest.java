@@ -22,10 +22,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.strategicgains.hyperexpress.builder.TokenResolver;
+import com.strategicgains.hyperexpress.builder.DefaultTokenResolver;
 import com.strategicgains.hyperexpress.domain.Namespace;
-import com.strategicgains.hyperexpress.domain.siren.SirenLinkBuilder;
-import com.strategicgains.hyperexpress.domain.siren.SirenResource;
 import com.strategicgains.hyperexpress.exception.ResourceException;
 
 /**
@@ -38,7 +36,7 @@ public class SirenResourceImplTest
 	public void shouldThrowOnMissingRel()
 	{
 		SirenResource r = new SirenResource();
-		r.addLink(new SirenLinkBuilder("/something").build(new TokenResolver()));
+		r.addLink(new SirenLinkBuilder("/something").build(new DefaultTokenResolver()));
 	}
 
 	@Test(expected=ResourceException.class)

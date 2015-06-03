@@ -26,7 +26,7 @@ import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.strategicgains.hyperexpress.builder.BuilderFactory;
+import com.strategicgains.hyperexpress.BuilderFactory;
 import com.strategicgains.hyperexpress.builder.DefaultBuilderFactory;
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.siren.SirenResource;
@@ -128,7 +128,7 @@ extends JsonDeserializer<SirenResource>
 	 */
 	private void addAllLinks(SirenResource resource, Entry<String, JsonNode> field)
 	{
-		LinkBuilder lb = factory.newConditionalLinkBuilder();
+		LinkBuilder lb = factory.newLinkBuilder();
 		lb.rel(field.getKey());
 		Iterator<JsonNode> values = field.getValue().elements();
 
@@ -154,7 +154,7 @@ extends JsonDeserializer<SirenResource>
 	 */
 	private void addLink(SirenResource resource, Entry<String, JsonNode> field)
 	{
-		LinkBuilder lb = factory.newConditionalLinkBuilder();
+		LinkBuilder lb = factory.newLinkBuilder();
 		lb.rel(field.getKey());
 		Iterator<Entry<String, JsonNode>> elements = field.getValue().fields();
 

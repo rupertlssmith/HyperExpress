@@ -13,7 +13,7 @@ public class DefaultUrlBuilderTest
 	public void shouldBuildSimpleUrl()
 	{
 		assertEquals("/todd:was,here", new DefaultUrlBuilder(URL_PATTERN)
-			.build(new TokenResolver()
+			.build(new DefaultTokenResolver()
 				.bind("id", "todd:was,here")
 			));
 	}
@@ -22,7 +22,7 @@ public class DefaultUrlBuilderTest
 	public void shouldBuildComplexUrl()
 	{
 		assertEquals("/something/else/12345", new DefaultUrlBuilder(URL_PATTERN2)
-			.build(new TokenResolver()
+			.build(new DefaultTokenResolver()
 				.bind("rootId", "something")
 				.bind("secondaryId", "else")
 				.bind("id", "12345")
@@ -33,7 +33,7 @@ public class DefaultUrlBuilderTest
 	public void shouldBuildMultipleUrls()
 	{
 		UrlBuilder b = new DefaultUrlBuilder(URL_PATTERN2);
-		TokenResolver r = new TokenResolver()
+		TokenResolver r = new DefaultTokenResolver()
 			.bind("rootId", "something")
 			.bind("secondaryId", "else")
 			.bind("id", "12345");
@@ -57,7 +57,7 @@ public class DefaultUrlBuilderTest
 		assertEquals("/something/else/12345", new DefaultUrlBuilder(URL_PATTERN2)
 			.withQuery("limit={selfLimit}")
 			.withQuery("offset={selfOffset}")
-			.build(new TokenResolver()
+			.build(new DefaultTokenResolver()
 				.bind("rootId", "something")
 				.bind("secondaryId", "else")
 				.bind("id", "12345")
@@ -70,7 +70,7 @@ public class DefaultUrlBuilderTest
 		assertEquals("/something/else/12345?limit=20&offset=40", new DefaultUrlBuilder(URL_PATTERN2)
 			.withQuery("limit={selfLimit}")
 			.withQuery("offset={selfOffset}")
-			.build(new TokenResolver()
+			.build(new DefaultTokenResolver()
 				.bind("rootId", "something")
 				.bind("secondaryId", "else")
 				.bind("id", "12345")
@@ -85,7 +85,7 @@ public class DefaultUrlBuilderTest
 		assertEquals("/something/else/12345?offset=40", new DefaultUrlBuilder(URL_PATTERN2)
 			.withQuery("limit={selfLimit}")
 			.withQuery("offset={selfOffset}")
-			.build(new TokenResolver()
+			.build(new DefaultTokenResolver()
 				.bind("rootId", "something")
 				.bind("secondaryId", "else")
 				.bind("id", "12345")
@@ -98,7 +98,7 @@ public class DefaultUrlBuilderTest
 	{
 		assertEquals("/something/else/12345?offset=40&limit=20", new DefaultUrlBuilder(URL_PATTERN2 + "?offset={nextOffset}")
 			.withQuery("limit={limit}")
-			.build(new TokenResolver()
+			.build(new DefaultTokenResolver()
 				.bind("rootId", "something")
 				.bind("secondaryId", "else")
 				.bind("id", "12345")
@@ -112,7 +112,7 @@ public class DefaultUrlBuilderTest
 	{
 		assertEquals("/something/else/12345?offset=40", new DefaultUrlBuilder(URL_PATTERN2 + "?offset={nextOffset}")
 			.withQuery("limit={limit}")
-			.build(new TokenResolver()
+			.build(new DefaultTokenResolver()
 				.bind("rootId", "something")
 				.bind("secondaryId", "else")
 				.bind("id", "12345")
@@ -126,7 +126,7 @@ public class DefaultUrlBuilderTest
 		assertEquals("/something/else/12345?limit=20&offset=40", new DefaultUrlBuilder(URL_PATTERN2)
 			.withQuery("limit={selfLimit}")
 			.withQuery("offset={selfOffset}")
-			.build(new TokenResolver()
+			.build(new DefaultTokenResolver()
 				.bind("rootId", "something")
 				.bind("secondaryId", "else")
 				.bind("id", "12345")
