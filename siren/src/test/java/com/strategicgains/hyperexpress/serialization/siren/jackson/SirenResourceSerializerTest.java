@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.strategicgains.hyperexpress.builder.DefaultLinkBuilder;
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.domain.siren.SirenAction;
@@ -87,7 +88,7 @@ public class SirenResourceSerializerTest
 	throws JsonProcessingException
 	{
 		Resource r = new SirenResource();
-		LinkBuilder l = new LinkBuilder();
+		LinkBuilder l = new DefaultLinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something").build());
 		String json = mapper.writeValueAsString(r);
 		assertEquals("{\"links\":[{\"rel\":[\"self\"],\"href\":\"/something\"}]}", json);
@@ -98,7 +99,7 @@ public class SirenResourceSerializerTest
 	throws JsonProcessingException
 	{
 		Resource r = new SirenResource();
-		LinkBuilder l = new LinkBuilder();
+		LinkBuilder l = new DefaultLinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something/{templated}").build());
 		String json = mapper.writeValueAsString(r);
 		assertEquals("{\"links\":[{\"rel\":[\"self\"],\"href\":\"/something/{templated}\"}]}", json);
@@ -109,7 +110,7 @@ public class SirenResourceSerializerTest
 	throws JsonProcessingException
 	{
 		Resource r = new SirenResource();
-		LinkBuilder l = new LinkBuilder();
+		LinkBuilder l = new DefaultLinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something/not_templated").build());
 		r.addLink(l.rel("self").urlPattern("/something/{templated}").build());
 		String json = mapper.writeValueAsString(r);
@@ -121,7 +122,7 @@ public class SirenResourceSerializerTest
 	throws JsonProcessingException
 	{
 		Resource r = new SirenResource();
-		LinkBuilder l = new LinkBuilder();
+		LinkBuilder l = new DefaultLinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something").build());
 		r.addLink(l.rel("self").urlPattern("/something/else").build());
 		String json = mapper.writeValueAsString(r);
@@ -133,7 +134,7 @@ public class SirenResourceSerializerTest
 	throws JsonProcessingException
 	{
 		Resource r = new SirenResource();
-		LinkBuilder l = new LinkBuilder();
+		LinkBuilder l = new DefaultLinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something/self").build());
 		r.addLink(l.rel("alternate").urlPattern("/something/self").build());
 		String json = mapper.writeValueAsString(r);
@@ -188,7 +189,7 @@ public class SirenResourceSerializerTest
 	{
 		Resource r = new SirenResource().addProperty("name", "root");
 		r.addNamespace("ns:1", "/namespaces/1");
-		LinkBuilder l = new LinkBuilder();
+		LinkBuilder l = new DefaultLinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something").build());
 		r.addResource("children", new SirenResource().addProperty("name", "child"));
 		String json = mapper.writeValueAsString(r);
@@ -202,7 +203,7 @@ public class SirenResourceSerializerTest
 		Resource r = new SirenResource().addProperty("name", "root");
 		r.addNamespace("ns:1", "/namespaces/1");
 		r.addNamespace("ns:2", "/namespaces/2");
-		LinkBuilder l = new LinkBuilder();
+		LinkBuilder l = new DefaultLinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something").build());
 		r.addLink(l.rel("self").urlPattern("/something/{templated}").build());
 		r.addResource("children", new SirenResource().addProperty("name", "child 1"));

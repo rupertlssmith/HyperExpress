@@ -54,6 +54,7 @@ public class RelationshipDefinition
 	// Atom-specific
 	private static final String LENGTH = "length";
 
+	private BuilderFactory factory = new DefaultBuilderFactory();
 	private Map<String, Namespace> namespaces = new LinkedHashMap<>();
 	private Map<String, Set<String>> arrayRelsByClass = new HashMap<String, Set<String>>();
 	private Map<String, List<ConditionalLinkBuilder>> linkBuildersByClass = new LinkedHashMap<>();
@@ -63,11 +64,18 @@ public class RelationshipDefinition
 	private String lastClassName;
 	private Map<String, String> relNamesByClass = new HashMap<String, String>();
 
+	
+	public RelationshipDefinition builderFactory(BuilderFactory factory)
+	{
+		this.factory = factory;
+		return this;
+	}
+
 	/**
 	 * Adds one or more namespaces to this relationship builder.
 	 * 
 	 * @param namespaces one or more Namespace instances.
-	 * @return
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition addNamespaces(Namespace... namespaces)
 	{
@@ -85,7 +93,7 @@ public class RelationshipDefinition
 	 * Add a single Namespace to this relationship builder.
 	 * 
 	 * @param namespace a Namespace. Cannot be null.
-	 * @return
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition addNamespace(Namespace namespace)
 	{
@@ -174,11 +182,11 @@ public class RelationshipDefinition
 	 * 
 	 * @param rel the relationship name (rel name).
 	 * @param href the URL, possibly templated.
-	 * @return this RelationshipDefinition
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition rel(String rel, String href)
 	{
-		return rel(rel, new DefaultConditionalLinkBuilder(href));
+		return rel(rel, factory.newConditionalLinkBuilder(href));
 	}
 
 	/**
@@ -186,7 +194,7 @@ public class RelationshipDefinition
 	 * 
 	 * @param rel the relationship name (rel name).
 	 * @param builder an OptionalLinkBuilder instance.
-	 * @return this RelationshipDefinition
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition rel(String rel, ConditionalLinkBuilder builder)
 	{
@@ -209,11 +217,11 @@ public class RelationshipDefinition
 	 * 
 	 * @param name the relationship name (rel name).
 	 * @param href the URL, possibly templated.
-	 * @return this RelationshipDefinition
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition rels(String name, String href)
 	{
-		return rels(name, new DefaultConditionalLinkBuilder(href));
+		return rels(name, factory.newConditionalLinkBuilder(href));
 	}
 
 	/**
@@ -223,7 +231,7 @@ public class RelationshipDefinition
 	 * 
 	 * @param name the relationship name (rel name).
 	 * @param builder an OptionalLinkBuilder instance.
-	 * @return this RelationshipDefinition
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition rels(String name, ConditionalLinkBuilder builder)
 	{
@@ -235,7 +243,7 @@ public class RelationshipDefinition
 	 * Set the title on the latest rel().
 	 * 
 	 * @param title
-	 * @return
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition title(String title)
 	{
@@ -246,7 +254,7 @@ public class RelationshipDefinition
 	 * Set the 'hreflang' property on the latest rel().
 	 * 
 	 * @param value
-	 * @return
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition hreflang(String value)
 	{
@@ -257,7 +265,7 @@ public class RelationshipDefinition
 	 * Set the 'type' property on the latest rel().
 	 * 
 	 * @param type
-	 * @return
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition type(String type)
     {
@@ -268,7 +276,7 @@ public class RelationshipDefinition
 	 * HAL-specific. Set the 'name' property of the latest rel().
 	 * 
 	 * @param name
-	 * @return
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition name(String name)
 	{
@@ -279,7 +287,7 @@ public class RelationshipDefinition
 	 * HAL-specific. Set the 'templated' property of the latest rel().
 	 * 
 	 * @param value
-	 * @return
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition templated(boolean value)
 	{
@@ -295,7 +303,7 @@ public class RelationshipDefinition
 	 * HAL-specific.
 	 * 
 	 * @param value
-	 * @return
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition deprecation(String value)
 	{
@@ -306,7 +314,7 @@ public class RelationshipDefinition
 	 * HAL-specific.
 	 * 
 	 * @param value
-	 * @return
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition profile(String value)
 	{
@@ -317,7 +325,7 @@ public class RelationshipDefinition
 	 * Atom-specific.
 	 * 
 	 * @param value
-	 * @return
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition length(String value)
 	{
@@ -328,7 +336,7 @@ public class RelationshipDefinition
 	 * Indicates that the link should not be included in a response if it would be marked 'templated'.
 	 * This is useful for links that are 'pagination' related, or otherwise conditional in the response.
 	 * 
-	 * @return
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition optional()
 	{
@@ -351,7 +359,7 @@ public class RelationshipDefinition
 	 * or HyperExpress.bind("adminRole", (role.equals("admin") ? "admin" : null));
 	 * 
 	 * @param token a URL token name, with or without beginning and ending curly-braces.
-	 * @return
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition ifBound(String token)
 	{
@@ -378,7 +386,7 @@ public class RelationshipDefinition
 	 * 
 	 * @param name
 	 * @param value
-	 * @return
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition attribute(String name, String value)
     {
@@ -393,7 +401,7 @@ public class RelationshipDefinition
 	 * tokens and is not fully populate, it will not appear in the generated link.
 	 * 
 	 * @param querySegment an optional query-string segment. Optionally contains tokens.
-	 * @return this RelationshipDefinition to facilitate method chaining.
+	 * @return this relationship definition instance to facilitate method chaining.
 	 */
 	public RelationshipDefinition withQuery(String querySegment)
 	{

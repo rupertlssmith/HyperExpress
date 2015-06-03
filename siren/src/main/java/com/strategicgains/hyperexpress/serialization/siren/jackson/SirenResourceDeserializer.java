@@ -16,12 +16,9 @@
 package com.strategicgains.hyperexpress.serialization.siren.jackson;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,8 +26,9 @@ import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.strategicgains.hyperexpress.builder.BuilderFactory;
+import com.strategicgains.hyperexpress.builder.DefaultBuilderFactory;
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
-import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.domain.siren.SirenResource;
 
 /**
@@ -51,6 +49,20 @@ extends JsonDeserializer<SirenResource>
 //	private static final String HREF = "href";
 //	private static final String TYPE = "type";
 	private static final String FIELDS = "fields";
+
+	private BuilderFactory factory;
+
+	public SirenResourceDeserializer()
+    {
+		super();
+		this.factory = new DefaultBuilderFactory();
+    }
+
+	public SirenResourceDeserializer(BuilderFactory factory)
+	{
+		super();
+		this.factory = factory;
+	}
 
 	@Override
 	public SirenResource deserialize(JsonParser jp, DeserializationContext context)
@@ -116,7 +128,7 @@ extends JsonDeserializer<SirenResource>
 	 */
 	private void addAllLinks(SirenResource resource, Entry<String, JsonNode> field)
 	{
-		LinkBuilder lb = new LinkBuilder();
+		LinkBuilder lb = factory.newConditionalLinkBuilder();
 		lb.rel(field.getKey());
 		Iterator<JsonNode> values = field.getValue().elements();
 
@@ -142,7 +154,7 @@ extends JsonDeserializer<SirenResource>
 	 */
 	private void addLink(SirenResource resource, Entry<String, JsonNode> field)
 	{
-		LinkBuilder lb = new LinkBuilder();
+		LinkBuilder lb = factory.newConditionalLinkBuilder();
 		lb.rel(field.getKey());
 		Iterator<Entry<String, JsonNode>> elements = field.getValue().fields();
 

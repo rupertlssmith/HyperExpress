@@ -18,9 +18,9 @@ package com.strategicgains.hyperexpress.builder;
 import java.util.List;
 
 /**
- * Extends LinkBuilder, adding a 'conditional' flag, where the value can either be "true" or
+ * Extends LinkBuilder, adding an 'optional' flag, where the value can either be "true" or
  * a token (e.g. "{role}").  If the flag is set to true and the resulting Link that is built
- * contains a token (a URL token is not bound), then build() returns null.
+ * still contains a token (a URL token is not bound), then build() returns null.
  * <p/>
  * Otherwise, if the flag is set to a token and that token doesn't get bound from the object
  * during build(), then the resulting link is not returned (it is null).

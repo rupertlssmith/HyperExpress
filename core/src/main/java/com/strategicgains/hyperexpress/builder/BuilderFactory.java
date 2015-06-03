@@ -19,8 +19,9 @@ package com.strategicgains.hyperexpress.builder;
  * @author toddf
  * @since Jun 3, 2015
  */
-public interface LinkBuilderFactory
+public interface BuilderFactory
 {
 	public ConditionalLinkBuilder newConditionalLinkBuilder();
+	public ConditionalLinkBuilder newConditionalLinkBuilder(String urlPattern);
 	public UrlBuilder newUrlBuilder();
 }

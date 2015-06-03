@@ -15,6 +15,16 @@
  */
 package com.strategicgains.hyperexpress.serialization.jackson;
 
+import static org.junit.Assert.assertThat;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -24,18 +34,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.io.CharStreams;
+import com.strategicgains.hyperexpress.builder.DefaultLinkBuilder;
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.domain.hal.HalResource;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-
-import static org.junit.Assert.assertThat;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 /**
  * @author toddf
@@ -88,7 +90,7 @@ public class HalResourceSerializerTest
 	throws JsonProcessingException
 	{
 		Resource r = new HalResource();
-		LinkBuilder l = new LinkBuilder();
+		LinkBuilder l = new DefaultLinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something").build());
 		String json = mapper.writeValueAsString(r);
 		thenJsonShouldBeEqualTo(json, "single-link.json");
@@ -99,7 +101,7 @@ public class HalResourceSerializerTest
 	throws JsonProcessingException
 	{
 		Resource r = new HalResource();
-		LinkBuilder l = new LinkBuilder();
+		LinkBuilder l = new DefaultLinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something/{templated}").build());
 		String json = mapper.writeValueAsString(r);
 		thenJsonShouldBeEqualTo(json, "templated.json");
@@ -110,7 +112,7 @@ public class HalResourceSerializerTest
 	throws JsonProcessingException
 	{
 		Resource r = new HalResource();
-		LinkBuilder l = new LinkBuilder();
+		LinkBuilder l = new DefaultLinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something/{templated}").build());
 		r.addLink(l.rel("self").urlPattern("/something/not_templated").build());
 		String json = mapper.writeValueAsString(r);
@@ -122,7 +124,7 @@ public class HalResourceSerializerTest
 	throws JsonProcessingException
 	{
 		Resource r = new HalResource();
-		LinkBuilder l = new LinkBuilder();
+		LinkBuilder l = new DefaultLinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something").build());
 		r.addLink(l.rel("self").urlPattern("/something/else").build());
 		String json = mapper.writeValueAsString(r);
@@ -134,7 +136,7 @@ public class HalResourceSerializerTest
 	throws JsonProcessingException
 	{
 		Resource r = new HalResource();
-		LinkBuilder l = new LinkBuilder();
+		LinkBuilder l = new DefaultLinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something").build(), true);
 		String json = mapper.writeValueAsString(r);
         thenJsonShouldBeEqualTo(json, "link-array.json");
@@ -188,7 +190,7 @@ public class HalResourceSerializerTest
 	{
 		Resource r = new HalResource().addProperty("name", "root");
 		r.addNamespace("ns:1", "/namespaces/1");
-		LinkBuilder l = new LinkBuilder();
+		LinkBuilder l = new DefaultLinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something").build());
 		r.addResource("children", new HalResource().addProperty("name", "child"));
 		String json = mapper.writeValueAsString(r);
@@ -201,7 +203,7 @@ public class HalResourceSerializerTest
 	{
 		Resource r = new HalResource().addProperty("name", "root");
 		r.addNamespace("ns:1", "/namespaces/1");
-		LinkBuilder l = new LinkBuilder();
+		LinkBuilder l = new DefaultLinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something").build(), true);
 		r.addResource("children", new HalResource().addProperty("name", "child"), true);
 		String json = mapper.writeValueAsString(r);
@@ -215,7 +217,7 @@ public class HalResourceSerializerTest
 		Resource r = new HalResource().addProperty("name", "root");
 		r.addNamespace("ns:1", "/namespaces/1");
 		r.addNamespace("ns:2", "/namespaces/2");
-		LinkBuilder l = new LinkBuilder();
+		LinkBuilder l = new DefaultLinkBuilder();
 		r.addLink(l.rel("self").urlPattern("/something").build());
 		r.addLink(l.rel("self").urlPattern("/something/{templated}").build());
 		r.addResource("children", new HalResource().addProperty("name", "child 1"));

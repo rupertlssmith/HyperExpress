@@ -19,6 +19,18 @@
  */
 package com.strategicgains.hyperexpress.serialization.jackson;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.List;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -26,20 +38,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.strategicgains.hyperexpress.builder.DefaultLinkBuilder;
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.domain.hal.HalResource;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * @author toddf,azaytsev
@@ -110,7 +114,7 @@ public class HalResourceDeserializerTest
 		List<Link> links = halResource.getLinks();
 		assertNotNull(links);
 		assertEquals(links.size(),2);
-		LinkBuilder l = new LinkBuilder();
+		LinkBuilder l = new DefaultLinkBuilder();
 
 		assertEquals(links.get(0),l.rel("self").urlPattern("/something").build());
 		assertEquals(links.get(1), l.rel("self").urlPattern("/something/{templated}").set("templated", "true").build());

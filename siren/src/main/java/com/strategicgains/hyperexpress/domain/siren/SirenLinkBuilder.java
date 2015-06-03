@@ -15,7 +15,7 @@
 */
 package com.strategicgains.hyperexpress.domain.siren;
 
-import com.strategicgains.hyperexpress.builder.LinkBuilder;
+import com.strategicgains.hyperexpress.builder.DefaultConditionalLinkBuilder;
 
 /**
  * A convenience class for building SirenLink instances.
@@ -24,7 +24,7 @@ import com.strategicgains.hyperexpress.builder.LinkBuilder;
  * @since Sep 12, 2014
  */
 public class SirenLinkBuilder
-extends LinkBuilder
+extends DefaultConditionalLinkBuilder
 {
 	public SirenLinkBuilder(String urlPattern)
     {

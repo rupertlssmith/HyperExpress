@@ -1,12 +1,10 @@
 package com.strategicgains.hyperexpress.builder;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.strategicgains.hyperexpress.builder.UrlBuilder;
-
-public class UrlBuilderTest
+public class DefaultUrlBuilderTest
 {
 	private static final String URL_PATTERN = "/{id}";
 	private static final String URL_PATTERN2 = "/{rootId}/{secondaryId}/{id}";
@@ -14,7 +12,7 @@ public class UrlBuilderTest
 	@Test
 	public void shouldBuildSimpleUrl()
 	{
-		assertEquals("/todd:was,here", new UrlBuilder(URL_PATTERN)
+		assertEquals("/todd:was,here", new DefaultUrlBuilder(URL_PATTERN)
 			.build(new TokenResolver()
 				.bind("id", "todd:was,here")
 			));
@@ -23,7 +21,7 @@ public class UrlBuilderTest
 	@Test
 	public void shouldBuildComplexUrl()
 	{
-		assertEquals("/something/else/12345", new UrlBuilder(URL_PATTERN2)
+		assertEquals("/something/else/12345", new DefaultUrlBuilder(URL_PATTERN2)
 			.build(new TokenResolver()
 				.bind("rootId", "something")
 				.bind("secondaryId", "else")
@@ -34,7 +32,7 @@ public class UrlBuilderTest
 	@Test
 	public void shouldBuildMultipleUrls()
 	{
-		UrlBuilder b = new UrlBuilder(URL_PATTERN2);
+		UrlBuilder b = new DefaultUrlBuilder(URL_PATTERN2);
 		TokenResolver r = new TokenResolver()
 			.bind("rootId", "something")
 			.bind("secondaryId", "else")
@@ -56,7 +54,7 @@ public class UrlBuilderTest
 	@Test
 	public void shouldExcludeQueryString()
 	{
-		assertEquals("/something/else/12345", new UrlBuilder(URL_PATTERN2)
+		assertEquals("/something/else/12345", new DefaultUrlBuilder(URL_PATTERN2)
 			.withQuery("limit={selfLimit}")
 			.withQuery("offset={selfOffset}")
 			.build(new TokenResolver()
@@ -69,7 +67,7 @@ public class UrlBuilderTest
 	@Test
 	public void shouldIncludeEntireQueryString()
 	{
-		assertEquals("/something/else/12345?limit=20&offset=40", new UrlBuilder(URL_PATTERN2)
+		assertEquals("/something/else/12345?limit=20&offset=40", new DefaultUrlBuilder(URL_PATTERN2)
 			.withQuery("limit={selfLimit}")
 			.withQuery("offset={selfOffset}")
 			.build(new TokenResolver()
@@ -84,7 +82,7 @@ public class UrlBuilderTest
 	@Test
 	public void shouldIncludeQueryString()
 	{
-		assertEquals("/something/else/12345?offset=40", new UrlBuilder(URL_PATTERN2)
+		assertEquals("/something/else/12345?offset=40", new DefaultUrlBuilder(URL_PATTERN2)
 			.withQuery("limit={selfLimit}")
 			.withQuery("offset={selfOffset}")
 			.build(new TokenResolver()
@@ -98,7 +96,7 @@ public class UrlBuilderTest
 	@Test
 	public void shouldIncludeOptionalQueryString()
 	{
-		assertEquals("/something/else/12345?offset=40&limit=20", new UrlBuilder(URL_PATTERN2 + "?offset={nextOffset}")
+		assertEquals("/something/else/12345?offset=40&limit=20", new DefaultUrlBuilder(URL_PATTERN2 + "?offset={nextOffset}")
 			.withQuery("limit={limit}")
 			.build(new TokenResolver()
 				.bind("rootId", "something")
@@ -112,7 +110,7 @@ public class UrlBuilderTest
 	@Test
 	public void shouldExcludeOptionalQueryString()
 	{
-		assertEquals("/something/else/12345?offset=40", new UrlBuilder(URL_PATTERN2 + "?offset={nextOffset}")
+		assertEquals("/something/else/12345?offset=40", new DefaultUrlBuilder(URL_PATTERN2 + "?offset={nextOffset}")
 			.withQuery("limit={limit}")
 			.build(new TokenResolver()
 				.bind("rootId", "something")
@@ -125,7 +123,7 @@ public class UrlBuilderTest
 	@Test
 	public void shouldUseExternalTokenResolver()
 	{
-		assertEquals("/something/else/12345?limit=20&offset=40", new UrlBuilder(URL_PATTERN2)
+		assertEquals("/something/else/12345?limit=20&offset=40", new DefaultUrlBuilder(URL_PATTERN2)
 			.withQuery("limit={selfLimit}")
 			.withQuery("offset={selfOffset}")
 			.build(new TokenResolver()

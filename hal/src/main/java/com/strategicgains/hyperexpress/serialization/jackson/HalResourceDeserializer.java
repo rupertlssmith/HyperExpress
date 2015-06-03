@@ -29,7 +29,8 @@ import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.strategicgains.hyperexpress.builder.DefaultLinkBuilder;
+import com.strategicgains.hyperexpress.builder.BuilderFactory;
+import com.strategicgains.hyperexpress.builder.DefaultBuilderFactory;
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.domain.hal.HalResource;
@@ -45,6 +46,20 @@ extends JsonDeserializer<HalResource>
 	private static final String CURIES = "curies";
 	private static final String EMBEDDED = "_embedded";
 	private static final Set<String> RESERVED_PROPERTIES = new HashSet<>(Arrays.asList(LINKS, EMBEDDED));
+
+	private BuilderFactory factory;
+
+	public HalResourceDeserializer()
+    {
+		super();
+		factory = new DefaultBuilderFactory();
+    }
+
+	public HalResourceDeserializer(BuilderFactory factory)
+    {
+		super();
+		this.factory = factory;
+    }
 
 	@Override
 	public HalResource deserialize(JsonParser jp, DeserializationContext context)
@@ -124,7 +139,7 @@ extends JsonDeserializer<HalResource>
 	 */
 	private void addAllLinks(HalResource resource, Entry<String, JsonNode> field)
 	{
-		LinkBuilder lb = new DefaultLinkBuilder();
+		LinkBuilder lb = factory.newConditionalLinkBuilder();
 		Iterator<JsonNode> values = field.getValue().elements();
 
 		while (values.hasNext())
@@ -143,7 +158,7 @@ extends JsonDeserializer<HalResource>
 	 */
 	private void addLink(HalResource resource, Entry<String, JsonNode> field)
 	{
-		LinkBuilder lb = new DefaultLinkBuilder();
+		LinkBuilder lb = factory.newConditionalLinkBuilder();
 		lb.rel(field.getKey());
 		processLinkProperties(lb, field.getValue());
 		resource.addLink(lb.build());

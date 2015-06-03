@@ -29,7 +29,7 @@ import com.strategicgains.hyperexpress.domain.Link;
  * @author toddf
  * @since Oct 18, 2013
  */
-public class LinkBuilderTest
+public class DefaultLinkBuilderTest
 {
 	private static final String BASE_URL = "http://localhost:8081";
 	private static final String URL_PATTERN = "/{id}";
@@ -38,7 +38,7 @@ public class LinkBuilderTest
 //	@Test
 //	public void shouldBuildSimpleMultipleIdTemplate()
 //	{
-//		Collection<Link> links = new LinkBuilder(URL_PATTERN)
+//		Collection<Link> links = new DefaultLinkBuilder(URL_PATTERN)
 //			.baseUrl(BASE_URL)
 //			.rel(RelTypes.RELATED)
 //			.build("id", "42", "22", "4");
@@ -69,7 +69,7 @@ public class LinkBuilderTest
 //	@Test
 //	public void shouldBuildComplexMultipleIdTemplate()
 //	{
-//		Collection<Link> links = new LinkBuilder(URL_PATTERN2)
+//		Collection<Link> links = new DefaultLinkBuilder(URL_PATTERN2)
 //			.baseUrl(BASE_URL)
 //			.rel(RelTypes.DESCRIBED_BY)
 //			.build("id", "42", "22", "4");
@@ -101,7 +101,7 @@ public class LinkBuilderTest
 	@Test
 	public void shouldBuildSimpleSingleIdTemplate()
 	{
-		Link link = new LinkBuilder(URL_PATTERN)
+		Link link = new DefaultLinkBuilder(URL_PATTERN)
 			.baseUrl(BASE_URL)
 			.rel(RelTypes.SELF)
 			.build(new TokenResolver()
@@ -121,7 +121,7 @@ public class LinkBuilderTest
 			.bind("id", "42")
 			.bind("ignored", "ignored");
 
-		Link link = new LinkBuilder(URL_PATTERN2)
+		Link link = new DefaultLinkBuilder(URL_PATTERN2)
 			.baseUrl(BASE_URL)
 			.rel(RelTypes.DESCRIBED_BY)
 			.build(r);
@@ -139,7 +139,7 @@ public class LinkBuilderTest
 		List<String> accountIds = Arrays.asList("400", "401", "402");
 		int i = 0;
 
-		LinkBuilder lb = new LinkBuilder("/myapp/report/{reportId}")
+		LinkBuilder lb = new DefaultLinkBuilder("/myapp/report/{reportId}")
 			.baseUrl("http://someserver");
 		TokenResolver r = new TokenResolver()
 			.bind("reportId", "1234");
@@ -161,7 +161,7 @@ public class LinkBuilderTest
 	{
 		String expectedUrl = "http://someserver/myapp/report/1234?param1=val1";
 
-		Link link = new LinkBuilder("/myapp/report/1234")
+		Link link = new DefaultLinkBuilder("/myapp/report/1234")
 		    .baseUrl("http://someserver")
 		    .withQuery("param1=val1")
 		    .build();
@@ -172,6 +172,6 @@ public class LinkBuilderTest
 	@Test
 	public void shouldAllowMissingRel()
 	{
-		new LinkBuilder(URL_PATTERN).build(new TokenResolver());
+		new DefaultLinkBuilder(URL_PATTERN).build(new TokenResolver());
 	}
 }

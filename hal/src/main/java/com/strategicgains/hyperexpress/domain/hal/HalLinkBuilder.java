@@ -15,7 +15,7 @@
 */
 package com.strategicgains.hyperexpress.domain.hal;
 
-import com.strategicgains.hyperexpress.builder.DefaultLinkBuilder;
+import com.strategicgains.hyperexpress.builder.DefaultConditionalLinkBuilder;
 
 /**
  * A convenience class for building HalLink implmenentations.
@@ -24,7 +24,7 @@ import com.strategicgains.hyperexpress.builder.DefaultLinkBuilder;
  * @since Jan 10, 2014
  */
 public class HalLinkBuilder
-extends DefaultLinkBuilder
+extends DefaultConditionalLinkBuilder
 {
 	private static final String TEMPLATED = "templated";
 	private static final String DEPRECATION = "deprecation";
