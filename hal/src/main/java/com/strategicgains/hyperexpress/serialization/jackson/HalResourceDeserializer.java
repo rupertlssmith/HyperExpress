@@ -29,6 +29,7 @@ import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.strategicgains.hyperexpress.builder.DefaultLinkBuilder;
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.domain.hal.HalResource;
@@ -123,7 +124,7 @@ extends JsonDeserializer<HalResource>
 	 */
 	private void addAllLinks(HalResource resource, Entry<String, JsonNode> field)
 	{
-		LinkBuilder lb = new LinkBuilder();
+		LinkBuilder lb = new DefaultLinkBuilder();
 		Iterator<JsonNode> values = field.getValue().elements();
 
 		while (values.hasNext())
@@ -142,7 +143,7 @@ extends JsonDeserializer<HalResource>
 	 */
 	private void addLink(HalResource resource, Entry<String, JsonNode> field)
 	{
-		LinkBuilder lb = new LinkBuilder();
+		LinkBuilder lb = new DefaultLinkBuilder();
 		lb.rel(field.getKey());
 		processLinkProperties(lb, field.getValue());
 		resource.addLink(lb.build());

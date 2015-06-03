@@ -15,10 +15,6 @@
  */
 package com.strategicgains.hyperexpress.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.strategicgains.hyperexpress.util.Strings;
 
 /**
  * Build URL strings from a URL pattern, binding URL tokens to actual values.
@@ -32,53 +28,18 @@ import com.strategicgains.hyperexpress.util.Strings;
  * @author toddf
  * @since Jan 10, 2014
  */
-public class UrlBuilder
-implements Cloneable
+public interface UrlBuilder
+extends Cloneable
 {
-	private String baseUrl;
-	private String urlPattern;
-	private List<String> queries;
+
+	public UrlBuilder clone();
 
 	/**
-	 * Create an empty UrlBuilder, with no URL pattern. Using this constructor
-	 * mandates that you MUST use the build(String) form of build instead of the
-	 * parameterless, build(), as the latter will throw IllegalStateException in
-	 * this state.
-	 */
-	public UrlBuilder()
-	{
-		super();
-	}
-
-	/**
-	 * Create a new UrlBuilder, passing in the URL pattern in which to
-	 * substitute tokens. This URL pattern may represent the entire URL or just
-	 * the path portion (relative path).
-	 * <p/>
-	 * The URL pattern is templated, in that it contains tokens to be later
-	 * substituted for actual values. The tokens are delimited with beginning
-	 * and trailing curly-braces (e.g. '{token}').
-	 * <p/>
-	 * If used in conjunction with baseUrl(), this URL pattern must be just the
-	 * path portion of the URL and should be prefixed with a leading slash
-	 * ('/').
-	 * <p/>
-	 * For example: '/users/{userId}' or
-	 * 'http://www.example.com/api/users/{userId}'
+	 * Retrieve the URL pattern set on this URL builder.
 	 * 
-	 * @param urlPattern a URL path with optional tokens of the form '{tokenName}'
+	 * @return the URL pattern or null.
 	 */
-	public UrlBuilder(String urlPattern)
-	{
-		this();
-
-		if (urlPattern == null)
-		{
-			throw new NullPointerException("URL Pattern cannot be null using this constructor. Use the no-argument constructor, UrlBuilder().");
-		}
-
-		this.urlPattern = urlPattern;
-	}
+	public String urlPattern();
 
 	/**
 	 * Set the URL pattern for the URL builder.
@@ -86,21 +47,7 @@ implements Cloneable
 	 * @param urlPattern a URL path with optional tokens of the form '{tokenName}'
 	 * @return this UrlBuilder instance to facilitate method chaining.
 	 */
-	public UrlBuilder urlPattern(String urlPattern)
-	{
-		this.urlPattern = urlPattern;
-		return this;
-	}
-
-	/**
-	 * Retrieve the URL pattern set on this URL builder.
-	 * 
-	 * @return the URL pattern or null.
-	 */
-	public String urlPattern()
-	{
-		return urlPattern;
-	}
+	public UrlBuilder urlPattern(String urlPattern);
 
 	/**
 	 * Set the prefix portion of the URL which is to be pre-pended to the URL
@@ -115,21 +62,14 @@ implements Cloneable
 	 * @param baseUrl the string that will prefix the URL pattern
 	 * @return this UrlBuilder instance to facilitate method chaining.
 	 */
-	public UrlBuilder baseUrl(String baseUrl)
-	{
-		this.baseUrl = baseUrl;
-		return this;
-	}
+	public UrlBuilder baseUrl(String baseUrl);
 
 	/**
 	 * Retrieve the base URL set on this URL builder.
 	 * 
 	 * @return the base URL or null.
 	 */
-	public String baseUrl()
-	{
-		return baseUrl;
-	}
+	public String baseUrl();
 
 	/**
 	 * Add an optional query-string segment to this UrlBuilder. If all of the
@@ -144,43 +84,12 @@ implements Cloneable
 	 * @param query a query-string segment to optionally include.
 	 * @return this UrlBuilder instance to facilitate method chaining.
 	 */
-	public UrlBuilder withQuery(String query)
-	{
-		queries().add(query);
-		return this;
-	}
+	public UrlBuilder withQuery(String query);
 
 	/**
 	 * Remove the query-string segments from this UrlBuilder.
 	 */
-	public void clearQueries()
-	{
-		if (queries != null)
-		{
-			queries.clear();
-		}
-	}
-
-	@Override
-	public UrlBuilder clone()
-	{
-		UrlBuilder b = new UrlBuilder(this.urlPattern);
-		b.baseUrl = this.baseUrl;
-		b.queries = (this.queries == null ? null : new ArrayList<String>(this.queries));
-		return b;
-	}
-
-	@Override
-	public String toString()
-	{
-		StringBuilder s = new StringBuilder();
-		s.append("baseUrl: ");
-		s.append(baseUrl == null ? "null" : baseUrl);
-		s.append(", urlPattern: ");
-		s.append(urlPattern == null ? "null" : urlPattern);
-		printQueryStrings(s);
-		return s.toString();
-	}
+	public void clearQueries();
 
 	/**
 	 * Builds a URL but does not perform any token replacement.
@@ -188,10 +97,7 @@ implements Cloneable
 	 * 
 	 * @return
 	 */
-	public String build()
-	{
-		return build(null);
-	}
+	public String build();
 
 	/**
 	 * Build a URL, resolving any tokens using the given TokenResolver.
@@ -199,10 +105,7 @@ implements Cloneable
 	 * @param tokenResolver a TokenResolver to perform token substitution.
 	 * @return a URL string.
 	 */
-	public String build(TokenResolver tokenResolver)
-	{
-		return build(buildFullUrlPattern(), null, tokenResolver);
-	}
+	public String build(TokenResolver tokenResolver);
 
 	/**
 	 * Build a URL, resolving any tokens using the given TokenResolver. Additionally,
@@ -213,10 +116,7 @@ implements Cloneable
 	 * @param tokenResolver a TokenResolver to perform token substitution.
 	 * @return a URL string.
 	 */
-	public String build(Object object, TokenResolver tokenResolver)
-	{
-		return build(buildFullUrlPattern(), object, tokenResolver);
-	}
+	public String build(Object object, TokenResolver tokenResolver);
 
 	/**
 	 * Build a new URL from the given URL pattern. Optional query-string parameters
@@ -227,10 +127,7 @@ implements Cloneable
 	 * @param tokenResolver a TokenResolver instance set with bound token values.
 	 * @return a URL string.
 	 */
-	public String build(String urlPattern, TokenResolver tokenResolver)
-	{
-		return build(urlPattern, null, tokenResolver);
-	}
+	public String build(String urlPattern, TokenResolver tokenResolver);
 
 	/**
 	 * Build a URL, resolving any tokens using the given TokenResolver. Additionally,
@@ -242,106 +139,5 @@ implements Cloneable
 	 * @param tokenResolver a TokenResolver to perform token substitution.
 	 * @return a URL string.
 	 */
-	public String build(String urlPattern, Object object, TokenResolver tokenResolver)
-	{
-		if (tokenResolver == null)
-		{
-			return appendQueryString(urlPattern, null);
-		}
-
-		String url = tokenResolver.resolve(urlPattern, object);
-		return appendQueryString(url, tokenResolver);
-	}
-
-	private String buildFullUrlPattern()
-	{
-		if (urlPattern == null)
-		{
-			throw new IllegalStateException("Null URL pattern");
-		}
-
-		return (baseUrl == null ? urlPattern : baseUrl + urlPattern);
-	}
-
-	private String appendQueryString(String url, TokenResolver tokenResolver)
-	{
-		if (queries == null || queries.isEmpty()) return url;
-
-		StringBuilder sb = new StringBuilder(url);
-		boolean hasQuery = url.contains("?");
-
-		for (String query : queries)
-		{
-			String boundQuery = null;
-
-			if (Strings.hasToken(query))
-			{
-				boundQuery = attemptResolution(query, tokenResolver);
-			}
-			else
-			{
-				boundQuery = query;
-			}
-
-			if (boundQuery != null)
-			{
-				sb.append(queryDelimiter(hasQuery));
-				sb.append(boundQuery);
-				hasQuery = true;
-			}
-		}
-
-		return (hasQuery ? sb.toString() : url);
-	}
-
-	private String attemptResolution(String query, TokenResolver tokenResolver)
-    {
-		if (tokenResolver != null)
-		{
-			String resolved = tokenResolver.resolve(query);
-			return (Strings.hasToken(resolved) ? null : resolved);
-		}
-
-		return null;
-    }
-
-	private String queryDelimiter(boolean hasQuery)
-    {
-		return (hasQuery ? "&" : "?");
-    }
-
-	private void printQueryStrings(StringBuilder s)
-    {
-	    boolean isFirst = true;
-		s.append("}, query-strings: {");
-
-		if (queries != null)
-		{
-			for (String query : queries)
-			{
-				if (!isFirst)
-				{
-					s.append(", ");
-				}
-				else
-				{
-					isFirst = false;
-				}
-
-				s.append(query);
-			}
-		}
-
-		s.append("}");
-    }
-
-	private List<String> queries()
-	{
-		if (queries == null)
-		{
-			queries = new ArrayList<String>();
-		}
-
-		return queries;
-	}
+	public String build(String urlPattern, Object object, TokenResolver tokenResolver);
 }

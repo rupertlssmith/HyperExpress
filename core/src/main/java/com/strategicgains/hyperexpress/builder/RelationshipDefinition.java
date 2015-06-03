@@ -178,7 +178,7 @@ public class RelationshipDefinition
 	 */
 	public RelationshipDefinition rel(String rel, String href)
 	{
-		return rel(rel, new ConditionalLinkBuilder(href));
+		return rel(rel, new DefaultConditionalLinkBuilder(href));
 	}
 
 	/**
@@ -213,7 +213,7 @@ public class RelationshipDefinition
 	 */
 	public RelationshipDefinition rels(String name, String href)
 	{
-		return rels(name, new ConditionalLinkBuilder(href));
+		return rels(name, new DefaultConditionalLinkBuilder(href));
 	}
 
 	/**
