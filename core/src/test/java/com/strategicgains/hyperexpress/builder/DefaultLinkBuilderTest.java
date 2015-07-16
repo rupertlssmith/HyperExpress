@@ -137,21 +137,31 @@ public class DefaultLinkBuilderTest
 		
 		  //--- the list of IDs would be variable...
 		List<String> accountIds = Arrays.asList("400", "401", "402");
-		int i = 0;
 
 		LinkBuilder lb = new DefaultLinkBuilder("/myapp/report/{reportId}")
-			.baseUrl("http://someserver");
+			.baseUrl("http://someserver")
+			.withQuery("accountId={accountId}");
 		TokenResolver r = new DefaultTokenResolver()
-			.bind("reportId", "1234");
+			.bind("reportId", "1234")
+			.bind("accountId", accountIds);
 
-		for (String accountId : accountIds)
-		{
-			lb.withQuery("accountId={accountId" + i + "}");
-			r.bind("accountId" + i, accountId);
-			++i;
-		}
-	
-		
+		Link link = lb.build(r);
+		assertEquals(expectedUrl, link.getHref());
+	}
+
+	@Test
+	public void shouldBuildComplexQueryStringFromArray()
+	{
+		String expectedUrl = "http://someserver/myapp/report/1234?accountId=400&accountId=401&accountId=402";
+
+		LinkBuilder lb = new DefaultLinkBuilder("/myapp/report/{reportId}")
+			.baseUrl("http://someserver")
+			.withQuery("accountId={accountId}");
+		TokenResolver r = new DefaultTokenResolver()
+			.bind("reportId", "1234")
+			//--- the list of IDs would be variable...
+			.bind("accountId", "400", "401", "402");
+
 		Link link = lb.build(r);
 		assertEquals(expectedUrl, link.getHref());
 	}

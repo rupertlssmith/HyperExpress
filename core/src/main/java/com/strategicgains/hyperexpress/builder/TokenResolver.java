@@ -29,10 +29,32 @@ import java.util.List;
  */
 public interface TokenResolver
 {
+	/**
+	 * Bind a single value to a token name.
+	 * 
+	 * @param tokenName the name of the token.
+	 * @param value the value to be substituted for the token.
+	 * @return this token resolver to facilitate method chaining.
+	 */
 	public TokenResolver bind(String tokenName, String value);
 
+	/**
+	 * Bind multiple values to a single token name.
+	 * 
+	 * @param tokenName the name of the token.
+	 * @param multiValues the values to be substituted for the token.
+	 * @return this token resolver to facilitate method chaining.
+	 */
 	public TokenResolver bind(String tokenName, String... multiValues);
 
+
+	/**
+	 * Bind multiple values to a single token name.
+	 * 
+	 * @param tokenName the name of the token.
+	 * @param multiValues the values to be substituted for the token.
+	 * @return this token resolver to facilitate method chaining.
+	 */
 	public TokenResolver bind(String tokenName, List<String> multiValues);
 
 	/**
@@ -81,6 +103,8 @@ public interface TokenResolver
 	 * @return the pattern with tokens resolved
 	 */
 	public String resolve(String pattern);
+
+	public String[] resolveMulti(String pattern);
 
 	/**
 	 * Resolve the tokens in a string pattern, binding additional token values from

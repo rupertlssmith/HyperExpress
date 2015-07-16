@@ -17,14 +17,18 @@ package com.strategicgains.hyperexpress.builder;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import com.strategicgains.hyperexpress.util.MapStringFormat;
+import com.strategicgains.hyperexpress.util.Strings;
 
 /**
  * TokenResolver is a utility class that replaces tokens (e.g. '{tokenName}')
@@ -60,7 +64,7 @@ implements TokenResolver
 	{
 		if (value == null)
 		{
-			values.remove(tokenName);
+			remove(tokenName);
 		}
 		else
 		{
@@ -72,13 +76,55 @@ implements TokenResolver
 
 	public DefaultTokenResolver bind(String tokenName, String... multiValues)
 	{
+		if (multiValues == null || multiValues.length == 0)
+		{
+			remove(tokenName);
+		}
+		else
+		{
+			bind(tokenName, Arrays.asList(multiValues));
+		}
+
 		return this;
 	}
 
 	public DefaultTokenResolver bind(String tokenName, List<String> multiValues)
 	{
+		if (multiValues == null || multiValues.isEmpty())
+		{
+			remove(tokenName);
+		}
+		else
+		{
+			bind(tokenName, multiValues.get(0));
+			bindExtras(tokenName, multiValues);
+		}
+
 		return this;
 	}
+
+	private void bindExtras(String tokenName, List<String> valueList)
+    {
+		if (valueList.size() <= 1)
+		{
+			this.multiValues.remove(tokenName);
+		}
+		else
+		{
+			Set<String> extras = this.multiValues.get(tokenName);
+	
+			if (extras == null)
+			{
+				extras = new LinkedHashSet<String>(valueList.size() - 1);
+				this.multiValues.put(tokenName, extras);
+			}
+
+			for (int i = 1; i < valueList.size(); ++i)
+			{
+				extras.add(valueList.get(i));
+			}
+		}
+    }
 
 	/**
 	 * Removes all bound tokens. Does not remove token binder callbacks.
@@ -146,9 +192,39 @@ implements TokenResolver
 	 * @param pattern
 	 * @return
 	 */
+	@Override
 	public String resolve(String pattern)
 	{
 		return FORMATTER.format(pattern, values);
+	}
+
+	@Override
+	public String[] resolveMulti(String pattern)
+	{
+		List<String> resolved = new ArrayList<String>();
+		String current = FORMATTER.format(pattern, values);
+		resolved.add(current);
+
+		for(Entry<String, Set<String>> entry : multiValues.entrySet())
+		{
+			String firstValue = values.get(entry.getKey());
+			Iterator<String> nextValue = entry.getValue().iterator();
+
+			while(nextValue.hasNext())
+			{
+				values.put(entry.getKey(), nextValue.next());
+				String bound = FORMATTER.format(pattern, values);
+
+				if (!Strings.hasToken(bound))
+				{
+					resolved.add(bound);
+				}
+			}
+
+			values.put(entry.getKey(), firstValue);
+		}
+
+		return resolved.toArray(new String[0]);
 	}
 
 	/**

@@ -276,7 +276,7 @@ implements UrlBuilder
 
 			if (Strings.hasToken(query))
 			{
-				boundQuery = attemptResolution(query, tokenResolver);
+				boundQuery = resolveQueryString(query, tokenResolver);
 			}
 			else
 			{
@@ -294,12 +294,13 @@ implements UrlBuilder
 		return (hasQuery ? sb.toString() : url);
 	}
 
-	private String attemptResolution(String query, TokenResolver tokenResolver)
+	private String resolveQueryString(String query, TokenResolver tokenResolver)
     {
 		if (tokenResolver != null)
 		{
-			String resolved = tokenResolver.resolve(query);
-			return (Strings.hasToken(resolved) ? null : resolved);
+			String[] resolved = tokenResolver.resolveMulti(query);
+			String all = String.join(queryDelimiter(true), resolved);
+			return (Strings.hasToken(all) ? null : all);
 		}
 
 		return null;
