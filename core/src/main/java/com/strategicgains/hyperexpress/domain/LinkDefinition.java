@@ -1,18 +1,3 @@
-/*
-    Copyright 2013, Strategic Gains, Inc.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
- */
 package com.strategicgains.hyperexpress.domain;
 
 import java.util.HashMap;
@@ -21,19 +6,6 @@ import java.util.Map.Entry;
 
 import com.strategicgains.hyperexpress.util.Strings;
 
-/**
- * A LinkDefinition is a generic definition of a hypermedia link. It contains attributes than can describe various
- * output link formats such as HAL, Atom, and JSON-LD. It can contain, therefore, a superset of attributes for any given
- * destination link format.
- *
- * <p/>At a minimum, a LinkDefinition must contain a 'rel' and an 'href' property, which correspond to the relation type
- * and associated URL, respectively.
- *
- * <p/>LinkDefinition is Cloneable.
- *
- * @author toddf
- * @since  Oct 17, 2013
- */
 public class LinkDefinition implements Link {
     private static final String REL_TYPE = "rel";
     private static final String HREF = "href";

@@ -1,6 +1,3 @@
-/*
- * Copyright 2014, eCollege, Inc.  All rights reserved.
- */
 package com.strategicgains.hyperexpress.util;
 
 import java.util.LinkedHashMap;
@@ -8,16 +5,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-/**
- * @author toddf
- * @since  May 7, 2014
- */
 public class Strings {
     // Regular expression for the hasTokene(String) method.
     private static final String TEMPLATE_REGEX = "\\{(\\w*?)\\}";
     private static final Pattern TEMPLATE_PATTERN = Pattern.compile(TEMPLATE_REGEX);
 
-    /** Regular expressions used to create plural forms of words. */
     private static final Map<String, String> PLURALIZATION_RULES = new LinkedHashMap<String, String>();
 
     static {
@@ -43,13 +35,6 @@ public class Strings {
         // Prevents instantiation.
     }
 
-    /**
-     * Converts the string (presumably a single word) from singular into plural form.
-     *
-     * @param  word a single word in singular form.
-     *
-     * @return the plural form of the word.
-     */
     public static String pluralize(String word) {
         if (word == null || word.isEmpty()) {
             return word;
@@ -67,12 +52,6 @@ public class Strings {
         return word.replaceFirst("([\\w]+)([^s])$", "$1$2s");
     }
 
-    /**
-     * Answer whether the string contains any tokens (e.g. of the form '{tokenName}'). If 'true' is returned, this
-     * indicates that the tokens are not fully populated (by MapStringFormat, UrlBuilder, etc).
-     *
-     * @return true if the string contains template tokens. Otherwise, false.
-     */
     public static boolean hasToken(String string) {
         return TEMPLATE_PATTERN.matcher(string).find();
     }

@@ -1,18 +1,3 @@
-/*
-    Copyright 2014, Strategic Gains, Inc.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
- */
 package com.strategicgains.hyperexpress.serialization.jackson;
 
 import java.io.IOException;
@@ -35,10 +20,6 @@ import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.domain.hal.HalResource;
 
-/**
- * @author toddf
- * @since  May 21, 2014
- */
 public class HalResourceDeserializer extends JsonDeserializer<HalResource> {
     private static final String LINKS = "_links";
     private static final String CURIES = "curies";
@@ -74,14 +55,6 @@ public class HalResourceDeserializer extends JsonDeserializer<HalResource> {
         return resource;
     }
 
-    /**
-     * @param  links
-     * @param  resource
-     * @param  oc
-     *
-     * @throws IOException
-     * @throws JsonProcessingException
-     */
     private void processLinks(JsonNode links, HalResource resource, ObjectCodec oc) throws JsonProcessingException,
         IOException {
         if (links == null) {
@@ -107,14 +80,6 @@ public class HalResourceDeserializer extends JsonDeserializer<HalResource> {
         }
     }
 
-    /**
-     * @param  curies
-     * @param  resource
-     * @param  oc
-     *
-     * @throws IOException
-     * @throws JsonProcessingException
-     */
     private void processCuries(JsonNode curies, HalResource resource, ObjectCodec oc) throws JsonProcessingException,
         IOException {
         if (curies == null) {
@@ -128,10 +93,6 @@ public class HalResourceDeserializer extends JsonDeserializer<HalResource> {
         }
     }
 
-    /**
-     * @param resource
-     * @param field
-     */
     private void addAllLinks(HalResource resource, Entry<String, JsonNode> field) {
         LinkBuilder lb = factory.newLinkBuilder();
         Iterator<JsonNode> values = field.getValue().elements();
@@ -146,10 +107,6 @@ public class HalResourceDeserializer extends JsonDeserializer<HalResource> {
         }
     }
 
-    /**
-     * @param resource
-     * @param field
-     */
     private void addLink(HalResource resource, Entry<String, JsonNode> field) {
         LinkBuilder lb = factory.newLinkBuilder();
         lb.rel(field.getKey());

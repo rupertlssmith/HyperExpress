@@ -1,18 +1,3 @@
-/*
-    Copyright 2014, Strategic Gains, Inc.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
- */
 package com.strategicgains.hyperexpress.domain;
 
 import java.util.ArrayList;
@@ -27,12 +12,6 @@ import java.util.Set;
 
 import com.strategicgains.hyperexpress.exception.ResourceException;
 
-/**
- * An abstract implementation of the Resource interface.
- *
- * @author toddf
- * @since  Apr 7, 2014
- */
 public abstract class AbstractResource implements Resource {
     private List<Namespace> namespaces;
     private Map<String, List<Link>> linksByRel = new LinkedHashMap<String, List<Link>>();
@@ -44,14 +23,6 @@ public abstract class AbstractResource implements Resource {
 //  private Map<String, Action> actionsByRel;
 //  private Map<String, Form> formsByRel;
 
-    /**
-     * Initialize the contents of this resource from another. The contents from the other resource are not copied, they
-     * are referenced (to reduce GC impacts).
-     *
-     * @param  that the resource from which to copy contents.
-     *
-     * @return this Resource instance (for method chaining).
-     */
     @Override
     public Resource from(Resource that) {
         addNamespaces(that.getNamespaces());
@@ -68,14 +39,6 @@ public abstract class AbstractResource implements Resource {
         return this;
     }
 
-    /**
-     * Adds a property to this resource, ensuring the property name is unique.
-     *
-     * @param  name  the property name
-     * @param  value the value of the named property
-     *
-     * @throws ResourceException if the name of the property is not unique.
-     */
     @Override
     public Resource addProperty(String name, Object value) {
         if (properties.containsKey(name)) {
@@ -259,14 +222,6 @@ public abstract class AbstractResource implements Resource {
         return Collections.unmodifiableMap(_getResources());
     }
 
-    /**
-     * Get the embedded resources for a given relation type. The returned list is unmodifiable. Returns an empty list if
-     * there are no embedded resources.
-     *
-     * @param  rel the name of the relation for which to retrieve embedded resources.
-     *
-     * @return a list of embedded resources. Never null.
-     */
     @Override
     @SuppressWarnings("unchecked")
     public List<Resource> getResources(String rel) {
@@ -275,11 +230,6 @@ public abstract class AbstractResource implements Resource {
         return (result == null ? Collections.EMPTY_LIST : Collections.unmodifiableList(result));
     }
 
-    /**
-     * Returns whether this resource has embedded resources or not.
-     *
-     * @return true if this resource has embedded resources. Otherwise, false.
-     */
     @Override
     public boolean hasResources() {
         return (resources != null && !resources.isEmpty());

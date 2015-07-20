@@ -1,15 +1,8 @@
-/*
- * Copyright 2014, eCollege, Inc.  All rights reserved.
- */
 package com.strategicgains.hyperexpress.util;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
-/**
- * @author fredta2
- * @since  May 7, 2014
- */
 public class StringsTest {
     @Test
     public void shouldPluralize() {
