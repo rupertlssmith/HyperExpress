@@ -1,12 +1,15 @@
-package com.strategicgains.hyperexpress.util;
+package com.strategicgains.hyperexpress.util.test;
 
 import static org.junit.Assert.assertEquals;
+
+import com.strategicgains.hyperexpress.util.Strings;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class StringsTest {
     @Test
     public void shouldPluralize() {
-        assertEquals("keys", Strings.pluralize("key"));
+        Assert.assertEquals("keys", Strings.pluralize("key"));
         assertEquals("words", Strings.pluralize("word"));
         assertEquals("properties", Strings.pluralize("property"));
         assertEquals("buses", Strings.pluralize("bus"));

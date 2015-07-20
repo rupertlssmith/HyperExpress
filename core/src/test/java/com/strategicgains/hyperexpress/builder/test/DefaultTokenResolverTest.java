@@ -1,10 +1,14 @@
-package com.strategicgains.hyperexpress.builder;
+package com.strategicgains.hyperexpress.builder.test;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import com.strategicgains.hyperexpress.builder.DefaultTokenResolver;
+import com.strategicgains.hyperexpress.builder.TokenBinder;
+import com.strategicgains.hyperexpress.builder.TokenResolver;
 import org.junit.Test;
 
 public class DefaultTokenResolverTest {

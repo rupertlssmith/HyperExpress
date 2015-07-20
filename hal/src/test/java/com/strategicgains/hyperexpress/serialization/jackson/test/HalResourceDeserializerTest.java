@@ -1,4 +1,4 @@
-package com.strategicgains.hyperexpress.serialization.jackson;
+package com.strategicgains.hyperexpress.serialization.jackson.test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +22,8 @@ import com.strategicgains.hyperexpress.domain.hal.HalResource;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import com.strategicgains.hyperexpress.serialization.jackson.HalResourceDeserializer;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

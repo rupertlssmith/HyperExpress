@@ -1,4 +1,4 @@
-package com.strategicgains.hyperexpress.domain.hal;
+package com.strategicgains.hyperexpress.domain.hal.test;
 
 import java.util.UUID;
 

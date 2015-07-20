@@ -1,5 +1,6 @@
-package com.strategicgains.hyperexpress;
+package com.strategicgains.hyperexpress.test;
 
+import com.strategicgains.hyperexpress.AbstractResourceFactoryStrategy;
 import com.strategicgains.hyperexpress.domain.Resource;
 
 public class NullResourceFactoryStrategy extends AbstractResourceFactoryStrategy {

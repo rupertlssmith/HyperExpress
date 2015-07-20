@@ -1,4 +1,4 @@
-package com.strategicgains.hyperexpress;
+package com.strategicgains.hyperexpress.test;
 
 import com.strategicgains.hyperexpress.domain.AbstractResource;
 

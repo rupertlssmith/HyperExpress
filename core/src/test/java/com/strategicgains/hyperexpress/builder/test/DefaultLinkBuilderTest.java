@@ -1,9 +1,13 @@
-package com.strategicgains.hyperexpress.builder;
+package com.strategicgains.hyperexpress.builder.test;
 
 import java.util.Arrays;
 import java.util.List;
 
 import com.strategicgains.hyperexpress.RelTypes;
+import com.strategicgains.hyperexpress.builder.DefaultLinkBuilder;
+import com.strategicgains.hyperexpress.builder.DefaultTokenResolver;
+import com.strategicgains.hyperexpress.builder.LinkBuilder;
+import com.strategicgains.hyperexpress.builder.TokenResolver;
 import com.strategicgains.hyperexpress.domain.Link;
 
 import static org.junit.Assert.assertEquals;

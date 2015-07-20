@@ -1,9 +1,11 @@
-package com.strategicgains.hyperexpress.domain.hal;
+package com.strategicgains.hyperexpress.domain.hal.test;
 
 import java.util.List;
 
 import com.strategicgains.hyperexpress.builder.DefaultTokenResolver;
 import com.strategicgains.hyperexpress.domain.Namespace;
+import com.strategicgains.hyperexpress.domain.hal.HalLinkBuilder;
+import com.strategicgains.hyperexpress.domain.hal.HalResource;
 import com.strategicgains.hyperexpress.exception.ResourceException;
 
 import static org.junit.Assert.assertEquals;

@@ -1,6 +1,12 @@
-package com.strategicgains.hyperexpress.builder;
+package com.strategicgains.hyperexpress.builder.test;
 
 import static org.junit.Assert.assertEquals;
+
+import com.strategicgains.hyperexpress.builder.DefaultTokenResolver;
+import com.strategicgains.hyperexpress.builder.DefaultUrlBuilder;
+import com.strategicgains.hyperexpress.builder.TokenResolver;
+import com.strategicgains.hyperexpress.builder.UrlBuilder;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class DefaultUrlBuilderTest {
@@ -9,8 +15,8 @@ public class DefaultUrlBuilderTest {
 
     @Test
     public void shouldBuildSimpleUrl() {
-        assertEquals("/todd:was,here", new DefaultUrlBuilder(URL_PATTERN).build(new DefaultTokenResolver().bind("id",
-                    "todd:was,here")));
+        Assert.assertEquals("/todd:was,here", new DefaultUrlBuilder(URL_PATTERN).build(new DefaultTokenResolver().bind("id",
+                "todd:was,here")));
     }
 
     @Test

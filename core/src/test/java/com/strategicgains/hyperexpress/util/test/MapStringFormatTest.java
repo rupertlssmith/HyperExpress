@@ -1,4 +1,4 @@
-package com.strategicgains.hyperexpress.util;
+package com.strategicgains.hyperexpress.util.test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +7,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import com.strategicgains.hyperexpress.util.MapStringFormat;
 import org.junit.Test;
 
 public class MapStringFormatTest {

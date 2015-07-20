@@ -1,4 +1,4 @@
-package com.strategicgains.hyperexpress;
+package com.strategicgains.hyperexpress.test;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,9 +10,11 @@ import static com.strategicgains.hyperexpress.RelTypes.ALTERNATE;
 import static com.strategicgains.hyperexpress.RelTypes.NEXT;
 import static com.strategicgains.hyperexpress.RelTypes.PREV;
 import static com.strategicgains.hyperexpress.RelTypes.SELF;
-import com.strategicgains.hyperexpress.domain.Blog;
-import com.strategicgains.hyperexpress.domain.Comment;
-import com.strategicgains.hyperexpress.domain.Entry;
+
+import com.strategicgains.hyperexpress.HyperExpress;
+import com.strategicgains.hyperexpress.domain.test.Blog;
+import com.strategicgains.hyperexpress.domain.test.Comment;
+import com.strategicgains.hyperexpress.domain.test.Entry;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.domain.Resource;
