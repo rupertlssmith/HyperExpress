@@ -3,12 +3,12 @@ package com.strategicgains.hyperexpress.builder.test;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import com.strategicgains.hyperexpress.builder.DefaultTokenResolver;
 import com.strategicgains.hyperexpress.builder.TokenBinder;
 import com.strategicgains.hyperexpress.builder.TokenResolver;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 public class DefaultTokenResolverTest {
@@ -20,7 +20,6 @@ public class DefaultTokenResolverTest {
         .bind("c", "c")
         .bind("d", "d")
         .binder(new TokenBinder<Resolvable>() {
-                @Override
                 public void bind(Resolvable object, TokenResolver r) {
                     r.bind("e", String.valueOf(object.e));
                 }

@@ -4,7 +4,6 @@ import com.strategicgains.hyperexpress.AbstractResourceFactoryStrategy;
 import com.strategicgains.hyperexpress.domain.Resource;
 
 public class NullResourceFactoryStrategy extends AbstractResourceFactoryStrategy {
-    @Override
     public Resource createResource(Object from) {
         Resource to = new AgnosticResource();
 
@@ -15,7 +14,6 @@ public class NullResourceFactoryStrategy extends AbstractResourceFactoryStrategy
         return to;
     }
 
-    @Override
     public Class<? extends Resource> getResourceType() {
         return AgnosticResource.class;
     }

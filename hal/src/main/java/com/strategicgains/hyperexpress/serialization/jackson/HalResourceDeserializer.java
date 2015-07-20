@@ -38,7 +38,6 @@ public class HalResourceDeserializer extends JsonDeserializer<HalResource> {
         this.factory = factory;
     }
 
-    @Override
     public HalResource deserialize(JsonParser jp, DeserializationContext context) throws IOException,
         JsonProcessingException {
         ObjectCodec oc = jp.getCodec();

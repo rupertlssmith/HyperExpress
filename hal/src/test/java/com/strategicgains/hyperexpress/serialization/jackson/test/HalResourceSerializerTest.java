@@ -17,10 +17,9 @@ import com.strategicgains.hyperexpress.builder.DefaultLinkBuilder;
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.domain.hal.HalResource;
+import com.strategicgains.hyperexpress.serialization.jackson.HalResourceSerializer;
 
 import static org.junit.Assert.assertThat;
-
-import com.strategicgains.hyperexpress.serialization.jackson.HalResourceSerializer;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

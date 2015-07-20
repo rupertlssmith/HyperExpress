@@ -111,7 +111,6 @@ public class DefaultLinkBuilder implements LinkBuilder {
         return createLink(urlBuilder.build(object, tokenResolver));
     }
 
-    @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append(this.getClass().getSimpleName());

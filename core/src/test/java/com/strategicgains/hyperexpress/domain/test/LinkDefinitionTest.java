@@ -1,11 +1,11 @@
 package com.strategicgains.hyperexpress.domain.test;
 
+import com.strategicgains.hyperexpress.domain.Link;
+import com.strategicgains.hyperexpress.domain.LinkDefinition;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import com.strategicgains.hyperexpress.domain.Link;
-import com.strategicgains.hyperexpress.domain.LinkDefinition;
 import org.junit.Test;
 
 public class LinkDefinitionTest {

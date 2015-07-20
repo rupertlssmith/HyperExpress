@@ -2,14 +2,13 @@ package com.strategicgains.hyperexpress.domain.hal.test;
 
 import com.strategicgains.hyperexpress.HyperExpress;
 import com.strategicgains.hyperexpress.domain.Resource;
+import com.strategicgains.hyperexpress.domain.hal.HalResource;
+import com.strategicgains.hyperexpress.domain.hal.HalResourceFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import com.strategicgains.hyperexpress.domain.hal.HalResource;
-import com.strategicgains.hyperexpress.domain.hal.HalResourceFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

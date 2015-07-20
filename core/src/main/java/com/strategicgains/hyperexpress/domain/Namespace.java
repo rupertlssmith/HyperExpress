@@ -38,7 +38,6 @@ public class Namespace implements Cloneable {
         return new Namespace(name, href);
     }
 
-    @Override
     public boolean equals(Object that) {
         if (this == that) {
             return true;
@@ -59,7 +58,6 @@ public class Namespace implements Cloneable {
         return (this.href.equals(that.href) && this.name.equals(that.name));
     }
 
-    @Override
     public int hashCode() {
         return 42 + name.hashCode() + href.hashCode();
     }

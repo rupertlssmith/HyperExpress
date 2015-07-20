@@ -66,7 +66,6 @@ public class DefaultConditionalLinkBuilder extends DefaultLinkBuilder implements
         return conditionals;
     }
 
-    @Override
     public Link build(Object object, TokenResolver tokenResolver) {
         Link link = super.build(object, tokenResolver);
 
@@ -94,7 +93,6 @@ public class DefaultConditionalLinkBuilder extends DefaultLinkBuilder implements
         return link;
     }
 
-    @Override
     public Link build() {
         Link link = super.build();
 
@@ -105,7 +103,6 @@ public class DefaultConditionalLinkBuilder extends DefaultLinkBuilder implements
         return link;
     }
 
-    @Override
     public Link build(TokenResolver tokenResolver) {
         Link link = super.build(tokenResolver);
 

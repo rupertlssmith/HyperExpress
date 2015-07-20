@@ -47,7 +47,7 @@ public class DefaultLinkBuilderTest {
     public void shouldBuildComplexQueryString() {
         String expectedUrl = "http://someserver/myapp/report/1234?accountId=400&accountId=401&accountId=402";
 
-        //--- the list of IDs would be variable...
+        // --- the list of IDs would be variable...
         List<String> accountIds = Arrays.asList("400", "401", "402");
 
         LinkBuilder lb =

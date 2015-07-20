@@ -1,9 +1,9 @@
 package com.strategicgains.hyperexpress.util.test;
 
-import static org.junit.Assert.assertEquals;
-
 import com.strategicgains.hyperexpress.util.Strings;
+
 import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class StringsTest {

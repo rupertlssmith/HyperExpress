@@ -82,12 +82,10 @@ public class DefaultTokenResolver implements TokenResolver {
         binders.clear();
     }
 
-    @Override
     public String resolve(String pattern) {
         return FORMATTER.format(pattern, values);
     }
 
-    @Override
     public String[] resolveMulti(String pattern) {
         List<String> resolved = new ArrayList<String>();
         String current = FORMATTER.format(pattern, values);

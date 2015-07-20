@@ -4,13 +4,12 @@ import java.util.Collection;
 
 import static com.strategicgains.hyperexpress.RelTypes.SELF;
 import static com.strategicgains.hyperexpress.RelTypes.UP;
-
 import com.strategicgains.hyperexpress.builder.LinkBuilder;
 import com.strategicgains.hyperexpress.builder.RelationshipDefinition;
+import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.domain.test.Blog;
 import com.strategicgains.hyperexpress.domain.test.Comment;
 import com.strategicgains.hyperexpress.domain.test.Entry;
-import com.strategicgains.hyperexpress.domain.Namespace;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

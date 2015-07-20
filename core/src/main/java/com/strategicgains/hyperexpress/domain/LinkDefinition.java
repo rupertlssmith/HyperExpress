@@ -26,36 +26,30 @@ public class LinkDefinition implements Link {
         }
     }
 
-    @Override
     public LinkDefinition clone() {
         return new LinkDefinition(this);
     }
 
-    @Override
     public String getHref() {
         return get(HREF);
     }
 
-    @Override
     public LinkDefinition setHref(String href) {
         set(HREF, href);
 
         return this;
     }
 
-    @Override
     public String getRel() {
         return get(REL_TYPE);
     }
 
-    @Override
     public LinkDefinition setRel(String rel) {
         set(REL_TYPE, rel);
 
         return this;
     }
 
-    @Override
     public LinkDefinition set(String name, String value) {
         if (value == null) {
             attributes.remove(name);
@@ -66,22 +60,18 @@ public class LinkDefinition implements Link {
         return this;
     }
 
-    @Override
     public String get(String name) {
         return attributes.get(name);
     }
 
-    @Override
     public boolean has(String name) {
         return (get(name) != null);
     }
 
-    @Override
     public boolean hasToken() {
         return Strings.hasToken(getHref());
     }
 
-    @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append(this.getClass().getSimpleName());
@@ -106,12 +96,10 @@ public class LinkDefinition implements Link {
         return s.toString();
     }
 
-    @Override
     public int hashCode() {
         return 31 + ((attributes == null) ? 0 : attributes.hashCode());
     }
 
-    @Override
     public boolean equals(Object that) {
         if (this == that) {
             return true;

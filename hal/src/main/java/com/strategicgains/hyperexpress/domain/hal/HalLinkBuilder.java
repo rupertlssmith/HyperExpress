@@ -23,7 +23,6 @@ public class HalLinkBuilder extends DefaultConditionalLinkBuilder {
         return this;
     }
 
-    @Override
     public HalLinkBuilder type(String type) {
         return (HalLinkBuilder) super.type(type);
     }
@@ -40,7 +39,6 @@ public class HalLinkBuilder extends DefaultConditionalLinkBuilder {
         return (HalLinkBuilder) set(PROFILE, profile);
     }
 
-    @Override
     public HalLinkBuilder title(String title) {
         return (HalLinkBuilder) super.title(title);
     }
@@ -49,17 +47,14 @@ public class HalLinkBuilder extends DefaultConditionalLinkBuilder {
         return (HalLinkBuilder) set(HREFLANG, hreflang);
     }
 
-    @Override
     public HalLinkBuilder baseUrl(String url) {
         return (HalLinkBuilder) super.baseUrl(url);
     }
 
-    @Override
     public HalLinkBuilder rel(String rel) {
         return (HalLinkBuilder) super.rel(rel);
     }
 
-    @Override
     public HalLinkBuilder set(String name, String value) {
         return (HalLinkBuilder) super.set(name, value);
     }

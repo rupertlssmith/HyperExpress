@@ -57,7 +57,6 @@ public class DefaultUrlBuilder implements UrlBuilder {
         }
     }
 
-    @Override
     public DefaultUrlBuilder clone() {
         DefaultUrlBuilder b = new DefaultUrlBuilder(this.urlPattern);
         b.baseUrl = this.baseUrl;
@@ -66,7 +65,6 @@ public class DefaultUrlBuilder implements UrlBuilder {
         return b;
     }
 
-    @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append("baseUrl: ");

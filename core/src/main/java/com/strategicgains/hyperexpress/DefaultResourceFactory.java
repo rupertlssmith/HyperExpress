@@ -9,7 +9,6 @@ import com.strategicgains.hyperexpress.exception.ResourceException;
 public class DefaultResourceFactory implements ResourceFactory {
     private Map<String, ResourceFactoryStrategy> factoryStrategies = new HashMap<String, ResourceFactoryStrategy>();
 
-    @Override
     public Resource createResource(Object object, String contentType) {
         ResourceFactoryStrategy strategy = factoryStrategies.get(contentType);
 
@@ -30,7 +29,6 @@ public class DefaultResourceFactory implements ResourceFactory {
         return this;
     }
 
-    @Override
     public Class<? extends Resource> getResourceType(String contentType) {
         ResourceFactoryStrategy strategy = factoryStrategies.get(contentType);
 

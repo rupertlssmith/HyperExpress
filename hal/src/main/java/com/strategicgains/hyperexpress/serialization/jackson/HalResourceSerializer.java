@@ -27,7 +27,6 @@ public class HalResourceSerializer extends JsonSerializer<HalResource> {
         super();
     }
 
-    @Override
     public void serialize(HalResource resource, JsonGenerator jgen, SerializerProvider provider) throws IOException,
         JsonProcessingException {
         jgen.writeStartObject();
@@ -66,8 +65,7 @@ public class HalResourceSerializer extends JsonSerializer<HalResource> {
                 }
 
                 jgen.writeObjectField(entry.getKey(), link);
-            } else
-            {
+            } else {
                 jgen.writeArrayFieldStart(entry.getKey());
 
                 for (HalLink link : entry.getValue()) {
@@ -112,8 +110,7 @@ public class HalResourceSerializer extends JsonSerializer<HalResource> {
         if (namespaces.size() == 1) // Write single namespace
         {
             jgen.writeObjectField(CURIES, namespaces.iterator().next());
-        } else
-        {
+        } else {
             jgen.writeArrayFieldStart(CURIES);
 
             for (Namespace ns : namespaces) {

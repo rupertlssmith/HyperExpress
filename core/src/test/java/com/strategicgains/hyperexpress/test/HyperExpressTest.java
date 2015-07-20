@@ -6,18 +6,17 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.strategicgains.hyperexpress.HyperExpress;
 import static com.strategicgains.hyperexpress.RelTypes.ALTERNATE;
 import static com.strategicgains.hyperexpress.RelTypes.NEXT;
 import static com.strategicgains.hyperexpress.RelTypes.PREV;
 import static com.strategicgains.hyperexpress.RelTypes.SELF;
-
-import com.strategicgains.hyperexpress.HyperExpress;
-import com.strategicgains.hyperexpress.domain.test.Blog;
-import com.strategicgains.hyperexpress.domain.test.Comment;
-import com.strategicgains.hyperexpress.domain.test.Entry;
 import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.domain.Resource;
+import com.strategicgains.hyperexpress.domain.test.Blog;
+import com.strategicgains.hyperexpress.domain.test.Comment;
+import com.strategicgains.hyperexpress.domain.test.Entry;
 
 import org.junit.After;
 import org.junit.AfterClass;

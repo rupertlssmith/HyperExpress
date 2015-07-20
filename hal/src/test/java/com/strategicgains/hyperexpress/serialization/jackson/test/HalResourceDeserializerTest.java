@@ -18,12 +18,11 @@ import com.strategicgains.hyperexpress.domain.Link;
 import com.strategicgains.hyperexpress.domain.Namespace;
 import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.domain.hal.HalResource;
+import com.strategicgains.hyperexpress.serialization.jackson.HalResourceDeserializer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import com.strategicgains.hyperexpress.serialization.jackson.HalResourceDeserializer;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
