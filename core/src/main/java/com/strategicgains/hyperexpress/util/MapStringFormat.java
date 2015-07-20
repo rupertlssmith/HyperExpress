@@ -8,8 +8,6 @@ public class MapStringFormat {
     private static final String DEFAULT_END_DELIMITER = "}";
     private static final String DEFAULT_START_DELIMITER = "{";
 
-    // PROTOCOL: VARIABLES
-
     private String endDelimiter;
     private String startDelimiter;
 
@@ -39,8 +37,6 @@ public class MapStringFormat {
 
         return result;
     }
-
-    // PROTOCOL: ACCESSING
 
     public String endDelimiter() {
         return endDelimiter;
@@ -78,8 +74,6 @@ public class MapStringFormat {
         return result;
     }
 
-    // PROTOCOL: UTILITY
-
     private String constructParameterName(StringBuilder sb, String key) {
         sb.setLength(0);
         sb.append('\\');
@@ -90,7 +84,4 @@ public class MapStringFormat {
 
         return sb.toString();
     }
-
-    // SECTION: UTILITY - STATIC
-
 }

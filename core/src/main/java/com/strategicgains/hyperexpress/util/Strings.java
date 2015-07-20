@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 public class Strings {
-    // Regular expression for the hasTokene(String) method.
     private static final String TEMPLATE_REGEX = "\\{(\\w*?)\\}";
     private static final Pattern TEMPLATE_PATTERN = Pattern.compile(TEMPLATE_REGEX);
 
@@ -32,7 +31,6 @@ public class Strings {
     }
 
     private Strings() {
-        // Prevents instantiation.
     }
 
     public static String pluralize(String word) {

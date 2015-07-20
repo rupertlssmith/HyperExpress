@@ -13,7 +13,6 @@ public class Expander {
     private Map<String, ExpansionCallback> callbacks = new HashMap<String, ExpansionCallback>();
 
     private Expander() {
-        // prevents external instantiation.
     }
 
     public static Resource expand(Expansion expansion, Class<?> type, Resource resource) {

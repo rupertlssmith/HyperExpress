@@ -20,8 +20,6 @@ public abstract class AbstractResource implements Resource {
     private Map<String, List<Resource>> resources;
     private Set<String> arrayLinkRels = new HashSet<String>();
     private Set<String> arrayResourceRels = new HashSet<String>();
-//  private Map<String, Action> actionsByRel;
-//  private Map<String, Form> formsByRel;
 
     @Override
     public Resource from(Resource that) {

@@ -28,8 +28,6 @@ public class HyperExpress {
         builderFactory = new DefaultBuilderFactory();
     }
 
-    // SECTION: STATIC - PUBLIC METHODS
-
     public static void builderFactory(BuilderFactory factory) {
         INSTANCE.builderFactory = factory;
     }
@@ -76,8 +74,6 @@ public class HyperExpress {
         INSTANCE._clearTokenBindings();
     }
 
-    // SECTION: PRIVATE INSTANCE METHODS
-
     private void _registerResourceFactoryStrategy(ResourceFactoryStrategy factoryStrategy, String contentType) {
         resourceFactory.addFactoryStrategy(factoryStrategy, contentType);
     }
@@ -99,7 +95,6 @@ public class HyperExpress {
         return _createCollectionResource(components, componentType, componentRel, contentType);
     }
 
-    @SuppressWarnings("unchecked")
     private Resource _createCollectionResource(Collection<?> components, Class<?> componentType, String componentRel,
         String contentType) {
         Resource root = resourceFactory.createResource(null, contentType);

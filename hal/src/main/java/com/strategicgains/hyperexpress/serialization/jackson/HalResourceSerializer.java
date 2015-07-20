@@ -66,7 +66,7 @@ public class HalResourceSerializer extends JsonSerializer<HalResource> {
                 }
 
                 jgen.writeObjectField(entry.getKey(), link);
-            } else // Write link array
+            } else
             {
                 jgen.writeArrayFieldStart(entry.getKey());
 
@@ -112,7 +112,7 @@ public class HalResourceSerializer extends JsonSerializer<HalResource> {
         if (namespaces.size() == 1) // Write single namespace
         {
             jgen.writeObjectField(CURIES, namespaces.iterator().next());
-        } else // Write namespace array
+        } else
         {
             jgen.writeArrayFieldStart(CURIES);
 

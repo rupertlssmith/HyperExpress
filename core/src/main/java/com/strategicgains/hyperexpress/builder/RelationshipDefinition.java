@@ -19,20 +19,10 @@ public class RelationshipDefinition {
     private static final String TITLE = "title";
     private static final String TYPE = "type";
     private static final String HREFLANG = "hreflang";
-
-    // HAL-specific
     private static final String TEMPLATED = "templated";
-
-    // HAL-specific
     private static final String DEPRECATION = "deprecation";
-
-    // HAL-Specific
     private static final String NAME = "name";
-
-    // HAL-Specific
     private static final String PROFILE = "profile";
-
-    // Atom-specific
     private static final String LENGTH = "length";
 
     private BuilderFactory factory = new DefaultBuilderFactory();
@@ -295,8 +285,5 @@ public class RelationshipDefinition {
 
         return (builders != null ? Collections.<LinkBuilder>unmodifiableList(builders)
                                  : Collections.<LinkBuilder>emptyList());
-//      if (builders != null) return Collections.<LinkBuilder> unmodifiableList(builders);
-//
-//      return Collections.<LinkBuilder> emptyList();
     }
 }

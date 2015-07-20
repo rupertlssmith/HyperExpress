@@ -1,8 +1,6 @@
 package com.strategicgains.hyperexpress;
 
 public abstract class RelTypes {
-    // SECTION: CONSTANTS
-
     public static final String ALTERNATE = "alternate";
 
     public static final String APPENDIX = "appendix";
@@ -105,11 +103,8 @@ public abstract class RelTypes {
 
     public static final String WORKING_COPY = "working-copy";
 
-    // SECTION: CONSTRUCTORS - PRIVATE
-
     public static final String WORKING_COPY_OF = "working-copy-of";
 
     private RelTypes() {
-        // prevents instantiation.
     }
 }
