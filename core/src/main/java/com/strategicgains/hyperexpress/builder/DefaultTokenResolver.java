@@ -1,17 +1,17 @@
 /*
     Copyright 2014, Strategic Gains, Inc.
 
-	Licensed under the Apache License, Version 2.0 (the "License");
-	you may not use this file except in compliance with the License.
-	You may obtain a copy of the License at
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
 
-		http://www.apache.org/licenses/LICENSE-2.0
+        http://www.apache.org/licenses/LICENSE-2.0
 
-	Unless required by applicable law or agreed to in writing, software
-	distributed under the License is distributed on an "AS IS" BASIS,
-	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	See the License for the specific language governing permissions and
-	limitations under the License.
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
  */
 package com.strategicgains.hyperexpress.builder;
 
@@ -31,318 +31,269 @@ import com.strategicgains.hyperexpress.util.MapStringFormat;
 import com.strategicgains.hyperexpress.util.Strings;
 
 /**
- * TokenResolver is a utility class that replaces tokens (e.g. '{tokenName}')
- * in strings with values. It allows the addition of TokenBinder instances,
- * which are simply callbacks that can extract token values from Object
- * instances before replacing tokens in a string.
- * 
+ * TokenResolver is a utility class that replaces tokens (e.g. '{tokenName}') in strings with values. It allows the
+ * addition of TokenBinder instances, which are simply callbacks that can extract token values from Object instances
+ * before replacing tokens in a string.
+ *
  * @author toddf
- * @since Apr 28, 2014
+ * @since  Apr 28, 2014
  */
-public class DefaultTokenResolver
-implements TokenResolver
-{
-	private static final MapStringFormat FORMATTER = new MapStringFormat();
+public class DefaultTokenResolver implements TokenResolver {
+    private static final MapStringFormat FORMATTER = new MapStringFormat();
 
-	private Map<String, String> values = new HashMap<String, String>();
-	private Map<String, Set<String>> multiValues = new HashMap<String, Set<String>>();
-	private List<TokenBinder<?>> binders = new ArrayList<TokenBinder<?>>();
+    private Map<String, String> values = new HashMap<String, String>();
+    private Map<String, Set<String>> multiValues = new HashMap<String, Set<String>>();
+    private List<TokenBinder<?>> binders = new ArrayList<TokenBinder<?>>();
 
-	/**
-	 * Bind a token to a value. During resolve(), any token names matching
-	 * the given token name here will be replaced with the given value.
-	 * 
-	 * Set a value to be substituted for a token in the string pattern. While
-	 * tokens in the pattern are delimited with curly-braces, the token name
-	 * does not contain the braces. The value is any string value.
-	 * 
-	 * @param tokenName the name of a token in the string pattern.
-	 * @param value the string value to substitute for the token name in the URL pattern.
-	 * @return this TokenResolver instance to facilitate method chaining.
-	 */
-	public DefaultTokenResolver bind(String tokenName, String value)
-	{
-		if (value == null)
-		{
-			remove(tokenName);
-		}
-		else
-		{
-			values.put(tokenName, value);
-		}
+    /**
+     * Bind a token to a value. During resolve(), any token names matching the given token name here will be replaced
+     * with the given value. Set a value to be substituted for a token in the string pattern. While tokens in the
+     * pattern are delimited with curly-braces, the token name does not contain the braces. The value is any string
+     * value.
+     *
+     * @param  tokenName the name of a token in the string pattern.
+     * @param  value     the string value to substitute for the token name in the URL pattern.
+     *
+     * @return this TokenResolver instance to facilitate method chaining.
+     */
+    public DefaultTokenResolver bind(String tokenName, String value) {
+        if (value == null) {
+            remove(tokenName);
+        } else {
+            values.put(tokenName, value);
+        }
 
-		return this;
-	}
-
-	public DefaultTokenResolver bind(String tokenName, String... multiValues)
-	{
-		if (multiValues == null || multiValues.length == 0)
-		{
-			remove(tokenName);
-		}
-		else
-		{
-			bind(tokenName, Arrays.asList(multiValues));
-		}
-
-		return this;
-	}
-
-	public DefaultTokenResolver bind(String tokenName, List<String> multiValues)
-	{
-		if (multiValues == null || multiValues.isEmpty())
-		{
-			remove(tokenName);
-		}
-		else
-		{
-			bind(tokenName, multiValues.get(0));
-			bindExtras(tokenName, multiValues);
-		}
-
-		return this;
-	}
-
-	private void bindExtras(String tokenName, List<String> valueList)
-    {
-		if (valueList.size() <= 1)
-		{
-			this.multiValues.remove(tokenName);
-		}
-		else
-		{
-			Set<String> extras = this.multiValues.get(tokenName);
-	
-			if (extras == null)
-			{
-				extras = new LinkedHashSet<String>(valueList.size() - 1);
-				this.multiValues.put(tokenName, extras);
-			}
-
-			for (int i = 1; i < valueList.size(); ++i)
-			{
-				extras.add(valueList.get(i));
-			}
-		}
+        return this;
     }
 
-	/**
-	 * Removes all bound tokens. Does not remove token binder callbacks.
-	 */
-	public void clear()
-	{
-		values.clear();
-		multiValues.clear();
-	}
+    public DefaultTokenResolver bind(String tokenName, String... multiValues) {
+        if (multiValues == null || multiValues.length == 0) {
+            remove(tokenName);
+        } else {
+            bind(tokenName, Arrays.asList(multiValues));
+        }
 
-	/**
-	 * 'Unbind' a named substitution value from a token name.
-	 * 
-	 * @param tokenName the name of a previously-bound token name.
-	 */
-	public void remove(String tokenName)
-	{
-		values.remove(tokenName);
-		multiValues.remove(tokenName);
-	}
+        return this;
+    }
 
-	/**
-	 * Install a callback TokenBinder instance. During the resolve() methods that
-	 * take an Object instance such as, resolve(String, Object) and
-	 * resolve(Collection<String>, Object), the TokenBinder.bind(Object) method
-	 * is called to bind additional tokens that may come from the object.
-	 * <p/>
-	 * <Strong>LIMITATION:</strong> As TokenBinder is typed, calling binder()
-	 * with TokenBinder instances for different generic types will cause
-	 * a {@link ClassCastException} during resolve().
-	 * 
-	 * @param callback a TokenBinder implementation.
-	 * @return this instance of TokenResolver to facilitate method chaining.
-	 */
-	public <T> DefaultTokenResolver binder(TokenBinder<T> callback)
-	{
-		if (callback == null) return this;
+    public DefaultTokenResolver bind(String tokenName, List<String> multiValues) {
+        if (multiValues == null || multiValues.isEmpty()) {
+            remove(tokenName);
+        } else {
+            bind(tokenName, multiValues.get(0));
+            bindExtras(tokenName, multiValues);
+        }
 
-		binders.add(callback);
-		return this;
-	}
+        return this;
+    }
 
-	/**
-	 * Removes all token binder callbacks from this TokenResolver.
-	 */
-	public void clearBinders()
-	{
-		binders.clear();
-	}
+    /** Removes all bound tokens. Does not remove token binder callbacks. */
+    public void clear() {
+        values.clear();
+        multiValues.clear();
+    }
 
-	/**
-	 * Removes all bound tokens and token binder callbacks from this
-	 * TokenResolver, making it essentially empty. After reset() this
-	 * TokenResolver's state is as if it was newly instantiated.
-	 */
-	public void reset()
-	{
-		clear();
-		binders.clear();
-	}
+    /**
+     * 'Unbind' a named substitution value from a token name.
+     *
+     * @param tokenName the name of a previously-bound token name.
+     */
+    public void remove(String tokenName) {
+        values.remove(tokenName);
+        multiValues.remove(tokenName);
+    }
 
-	/**
-	 * Resolve the tokens in the pattern string.
-	 * 
-	 * @param pattern
-	 * @return
-	 */
-	@Override
-	public String resolve(String pattern)
-	{
-		return FORMATTER.format(pattern, values);
-	}
+    /**
+     * Install a callback TokenBinder instance. During the resolve() methods that take an Object instance such as,
+     * resolve(String, Object) and resolve(Collection<String>, Object), the TokenBinder.bind(Object) method is called to
+     * bind additional tokens that may come from the object.
+     *
+     * <p/><Strong>LIMITATION:</strong> As TokenBinder is typed, calling binder() with TokenBinder instances for
+     * different generic types will cause a {@link ClassCastException} during resolve().
+     *
+     * @param  callback a TokenBinder implementation.
+     *
+     * @return this instance of TokenResolver to facilitate method chaining.
+     */
+    public <T> DefaultTokenResolver binder(TokenBinder<T> callback) {
+        if (callback == null) {
+            return this;
+        }
 
-	@Override
-	public String[] resolveMulti(String pattern)
-	{
-		List<String> resolved = new ArrayList<String>();
-		String current = FORMATTER.format(pattern, values);
-		resolved.add(current);
+        binders.add(callback);
 
-		for(Entry<String, Set<String>> entry : multiValues.entrySet())
-		{
-			String firstValue = values.get(entry.getKey());
-			Iterator<String> nextValue = entry.getValue().iterator();
+        return this;
+    }
 
-			while(nextValue.hasNext())
-			{
-				values.put(entry.getKey(), nextValue.next());
-				String bound = FORMATTER.format(pattern, values);
+    /** Removes all token binder callbacks from this TokenResolver. */
+    public void clearBinders() {
+        binders.clear();
+    }
 
-				if (!Strings.hasToken(bound))
-				{
-					resolved.add(bound);
-				}
-			}
+    /**
+     * Removes all bound tokens and token binder callbacks from this TokenResolver, making it essentially empty. After
+     * reset() this TokenResolver's state is as if it was newly instantiated.
+     */
+    public void reset() {
+        clear();
+        binders.clear();
+    }
 
-			values.put(entry.getKey(), firstValue);
-		}
+    /**
+     * Resolve the tokens in the pattern string.
+     *
+     * @param  pattern
+     *
+     * @return
+     */
+    @Override
+    public String resolve(String pattern) {
+        return FORMATTER.format(pattern, values);
+    }
 
-		return resolved.toArray(new String[0]);
-	}
+    @Override
+    public String[] resolveMulti(String pattern) {
+        List<String> resolved = new ArrayList<String>();
+        String current = FORMATTER.format(pattern, values);
+        resolved.add(current);
 
-	/**
-	 * Resolve the tokens in a string pattern, binding additional token values from
-	 * the given Object first. Any TokenBinder callbacks are called for the
-	 * object before resolving the tokens. If object is null, no token binders
-	 * are called.
-	 * <p/>
-	 * <Strong>LIMITATION:</strong> As TokenBinder is typed, calling binder()
-	 * with TokenBinder instances for different generic types will cause
-	 * a {@link ClassCastException} during resolve().
-	 * 
-	 * @param pattern a pattern string optionally containing tokens.
-	 * @param object an instance for which to call TokenBinders.
-	 * @return a string with bound tokens substituted for values.
-	 * @throws ClassCastException if binder() called with TokenBinder instances for different generic types.
-	 */
-	public String resolve(String pattern, Object object)
-	{
-		if (object != null)
-		{
-			callTokenBinders(object);
-		}
+        for (Entry<String, Set<String>> entry : multiValues.entrySet()) {
+            String firstValue = values.get(entry.getKey());
+            Iterator<String> nextValue = entry.getValue().iterator();
 
-		return FORMATTER.format(pattern, values);
-	}
+            while (nextValue.hasNext()) {
+                values.put(entry.getKey(), nextValue.next());
 
-	/**
-	 * Resolve the tokens in the collection of string patterns, returning a
-	 * collection of resolved strings. The resulting strings may still contain tokens
-	 * if they do not have token values bound.
-	 * 
-	 * @param patterns a list of string patterns
-	 * @return a collection of strings with bound tokens substituted for values.
-	 */
-	public Collection<String> resolve(Collection<String> patterns)
-	{
-		List<String> resolved = new ArrayList<String>(patterns.size());
+                String bound = FORMATTER.format(pattern, values);
 
-		for (String pattern : patterns)
-		{
-			resolved.add(resolve(pattern));
-		}
+                if (!Strings.hasToken(bound)) {
+                    resolved.add(bound);
+                }
+            }
 
-		return resolved;
-	}
+            values.put(entry.getKey(), firstValue);
+        }
 
-	/**
-	 * Resolve the tokens in a collection of string patterns, binding additional
-	 * token values from the given Object first. Any TokenBinder callbacks are
-	 * called for the object before resolving the tokens. If object is null, no
-	 * token binders are called. The resulting strings may still contain tokens if
-	 * they do not have values bound.
-	 * 
-	 * @param patterns a collection of string patterns optionally containing tokens.
-	 * @param object an instance for which to call TokenBinders.
-	 * @return a collection of strings with bound tokens substituted for values.
-	 */
-	public Collection<String> resolve(Collection<String> patterns, Object object)
-	{
-		if (object != null)
-		{
-			callTokenBinders(object);
-		}
+        return resolved.toArray(new String[0]);
+    }
 
-		return resolve(patterns);
-	}
+    /**
+     * Resolve the tokens in a string pattern, binding additional token values from the given Object first. Any
+     * TokenBinder callbacks are called for the object before resolving the tokens. If object is null, no token binders
+     * are called.
+     *
+     * <p/><Strong>LIMITATION:</strong> As TokenBinder is typed, calling binder() with TokenBinder instances for
+     * different generic types will cause a {@link ClassCastException} during resolve().
+     *
+     * @param  pattern a pattern string optionally containing tokens.
+     * @param  object  an instance for which to call TokenBinders.
+     *
+     * @return a string with bound tokens substituted for values.
+     *
+     * @throws ClassCastException if binder() called with TokenBinder instances for different generic types.
+     */
+    public String resolve(String pattern, Object object) {
+        if (object != null) {
+            callTokenBinders(object);
+        }
 
-	/**
-	 * Call the installed TokenBinder instances, calling bind() for each one
-	 * and passing the object so the TokenBinders can extract token values
-	 * from the object.
-	 * 
-	 * @param object an object for which to extract token bindings.
-	 */
-	@SuppressWarnings({
-        "rawtypes", "unchecked"
-    })
-    private void callTokenBinders(Object object)
-	{
-		if (object == null) return;
+        return FORMATTER.format(pattern, values);
+    }
 
-		for (TokenBinder tokenBinder : binders)
-		{
-			Class<?> binderClass = (Class<?>) ((ParameterizedType) tokenBinder
-				.getClass()
-				.getGenericInterfaces()[0])
-				.getActualTypeArguments()[0];
+    /**
+     * Resolve the tokens in the collection of string patterns, returning a collection of resolved strings. The
+     * resulting strings may still contain tokens if they do not have token values bound.
+     *
+     * @param  patterns a list of string patterns
+     *
+     * @return a collection of strings with bound tokens substituted for values.
+     */
+    public Collection<String> resolve(Collection<String> patterns) {
+        List<String> resolved = new ArrayList<String>(patterns.size());
 
-			if (binderClass.isAssignableFrom(object.getClass()))
-			{
-				tokenBinder.bind(object, this);
-			}
-		}
-	}
+        for (String pattern : patterns) {
+            resolved.add(resolve(pattern));
+        }
 
-	public String toString()
-	{
-		StringBuilder s = new StringBuilder();
-	    s.append("{");
-		boolean isFirst = true;
+        return resolved;
+    }
 
-		for (Entry<String, String> entry : values.entrySet())
-		{
-			if (!isFirst)
-			{
-				s.append(", ");
-			}
-			else
-			{
-				isFirst = false;
-			}
+    /**
+     * Resolve the tokens in a collection of string patterns, binding additional token values from the given Object
+     * first. Any TokenBinder callbacks are called for the object before resolving the tokens. If object is null, no
+     * token binders are called. The resulting strings may still contain tokens if they do not have values bound.
+     *
+     * @param  patterns a collection of string patterns optionally containing tokens.
+     * @param  object   an instance for which to call TokenBinders.
+     *
+     * @return a collection of strings with bound tokens substituted for values.
+     */
+    public Collection<String> resolve(Collection<String> patterns, Object object) {
+        if (object != null) {
+            callTokenBinders(object);
+        }
 
-			s.append(entry.getKey());
-			s.append("=");
-			s.append(entry.getValue());
-		}
+        return resolve(patterns);
+    }
 
-		return s.toString();
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append("{");
+
+        boolean isFirst = true;
+
+        for (Entry<String, String> entry : values.entrySet()) {
+            if (!isFirst) {
+                s.append(", ");
+            } else {
+                isFirst = false;
+            }
+
+            s.append(entry.getKey());
+            s.append("=");
+            s.append(entry.getValue());
+        }
+
+        return s.toString();
+    }
+
+    private void bindExtras(String tokenName, List<String> valueList) {
+        if (valueList.size() <= 1) {
+            this.multiValues.remove(tokenName);
+        } else {
+            Set<String> extras = this.multiValues.get(tokenName);
+
+            if (extras == null) {
+                extras = new LinkedHashSet<String>(valueList.size() - 1);
+                this.multiValues.put(tokenName, extras);
+            }
+
+            for (int i = 1; i < valueList.size(); ++i) {
+                extras.add(valueList.get(i));
+            }
+        }
+    }
+
+    /**
+     * Call the installed TokenBinder instances, calling bind() for each one and passing the object so the TokenBinders
+     * can extract token values from the object.
+     *
+     * @param object an object for which to extract token bindings.
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private void callTokenBinders(Object object) {
+        if (object == null) {
+            return;
+        }
+
+        for (TokenBinder tokenBinder : binders) {
+            Class<?> binderClass =
+                (Class<?>)
+                ((ParameterizedType) tokenBinder.getClass().getGenericInterfaces()[0]).getActualTypeArguments()[0];
+
+            if (binderClass.isAssignableFrom(object.getClass())) {
+                tokenBinder.bind(object, this);
+            }
+        }
     }
 }

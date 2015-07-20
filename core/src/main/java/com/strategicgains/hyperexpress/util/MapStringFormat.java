@@ -1,17 +1,17 @@
 /*
-	Copyright 2005 Strategic Gains, Inc.
-	
-	Licensed under the Apache License, Version 2.0 (the "License");
-	you may not use this file except in compliance with the License.
-	You may obtain a copy of the License at
-	
-		http://www.apache.org/licenses/LICENSE-2.0
-	
-	Unless required by applicable law or agreed to in writing, software
-	distributed under the License is distributed on an "AS IS" BASIS,
-	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	See the License for the specific language governing permissions and
-	limitations under the License.
+    Copyright 2005 Strategic Gains, Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
  */
 package com.strategicgains.hyperexpress.util;
 
@@ -21,125 +21,116 @@ import java.util.Map.Entry;
 
 /**
  * @author Todd Fredrich
- * @since Feb 16, 2005
+ * @since  Feb 16, 2005
  */
-public class MapStringFormat
-{
-	private final static String DEFAULT_END_DELIMITER = "}";
-	private final static String DEFAULT_START_DELIMITER = "{";
+public class MapStringFormat {
+    private static final String DEFAULT_END_DELIMITER = "}";
+    private static final String DEFAULT_START_DELIMITER = "{";
 
+    // PROTOCOL: VARIABLES
 
-	// PROTOCOL: VARIABLES
+    private String endDelimiter;
+    private String startDelimiter;
 
-	private String endDelimiter;
-	private String startDelimiter;
+    public MapStringFormat() {
+        this(DEFAULT_START_DELIMITER, DEFAULT_END_DELIMITER);
+    }
 
-	public MapStringFormat()
-	{
-		this(DEFAULT_START_DELIMITER, DEFAULT_END_DELIMITER);
-	}
+    public MapStringFormat(String startDelimiter, String endDelimiter) {
+        startDelimiter(startDelimiter);
+        endDelimiter(endDelimiter);
+    }
 
-	public MapStringFormat(String startDelimiter, String endDelimiter)
-	{
-		startDelimiter(startDelimiter);
-		endDelimiter(endDelimiter);
-	}
+    /**
+     * Converts a sequence of strings into name/value pairs in a map. Pairs must be matched or IllegalArgumentException
+     * is thrown. If nameValuePairs is null an empty Map is returned.
+     *
+     * @param  nameValuePairs a sequence of strings as matched name/value pairs.
+     *
+     * @return a Map of name/value pairs. Never null. Empty, if nameValuePairs is null.
+     *
+     * @throws IllegalArgumentException if name/value pairs not matched.
+     */
+    public static Map<String, String> toMap(String... nameValuePairs) {
+        Map<String, String> result = new HashMap<String, String>();
 
-	// PROTOCOL: ACCESSING
+        if (nameValuePairs == null) {
+            return result;
+        }
 
-	public String endDelimiter()
-	{
-		return endDelimiter;
-	}
+        if ((nameValuePairs.length % 2) != 0) {
+            throw new IllegalArgumentException("Name/value pairs unbalanced: " + nameValuePairs.toString());
+        }
 
-	public void endDelimiter(String delimiter)
-	{
-		endDelimiter = delimiter;
-	}
+        for (int i = 0; i < nameValuePairs.length; i += 2) {
+            result.put(nameValuePairs[i], nameValuePairs[i + 1]);
+        }
 
-	public String startDelimiter()
-	{
-		return startDelimiter;
-	}
+        return result;
+    }
 
-	public void startDelimiter(String delimiter)
-	{
-		startDelimiter = delimiter;
-	}
+    // PROTOCOL: ACCESSING
 
-	public String format(String string, String... parameters)
-	{
-		if (parameters.length % 2 != 0) throw new IllegalArgumentException("Parameters must be in name/value pairs");
+    public String endDelimiter() {
+        return endDelimiter;
+    }
 
-		return format(string, toMap(parameters));
-	}
+    public void endDelimiter(String delimiter) {
+        endDelimiter = delimiter;
+    }
 
-	/**
-	 * 
-	 * @param string The string containing named tokens to replace with parameters.
-	 * @param parameters A map of strings or I18nKeys, keyed by parameter names.
-	 * @return An internationalized string with parameter tokens replaced with values.
-	 */
-	public String format(String string, Map<String, String> parameters)
-	{
-		String result = string;
-		StringBuilder sb = new StringBuilder();
+    public String startDelimiter() {
+        return startDelimiter;
+    }
 
-		for (Entry<String, String> entry : parameters.entrySet())
-		{
-			constructParameterName(sb, entry.getKey());
-			result = result.replaceAll(sb.toString(), entry.getValue());
-		}
-		
-		
-		return result;
-	}
+    public void startDelimiter(String delimiter) {
+        startDelimiter = delimiter;
+    }
 
-	// PROTOCOL: UTILITY
+    public String format(String string, String... parameters) {
+        if (parameters.length % 2 != 0) {
+            throw new IllegalArgumentException("Parameters must be in name/value pairs");
+        }
 
-	/**
-	 * @param key
-	 * @return String with key contained within start delimiter and end delimiter
-	 */
-	private String constructParameterName(StringBuilder sb, String key)
-	{
-		sb.setLength(0);
-		sb.append('\\');
-		sb.append(startDelimiter());
-		sb.append(key);
-		sb.append('\\');
-		sb.append(endDelimiter());
-		return sb.toString();
-	}
+        return format(string, toMap(parameters));
+    }
 
-	// SECTION: UTILITY - STATIC
+    /**
+     * @param  string     The string containing named tokens to replace with parameters.
+     * @param  parameters A map of strings or I18nKeys, keyed by parameter names.
+     *
+     * @return An internationalized string with parameter tokens replaced with values.
+     */
+    public String format(String string, Map<String, String> parameters) {
+        String result = string;
+        StringBuilder sb = new StringBuilder();
 
-	/**
-	 * Converts a sequence of strings into name/value pairs in a map. Pairs must
-	 * be matched or IllegalArgumentException is thrown. If nameValuePairs is
-	 * null an empty Map is returned.
-	 * 
-	 * @param nameValuePairs a sequence of strings as matched name/value pairs.
-	 * @return a Map of name/value pairs. Never null. Empty, if nameValuePairs is null.
-	 * @throws IllegalArgumentException if name/value pairs not matched.
-	 */
-	public static Map<String, String> toMap(String... nameValuePairs)
-	{
-		Map<String, String> result = new HashMap<String, String>();
+        for (Entry<String, String> entry : parameters.entrySet()) {
+            constructParameterName(sb, entry.getKey());
+            result = result.replaceAll(sb.toString(), entry.getValue());
+        }
 
-		if (nameValuePairs == null) return result;
+        return result;
+    }
 
-		if ((nameValuePairs.length % 2) != 0)
-		{
-			throw new IllegalArgumentException("Name/value pairs unbalanced: " + nameValuePairs.toString());
-		}
+    // PROTOCOL: UTILITY
 
-		for (int i = 0; i < nameValuePairs.length; i += 2)
-		{
-			result.put(nameValuePairs[i], nameValuePairs[i + 1]);
-		}
+    /**
+     * @param  key
+     *
+     * @return String with key contained within start delimiter and end delimiter
+     */
+    private String constructParameterName(StringBuilder sb, String key) {
+        sb.setLength(0);
+        sb.append('\\');
+        sb.append(startDelimiter());
+        sb.append(key);
+        sb.append('\\');
+        sb.append(endDelimiter());
 
-		return result;
-	}
+        return sb.toString();
+    }
+
+    // SECTION: UTILITY - STATIC
 
 }

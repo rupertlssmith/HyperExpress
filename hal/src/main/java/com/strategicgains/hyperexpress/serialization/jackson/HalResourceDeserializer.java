@@ -1,17 +1,17 @@
 /*
     Copyright 2014, Strategic Gains, Inc.
 
-	Licensed under the Apache License, Version 2.0 (the "License");
-	you may not use this file except in compliance with the License.
-	You may obtain a copy of the License at
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
 
-		http://www.apache.org/licenses/LICENSE-2.0
+        http://www.apache.org/licenses/LICENSE-2.0
 
-	Unless required by applicable law or agreed to in writing, software
-	distributed under the License is distributed on an "AS IS" BASIS,
-	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	See the License for the specific language governing permissions and
-	limitations under the License.
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
  */
 package com.strategicgains.hyperexpress.serialization.jackson;
 
@@ -37,191 +37,173 @@ import com.strategicgains.hyperexpress.domain.hal.HalResource;
 
 /**
  * @author toddf
- * @since May 21, 2014
+ * @since  May 21, 2014
  */
-public class HalResourceDeserializer
-extends JsonDeserializer<HalResource>
-{
-	private static final String LINKS = "_links";
-	private static final String CURIES = "curies";
-	private static final String EMBEDDED = "_embedded";
-	private static final Set<String> RESERVED_PROPERTIES = new HashSet<>(Arrays.asList(LINKS, EMBEDDED));
+public class HalResourceDeserializer extends JsonDeserializer<HalResource> {
+    private static final String LINKS = "_links";
+    private static final String CURIES = "curies";
+    private static final String EMBEDDED = "_embedded";
+    private static final Set<String> RESERVED_PROPERTIES = new HashSet<>(Arrays.asList(LINKS, EMBEDDED));
 
-	private BuilderFactory factory;
+    private BuilderFactory factory;
 
-	public HalResourceDeserializer()
-    {
-		super();
-		factory = new DefaultBuilderFactory();
+    public HalResourceDeserializer() {
+        super();
+        factory = new DefaultBuilderFactory();
     }
 
-	public HalResourceDeserializer(BuilderFactory factory)
-    {
-		super();
-		this.factory = factory;
+    public HalResourceDeserializer(BuilderFactory factory) {
+        super();
+        this.factory = factory;
     }
 
-	@Override
-	public HalResource deserialize(JsonParser jp, DeserializationContext context)
-	throws IOException, JsonProcessingException
-	{
-		ObjectCodec oc = jp.getCodec();
-		return deserializeResource((JsonNode) jp.readValueAsTree(), oc);
-	}
+    @Override
+    public HalResource deserialize(JsonParser jp, DeserializationContext context) throws IOException,
+        JsonProcessingException {
+        ObjectCodec oc = jp.getCodec();
 
-	private HalResource deserializeResource(JsonNode root, ObjectCodec oc)
-	throws JsonProcessingException, IOException
-    {
-		HalResource resource = new HalResource();
-		processLinks(root.get(LINKS), resource, oc);
-		processEmbedded(root.get(EMBEDDED), resource, oc);
-		processProperties(root, resource);
-		return resource;
+        return deserializeResource((JsonNode) jp.readValueAsTree(), oc);
     }
 
-	/**
-	 * @param links
-	 * @param resource
-	 * @param oc 
-	 * @throws IOException
-	 * @throws JsonProcessingException
-	 */
-	private void processLinks(JsonNode links, HalResource resource, ObjectCodec oc)
-	throws JsonProcessingException, IOException
-	{
-		if (links == null) return;
+    private HalResource deserializeResource(JsonNode root, ObjectCodec oc) throws JsonProcessingException, IOException {
+        HalResource resource = new HalResource();
+        processLinks(root.get(LINKS), resource, oc);
+        processEmbedded(root.get(EMBEDDED), resource, oc);
+        processProperties(root, resource);
 
-		processCuries(links.get(CURIES), resource, oc);
-		Iterator<Entry<String, JsonNode>> fields = links.fields();
+        return resource;
+    }
 
-		while (fields.hasNext())
-		{
-			Entry<String, JsonNode> field = fields.next();
+    /**
+     * @param  links
+     * @param  resource
+     * @param  oc
+     *
+     * @throws IOException
+     * @throws JsonProcessingException
+     */
+    private void processLinks(JsonNode links, HalResource resource, ObjectCodec oc) throws JsonProcessingException,
+        IOException {
+        if (links == null) {
+            return;
+        }
 
-			if (CURIES.equals(field.getKey())) continue;
+        processCuries(links.get(CURIES), resource, oc);
 
-			if (field.getValue().isArray())
-			{
-				addAllLinks(resource, field);
-			}
-			else
-			{
-				addLink(resource, field);
-			}
-		}
-	}
+        Iterator<Entry<String, JsonNode>> fields = links.fields();
 
-	/**
-	 * @param curies
-	 * @param resource
-	 * @param oc 
-	 * @throws IOException
-	 * @throws JsonProcessingException
-	 */
-	private void processCuries(JsonNode curies, HalResource resource, ObjectCodec oc)
-	throws JsonProcessingException, IOException
-	{
-		if (curies == null) return;
+        while (fields.hasNext()) {
+            Entry<String, JsonNode> field = fields.next();
 
-		if (curies.isArray())
-		{
-			resource.addNamespaces(Arrays.asList(curies.traverse(oc).readValueAs(Namespace[].class)));
-		}
-		else
-		{
-			resource.addNamespace(curies.traverse(oc).readValueAs(Namespace.class));
-		}
-	}
+            if (CURIES.equals(field.getKey())) {
+                continue;
+            }
 
-	/**
-	 * @param resource
-	 * @param field
-	 */
-	private void addAllLinks(HalResource resource, Entry<String, JsonNode> field)
-	{
-		LinkBuilder lb = factory.newLinkBuilder();
-		Iterator<JsonNode> values = field.getValue().elements();
+            if (field.getValue().isArray()) {
+                addAllLinks(resource, field);
+            } else {
+                addLink(resource, field);
+            }
+        }
+    }
 
-		while (values.hasNext())
-		{
-			lb.rel(field.getKey());
-			JsonNode value = values.next();
-			processLinkProperties(lb, value);
-			resource.addLink(lb.build());
-			lb.clearAttributes();
-		}
-	}
+    /**
+     * @param  curies
+     * @param  resource
+     * @param  oc
+     *
+     * @throws IOException
+     * @throws JsonProcessingException
+     */
+    private void processCuries(JsonNode curies, HalResource resource, ObjectCodec oc) throws JsonProcessingException,
+        IOException {
+        if (curies == null) {
+            return;
+        }
 
-	/**
-	 * @param resource
-	 * @param field
-	 */
-	private void addLink(HalResource resource, Entry<String, JsonNode> field)
-	{
-		LinkBuilder lb = factory.newLinkBuilder();
-		lb.rel(field.getKey());
-		processLinkProperties(lb, field.getValue());
-		resource.addLink(lb.build());
-	}
+        if (curies.isArray()) {
+            resource.addNamespaces(Arrays.asList(curies.traverse(oc).readValueAs(Namespace[].class)));
+        } else {
+            resource.addNamespace(curies.traverse(oc).readValueAs(Namespace.class));
+        }
+    }
 
-	private void processLinkProperties(LinkBuilder lb, JsonNode value) {
-		Iterator<Entry<String, JsonNode>> elements = value.fields();
+    /**
+     * @param resource
+     * @param field
+     */
+    private void addAllLinks(HalResource resource, Entry<String, JsonNode> field) {
+        LinkBuilder lb = factory.newLinkBuilder();
+        Iterator<JsonNode> values = field.getValue().elements();
 
-		while (elements.hasNext())
-		{
-			Entry<String, JsonNode> element = elements.next();
+        while (values.hasNext()) {
+            lb.rel(field.getKey());
 
-			if ("href".equals(element.getKey()))
-			{
-				lb.urlPattern(element.getValue().asText());
-			}
-			else
-			{
-				lb.set(element.getKey(), element.getValue().asText());
-			}
-		}
-	}
+            JsonNode value = values.next();
+            processLinkProperties(lb, value);
+            resource.addLink(lb.build());
+            lb.clearAttributes();
+        }
+    }
 
-	private void processEmbedded(JsonNode embedded, HalResource resource, ObjectCodec oc)
-	throws JsonProcessingException, IOException
-    {
-		if (embedded == null) return;
+    /**
+     * @param resource
+     * @param field
+     */
+    private void addLink(HalResource resource, Entry<String, JsonNode> field) {
+        LinkBuilder lb = factory.newLinkBuilder();
+        lb.rel(field.getKey());
+        processLinkProperties(lb, field.getValue());
+        resource.addLink(lb.build());
+    }
 
-		Iterator<Map.Entry<String, JsonNode>> fields = embedded.fields();
+    private void processLinkProperties(LinkBuilder lb, JsonNode value) {
+        Iterator<Entry<String, JsonNode>> elements = value.fields();
 
-		while (fields.hasNext())
-		{
-			Map.Entry<String, JsonNode> fieldEntry = fields.next();
+        while (elements.hasNext()) {
+            Entry<String, JsonNode> element = elements.next();
 
-			if (fieldEntry.getValue().isArray())
-			{
-				Iterator<JsonNode> values = fieldEntry.getValue().elements();
+            if ("href".equals(element.getKey())) {
+                lb.urlPattern(element.getValue().asText());
+            } else {
+                lb.set(element.getKey(), element.getValue().asText());
+            }
+        }
+    }
 
-				while (values.hasNext())
-				{
-					JsonNode value = values.next();
-					resource.addResource(fieldEntry.getKey(), deserializeResource(value, oc));
-				}
-			}
-			else
-			{
-				resource.addResource(fieldEntry.getKey(), deserializeResource(fieldEntry.getValue(), oc));
-			}
-		}
-	}
+    private void processEmbedded(JsonNode embedded, HalResource resource, ObjectCodec oc)
+        throws JsonProcessingException, IOException {
+        if (embedded == null) {
+            return;
+        }
 
-	private void processProperties(JsonNode root, HalResource resource)
-    {
-		Iterator<Entry<String, JsonNode>> fields = root.fields();
+        Iterator<Map.Entry<String, JsonNode>> fields = embedded.fields();
 
-		while (fields.hasNext())
-		{
-			Entry<String, JsonNode> fieldEntry = fields.next();
+        while (fields.hasNext()) {
+            Map.Entry<String, JsonNode> fieldEntry = fields.next();
 
-			if (!RESERVED_PROPERTIES.contains(fieldEntry.getKey()))
-			{
-				resource.setProperty(fieldEntry.getKey(), fieldEntry.getValue().asText());
-			}
-		}
+            if (fieldEntry.getValue().isArray()) {
+                Iterator<JsonNode> values = fieldEntry.getValue().elements();
+
+                while (values.hasNext()) {
+                    JsonNode value = values.next();
+                    resource.addResource(fieldEntry.getKey(), deserializeResource(value, oc));
+                }
+            } else {
+                resource.addResource(fieldEntry.getKey(), deserializeResource(fieldEntry.getValue(), oc));
+            }
+        }
+    }
+
+    private void processProperties(JsonNode root, HalResource resource) {
+        Iterator<Entry<String, JsonNode>> fields = root.fields();
+
+        while (fields.hasNext()) {
+            Entry<String, JsonNode> fieldEntry = fields.next();
+
+            if (!RESERVED_PROPERTIES.contains(fieldEntry.getKey())) {
+                resource.setProperty(fieldEntry.getKey(), fieldEntry.getValue().asText());
+            }
+        }
     }
 }

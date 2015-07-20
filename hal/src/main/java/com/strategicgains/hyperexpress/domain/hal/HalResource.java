@@ -1,31 +1,28 @@
 /*
     Copyright 2013, Strategic Gains, Inc.
 
-	Licensed under the Apache License, Version 2.0 (the "License");
-	you may not use this file except in compliance with the License.
-	You may obtain a copy of the License at
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
 
-		http://www.apache.org/licenses/LICENSE-2.0
+        http://www.apache.org/licenses/LICENSE-2.0
 
-	Unless required by applicable law or agreed to in writing, software
-	distributed under the License is distributed on an "AS IS" BASIS,
-	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	See the License for the specific language governing permissions and
-	limitations under the License.
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 */
 package com.strategicgains.hyperexpress.domain.hal;
 
-import com.strategicgains.hyperexpress.domain.Resource;
 import com.strategicgains.hyperexpress.domain.AbstractResource;
+import com.strategicgains.hyperexpress.domain.Resource;
 
 /**
  * A HAL Resource instance, containing links, CURIEs and embedded resources.
- * 
+ *
  * @author toddf
- * @since May 21, 2013
+ * @since  May 21, 2013
  */
-public class HalResource
-extends AbstractResource
-implements Resource
-{
+public class HalResource extends AbstractResource implements Resource {
 }
